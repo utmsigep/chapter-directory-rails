@@ -1,0 +1,6 @@
+---
+<% 1.upto(12) do |i| %>
+region_<%= i %>:
+  name: Region <%= i %>
+  short_name: R<%= i %>
+<% end %>

@@ -1,0 +1,6 @@
+---
+<% 1.upto(37) do |i| %>
+district_<%= i %>:
+  name: District <%= i %>
+  short_name: D<%= i %>
+<% end %>
