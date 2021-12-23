@@ -3,4 +3,5 @@
 district_<%= i %>:
   name: District <%= i %>
   short_name: D<%= i %>
+  position: <%= i %>
 <% end %>

@@ -3,6 +3,7 @@ class CreateRegions < ActiveRecord::Migration[7.0]
     create_table :regions do |t|
       t.string :name
       t.string :short_name
+      t.integer :position
       t.timestamps
     end
   end

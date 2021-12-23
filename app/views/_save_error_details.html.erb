@@ -1,0 +1,8 @@
+<div class="alert alert-danger">
+    <p><strong><%= pluralize(record.errors.count, "error") %> prohibited this record from being saved:</strong></p>
+    <ul>
+    <% record.errors.each do |error| %>
+        <li><%= error.full_message %></li>
+    <% end %>
+    </ul>
+</div>

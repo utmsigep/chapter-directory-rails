@@ -1,0 +1,10 @@
+<%= render '/admin_menu' %>
+
+<%= render @district %>
+
+<div>
+  <%= link_to "Edit this district", edit_district_path(@district) %> |
+  <%= link_to "Back to districts", districts_path %>
+
+  <%= button_to "Delete District", @district, method: :delete, class: 'btn btn-danger' %>
+</div>

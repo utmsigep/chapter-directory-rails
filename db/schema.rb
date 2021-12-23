@@ -10,12 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_22_040614) do
+ActiveRecord::Schema.define(version: 2021_12_22_215804) do
 
   create_table "chapters", force: :cascade do |t|
     t.string "name"
     t.string "short_name"
-    t.string "institution_long_name"
+    t.string "institution_name"
     t.string "institution_short_name"
     t.decimal "latitude", precision: 10, scale: 6
     t.decimal "longitude", precision: 10, scale: 6
@@ -30,6 +30,7 @@ ActiveRecord::Schema.define(version: 2021_12_22_040614) do
   create_table "districts", force: :cascade do |t|
     t.string "name"
     t.string "short_name"
+    t.integer "position", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -37,6 +38,7 @@ ActiveRecord::Schema.define(version: 2021_12_22_040614) do
   create_table "regions", force: :cascade do |t|
     t.string "name"
     t.string "short_name"
+    t.integer "position", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

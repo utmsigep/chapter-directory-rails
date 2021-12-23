@@ -3,4 +3,5 @@
 region_<%= i %>:
   name: Region <%= i %>
   short_name: R<%= i %>
+  position: <%= i %>
 <% end %>

@@ -1,0 +1,43 @@
+<%= form_with(model: chapter) do |form| %>
+  <%= render'/save_error_details', record: chapter if chapter.errors.any? %>
+
+  <div class="mb-3">
+    <%= label_tag :name %>
+    <%= form.text_field :name, class: 'form-control' %>
+  </div>
+  <div class="mb-3">
+    <%= label_tag :short_name %>
+    <%= form.text_field :short_name, class: 'form-control' %>
+  </div>
+  <hr />
+  <div class="mb-3">
+    <%= label_tag :institution_name %>
+    <%= form.text_field :institution_name, class: 'form-control' %>
+  </div>
+  <div class="mb-3">
+    <%= label_tag :institution_short_name %>
+    <%= form.text_field :institution_short_name, class: 'form-control' %>
+  </div>
+  <hr />
+  <div class="mb-3">
+    <%= label_tag :region %>
+    <%= form.collection_select :region_id, Region.order(:position), :id, :name, class: 'form-control' %>
+  </div>
+  <div class="mb-3">
+    <%= label_tag :district %>
+    <%= form.collection_select :district_id, District.order(:position), :id, :name, class: 'form-control' %>
+  </div>
+  <hr />
+    <div class="mb-3">
+    <%= label_tag :latitude %>
+    <%= form.text_field :latitude, class: 'form-control' %>
+  </div>
+    <div class="mb-3">
+    <%= label_tag :longitude %>
+    <%= form.text_field :longitude, class: 'form-control' %>
+  </div>
+  <hr />
+  <div>
+    <%= form.submit nil, class: 'btn btn-primary' %>
+  </div>
+<% end %>

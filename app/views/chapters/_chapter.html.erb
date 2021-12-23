@@ -1,0 +1,22 @@
+<div class="card mb-3" id="<%= dom_id chapter %>">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-2">Name</dt>
+            <dd class="col-10"><%= chapter.name %></dd>
+            <dt class="col-2">Short Name</dt>
+            <dd class="col-10"><%= chapter.short_name %></dd>
+            <dt class="col-2">Institution Name</dt>
+            <dd class="col-10"><%= chapter.institution_name %></dd>
+            <dt class="col-2">Institution Short Name</dt>
+            <dd class="col-10"><%= chapter.institution_short_name %></dd>
+            <dt class="col-2">District</dt>
+            <dd class="col-10"><%= link_to chapter.district.name, chapter.district %></dd>
+            <dt class="col-2">Region</dt>
+            <dd class="col-10"><%= link_to chapter.region.name, chapter.region %></dd>
+            <dt class="col-2">Latitude</dt>
+            <dd class="col-10"><tt><%= chapter.latitude %></tt></dd>
+            <dt class="col-2">Longitude</dt>
+            <dd class="col-10"><tt><%= chapter.longitude %></tt></dd>
+        </dl>
+    </div>
+</div>

@@ -2,7 +2,7 @@ require "test_helper"
 
 class DistrictTest < ActiveSupport::TestCase
   test "fails when saving empty record" do
-    region = Region.new()
-    assert_raise(ActiveRecord::RecordInvalid) { region.save! }
+    district = District.new()
+    assert_raise(ActiveRecord::RecordInvalid) { district.save! }
   end
 end
