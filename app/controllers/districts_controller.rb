@@ -1,5 +1,5 @@
 class DistrictsController < ApplicationController
-  before_action :set_district, only: %i[ show edit update destroy ]
+  before_action :set_district, only: %i[ show edit update destroy chapters ]
 
   # GET /districts or /districts.json
   def index
@@ -56,6 +56,15 @@ class DistrictsController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+  # GET /districts/1/chapters or /districts/1/chapters.json
+  def chapters
+    respond_to do |format|
+      format.html { render template: 'chapters/index', locals: {'@chapters': @district.chapters} }
+      format.json { render template: 'chapters/index', locals: {'@chapters': @district.chapters} }
+    end
+  end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.

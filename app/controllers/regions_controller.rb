@@ -1,5 +1,5 @@
 class RegionsController < ApplicationController
-  before_action :set_region, only: %i[ show edit update destroy ]
+  before_action :set_region, only: %i[ show edit update destroy chapters ]
 
   # GET /regions or /regions.json
   def index
@@ -54,6 +54,14 @@ class RegionsController < ApplicationController
     respond_to do |format|
       format.html { redirect_to regions_url, notice: "Region was successfully destroyed." }
       format.json { head :no_content }
+    end
+  end
+
+  # GET /regions/1/chapters or /regions/1/chapters.json
+  def chapters
+    respond_to do |format|
+      format.html { render template: 'chapters/index', locals: {'@chapters': @region.chapters} }
+      format.json { render template: 'chapters/index', locals: {'@chapters': @region.chapters} }
     end
   end
 

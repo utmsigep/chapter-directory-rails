@@ -3,6 +3,10 @@ import L from "leaflet"
 
 // Connects to data-controller="map"
 export default class extends Controller {
+  static values = {
+    url: String
+  }
+
   connect() {
     // Configure base map
     this.map = L.map(this.element).setView([39.828175, -98.5795], 4);
@@ -22,19 +26,40 @@ export default class extends Controller {
       shadowUrl: require('leaflet/dist/images/marker-shadow.png').default,
     });
 
+    const ChapterIcon = L.Icon.extend({
+      options: {
+        iconUrl: '/assets/chapter.svg',
+        iconSize: [24, 24],
+        shadowUrl: null
+      }
+    })
+    
+    const SLCChapterIcon = L.Icon.extend({
+      options: {
+        iconUrl: '/assets/chapter-slc.svg',
+        iconSize: [24, 24],
+        shadowUrl: null
+      }
+    })
+
     // Load data for the markers
-    fetch('/chapters.json', {acccept: 'application/json'})
+    var mapBounds = [];
+    fetch(this.urlValue, {acccept: 'application/json'})
       .then((response) => {
         return response.json()
       })
-      .then((data => {
+      .then((data) => {
         data.forEach(chapter => {
-          var marker = L.marker([chapter.latitude, chapter.longitude]).addTo(this.map);
-          marker.bindTooltip(chapter.name)
-        });
+          var icon = chapter.slc ? new SLCChapterIcon() : new ChapterIcon()
+          var marker = L.marker([chapter.latitude, chapter.longitude], {icon: icon });
+          marker.bindTooltip(chapter.name + ' - ' + chapter.institution_name)
+          marker.addTo(this.map)
+          mapBounds.push([chapter.latitude, chapter.longitude])
+        })
       })
-    );
-
+      .then((data) => {
+        this.map.fitBounds(mapBounds)
+      })
   }
 
   disconnect() {
