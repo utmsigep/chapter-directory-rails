@@ -65,6 +65,6 @@ class ChaptersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def chapter_params
-      params.fetch(:chapter, {}).permit(:name, :short_name, :institution_name, :institution_short_name, :region_id, :district_id, :longitude, :latitude)
+      params.fetch(:chapter, {}).permit(:name, :institution_name, :slc, :region_id, :district_id, :longitude, :latitude)
     end
 end

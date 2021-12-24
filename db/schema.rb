@@ -14,9 +14,7 @@ ActiveRecord::Schema.define(version: 2021_12_23_231607) do
 
   create_table "chapters", force: :cascade do |t|
     t.string "name"
-    t.string "short_name"
     t.string "institution_name"
-    t.string "institution_short_name"
     t.decimal "latitude", precision: 10, scale: 6
     t.decimal "longitude", precision: 10, scale: 6
     t.integer "region_id"

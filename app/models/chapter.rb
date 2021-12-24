@@ -1,5 +1,5 @@
 class Chapter < ApplicationRecord
     belongs_to :region
     belongs_to :district
-    validates_presence_of :name, :short_name
+    validates_presence_of :name
 end

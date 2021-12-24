@@ -3,12 +3,10 @@
         <dl class="row">
             <dt class="col-2">Name</dt>
             <dd class="col-10"><%= chapter.name %></dd>
-            <dt class="col-2">Short Name</dt>
-            <dd class="col-10"><%= chapter.short_name %></dd>
             <dt class="col-2">Institution Name</dt>
             <dd class="col-10"><%= chapter.institution_name %></dd>
-            <dt class="col-2">Institution Short Name</dt>
-            <dd class="col-10"><%= chapter.institution_short_name %></dd>
+            <dt class="col-2">SigEp Learning Community</dt>
+            <dd class="col-10"><%= chapter.slc ? 'Yes' : 'No' %></dd>
             <dt class="col-2">Location</dt>
             <dd class="col-10"><%= chapter.location %></dd>
             <dt class="col-2">District</dt>
