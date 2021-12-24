@@ -2,38 +2,46 @@
   <%= render'/save_error_details', record: chapter if chapter.errors.any? %>
 
   <div class="mb-3">
-    <%= label_tag :name %>
+    <%= form.label :name %>
     <%= form.text_field :name, class: 'form-control' %>
   </div>
   <div class="mb-3">
-    <%= label_tag :short_name %>
+    <%= form.label :short_name %>
     <%= form.text_field :short_name, class: 'form-control' %>
+  </div>
+    <div class="form-check mb-3">
+    <%= form.check_box :slc, class: 'form-check-input' %>
+    <%= form.label :slc, 'SigEp Learning Community', class: 'form-check-label' %>
   </div>
   <hr />
   <div class="mb-3">
-    <%= label_tag :institution_name %>
+    <%= form.label :institution_name %>
     <%= form.text_field :institution_name, class: 'form-control' %>
   </div>
   <div class="mb-3">
-    <%= label_tag :institution_short_name %>
+    <%= form.label :institution_short_name %>
     <%= form.text_field :institution_short_name, class: 'form-control' %>
+  </div>
+    <div class="mb-3">
+    <%= form.label :location %>
+    <%= form.text_field :location, class: 'form-control' %>
   </div>
   <hr />
   <div class="mb-3">
-    <%= label_tag :region %>
-    <%= form.collection_select :region_id, Region.order(:position), :id, :name, class: 'form-control' %>
+    <%= form.label :region %>
+    <%= form.collection_select :region_id, Region.order(:position), :id, :name, {}, class: 'form-select' %>
   </div>
   <div class="mb-3">
-    <%= label_tag :district %>
-    <%= form.collection_select :district_id, District.order(:position), :id, :name, class: 'form-control' %>
+    <%= form.label :district %>
+    <%= form.collection_select :district_id, District.order(:position), :id, :name, {}, class: 'form-select' %>
   </div>
   <hr />
     <div class="mb-3">
-    <%= label_tag :latitude %>
+    <%= form.label :latitude %>
     <%= form.text_field :latitude, class: 'form-control' %>
   </div>
     <div class="mb-3">
-    <%= label_tag :longitude %>
+    <%= form.label :longitude %>
     <%= form.text_field :longitude, class: 'form-control' %>
   </div>
   <hr />

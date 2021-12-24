@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_12_22_215804) do
+ActiveRecord::Schema.define(version: 2021_12_23_231607) do
 
   create_table "chapters", force: :cascade do |t|
     t.string "name"
@@ -23,6 +23,8 @@ ActiveRecord::Schema.define(version: 2021_12_22_215804) do
     t.integer "district_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "location"
+    t.boolean "slc"
     t.index ["district_id"], name: "index_chapters_on_district_id"
     t.index ["region_id"], name: "index_chapters_on_region_id"
   end

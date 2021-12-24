@@ -1,2 +1,2 @@
-json.extract! region, :id, :created_at, :updated_at
+json.extract! region, :name, :short_name
 json.url region_url(region, format: :json)
