@@ -1,6 +1,10 @@
 @import 'bootstrap/scss/bootstrap';
 @import 'leaflet/dist/leaflet';
 
-#map {
-    height: 90vh;
+.map-box {
+    height: 80vh;
+}
+
+.map-box-form {
+    height: 500px;
 }

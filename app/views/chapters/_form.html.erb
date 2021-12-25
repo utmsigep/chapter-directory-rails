@@ -28,13 +28,20 @@
     <%= form.collection_select :district_id, District.order(:position), :id, :name, {}, class: 'form-select' %>
   </div>
   <hr />
-    <div class="mb-3">
-    <%= form.label :latitude %>
-    <%= form.text_field :latitude, class: 'form-control' %>
-  </div>
-    <div class="mb-3">
-    <%= form.label :longitude %>
-    <%= form.text_field :longitude, class: 'form-control' %>
+  <div class="row">
+    <div class="col-3">
+      <div class="mb-3">
+        <%= form.label :latitude %>
+        <%= form.text_field :latitude, class: 'form-control' %>
+      </div>
+      <div class="mb-3">
+        <%= form.label :longitude %>
+        <%= form.text_field :longitude, class: 'form-control' %>
+      </div>
+    </div>
+    <div class="col-9">
+      <div id="map" class="map-box-form" data-controller="map" data-map-url-value="<%= chapter_path(@chapter, format: :json) %>" data-map-draggable-value="true"></div>
+    </div>
   </div>
   <hr />
   <div>

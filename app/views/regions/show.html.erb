@@ -2,7 +2,7 @@
 
 <%= render @region %>
 
-<div id="map" data-controller="map" data-map-url-value="<%= region_chapters_url(@region, format: 'json') %>"></div>
+<div id="map" class="map-box" data-controller="map" data-map-url-value="<%= region_chapters_url(@region, format: 'json') %>"></div>
 
 <div>
   <%= link_to "Edit this region", edit_region_path(@region) %> |

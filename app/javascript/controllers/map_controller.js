@@ -4,7 +4,8 @@ import L from "leaflet"
 // Connects to data-controller="map"
 export default class extends Controller {
   static values = {
-    url: String
+    url: String,
+    draggable: Boolean
   }
 
   urlValueChanged() {
@@ -31,20 +32,29 @@ export default class extends Controller {
 
     // Load data for the markers
     let mapBounds = []
-    fetch(this.urlValue, {acccept: 'application/json'})
+    fetch(this.urlValue, {accept: 'application/json'})
       .then((response) => {
         return response.json()
       })
       .then((data) => {
+        if (!Array.isArray(data)) {
+          data = [data]
+        }
         data.forEach(chapter => {
           let icon = chapter.slc ? new SLCChapterIcon() : new ChapterIcon()
-          let marker = L.marker([chapter.latitude, chapter.longitude], {icon: icon });
+          let marker = L.marker([chapter.latitude, chapter.longitude], {icon: icon, draggable: this.draggableValue });
           chapter['region_name'] = chapter.region.name
           chapter['district_name'] = chapter.district.name
           chapter['slc'] = chapter.slc ? '<div><img src="/assets/chapter-slc.svg" style="height:1em; padding-right:0.5em;"/><strong>SigEp Learning Community</strong></div>' : ''
           marker.bindTooltip(chapter.name + ' - ' + chapter.institution_name)
           marker.bindPopup(L.Util.template('<div class="h5">{name}</div><div>{institution_name}</div>{slc}<hr /><div>{region_name}</div><div>{district_name}</div>', chapter))
           marker.addTo(this.chaptersLayer)
+          marker.on('dragend', function(event) {
+            var draggedMarker = event.target
+            console.log(draggedMarker.getLatLng())
+            document.getElementById('chapter_latitude').value = draggedMarker.getLatLng().lat
+            document.getElementById('chapter_longitude').value = draggedMarker.getLatLng().lng
+          })
           mapBounds.push([chapter.latitude, chapter.longitude])
         })
       })
