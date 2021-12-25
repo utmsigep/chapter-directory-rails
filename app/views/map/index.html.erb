@@ -1,1 +1,13 @@
-<div id="map" data-controller="map" data-map-url-value="/chapters.json"></div>
+<div class="row" data-controller="map" data-map-url-value="<%= map_data_url(format: :json) %>">
+    <div class="col-3">
+        <div class="row mb-3">
+            <%= select_tag :region, options_from_collection_for_select(@regions, :id, :name), include_blank: 'Regions', class: 'form-select', data: { action: "change->map#filterRegion" } %>
+        </div>
+        <div class="row mb-3">
+            <%= select_tag :district, options_from_collection_for_select(@districts, :id, :name), include_blank: 'Districts', class: 'form-select', data: { action: "change->map#filterDistrict" } %>
+        </div>
+    </div>
+    <div class="col-9">
+        <div id="map"></div>
+    </div>
+</div>

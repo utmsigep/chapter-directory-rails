@@ -8,6 +8,7 @@ class ChaptersController < ApplicationController
 
   # GET /chapters/1 or /chapters/1.json
   def show
+    render json: [@chapter] if params[:wrap] == 'true'
   end
 
   # GET /chapters/new

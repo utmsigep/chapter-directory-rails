@@ -24,11 +24,13 @@ namespace :app do
       region = Region.find_or_create_by(short_name: row['region'])
       region.name = "Region #{row['region']}" if region.name.nil?
       region.name = "#{row['region']}" if region.short_name.nil?
+      region.position = row['region'].to_i if region.position == 0
       region.save!
 
       district = District.find_or_create_by(short_name: row['district'])
       district.name = "District #{row['district']}" if district.name.nil?
       district.name = "#{row['district']}" if district.short_name.nil?
+      district.position = row['district'].to_i if district.position == 0
       district.save!
     end
 

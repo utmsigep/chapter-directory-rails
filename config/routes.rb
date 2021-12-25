@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   get 'map/index'
+  get 'map/data', to: 'map#map_data', as: 'map_data'
+
   resources :regions
   resources :districts
   resources :chapters
