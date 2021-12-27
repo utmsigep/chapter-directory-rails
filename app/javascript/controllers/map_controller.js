@@ -73,6 +73,7 @@ export default class extends Controller {
             chapterItem.innerHTML = L.Util.template('<div class="h5">{name}</div>{slc}<div>{institution_name}</div><div>{location}</div><hr />', chapter)
             chapterItem.onclick = function(_e) {
               that.map.flyTo(marker.getLatLng(), 10);
+              marker.openPopup()
             }
             chapterItem.style.cursor = 'pointer'
             chapterList.appendChild(chapterItem)
