@@ -11,14 +11,20 @@
   </head>
 
   <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="<%= root_path() %>">Chapter Directory</a>
+      </div>
+    </nav>
+
     <div class="container">
-    <% if flash[:notice] %>
-      <div class="alert alert-primary"><%= flash[:notice] %></div>
-    <% end %>
-    <% if flash[:error] %>
-      <div class="alert alert-danger"><%= flash[:error] %></div>
-    <% end %>
-    <%= yield %>
+      <% if flash[:notice] %>
+        <div class="alert alert-primary"><%= flash[:notice] %></div>
+      <% end %>
+      <% if flash[:error] %>
+        <div class="alert alert-danger"><%= flash[:error] %></div>
+      <% end %>
+      <%= yield %>
     </div>
   </body>
 </html>

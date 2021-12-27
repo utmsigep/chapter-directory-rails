@@ -6,6 +6,9 @@
         <div class="row mb-3">
             <%= select_tag :district, options_from_collection_for_select(@districts, :id, :name), include_blank: 'Districts', class: 'form-select', data: { action: "change->map#filterDistrict" } %>
         </div>
+        <hr />
+        <div id="chapter_list" class="overflow-auto" style="height: 60vh">
+        </div>
     </div>
     <div class="col-9">
         <div id="map" class="map-box" ></div>

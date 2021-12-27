@@ -9,6 +9,8 @@ export default class extends Controller {
   }
 
   urlValueChanged() {
+    var that = this;
+
     const ChapterIcon = L.Icon.extend({
       options: {
         iconUrl: '/assets/chapter.svg',
@@ -24,6 +26,11 @@ export default class extends Controller {
         shadowUrl: null
       }
     })
+
+    let chapterList = document.getElementById('chapter_list')
+    if (chapterList) {
+      chapterList.innerHTML = ''
+    }
 
     if (this.chaptersLayer) {
       this.chaptersLayer.clearLayers()
@@ -42,12 +49,12 @@ export default class extends Controller {
         }
         data.forEach(chapter => {
           let icon = chapter.slc ? new SLCChapterIcon() : new ChapterIcon()
-          let marker = L.marker([chapter.latitude, chapter.longitude], {icon: icon, draggable: this.draggableValue });
+          var marker = L.marker([chapter.latitude, chapter.longitude], {icon: icon, draggable: this.draggableValue });
           chapter['region_name'] = chapter.region.name
           chapter['district_name'] = chapter.district.name
           chapter['slc'] = chapter.slc ? '<div><img src="/assets/chapter-slc.svg" style="height:1em; padding-right:0.5em;"/><strong>SigEp Learning Community</strong></div>' : ''
-          marker.bindTooltip(chapter.name + ' - ' + chapter.institution_name)
-          marker.bindPopup(L.Util.template('<div class="h5">{name}</div><div>{institution_name}</div>{slc}<hr /><div>{region_name}</div><div>{district_name}</div>', chapter))
+          marker.bindTooltip(L.Util.template('<div><strong>{name}</strong></div>{slc}<div>{institution_name}</div>', chapter))
+          marker.bindPopup(L.Util.template('<div class="h5">{name}</div>{slc}<div>{institution_name}</div><div>{location}</div><hr /><div>{region_name} &#8226; {district_name}</div>', chapter))
           marker.addTo(this.chaptersLayer)
           marker.on('dragend', function(event) {
             var draggedMarker = event.target
@@ -55,7 +62,21 @@ export default class extends Controller {
             document.getElementById('chapter_latitude').value = draggedMarker.getLatLng().lat
             document.getElementById('chapter_longitude').value = draggedMarker.getLatLng().lng
           })
+          marker.on('click', function(event) {
+            that.map.flyTo(event.target.getLatLng(), 10);
+          })
           mapBounds.push([chapter.latitude, chapter.longitude])
+
+          // Add to sidebar
+          if (chapterList) {
+            var chapterItem = document.createElement('div')
+            chapterItem.innerHTML = L.Util.template('<div class="h5">{name}</div>{slc}<div>{institution_name}</div><div>{location}</div><hr />', chapter)
+            chapterItem.onclick = function(_e) {
+              that.map.flyTo(marker.getLatLng(), 10);
+            }
+            chapterItem.style.cursor = 'pointer'
+            chapterList.appendChild(chapterItem)
+          }
         })
       })
       .then((data) => {
@@ -68,10 +89,12 @@ export default class extends Controller {
   }
 
   filterDistrict(event) {
+    document.getElementById('region').value = ''
     this.urlValue = '/map/data.json?district_id=' + event.target.value;
   }
 
   filterRegion(event) {
+    document.getElementById('district').value = ''
     this.urlValue = '/map/data.json?region_id=' + event.target.value;
   }
 
