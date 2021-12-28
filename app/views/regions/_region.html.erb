@@ -8,14 +8,15 @@
         </dl>
     </div>
     <% unless current_page?(regions_url) %>
+
+    <div id="map" class="map-box" data-controller="map" data-map-url-value="<%= region_chapters_url(@region, format: 'json') %>"></div>
+
     <div class="card-body border_top">
         <% unless region.chapters.empty? %>
         <h5>Chapters</h5>
-        <ul>
-            <% region.chapters.each do |chapter| %>
-            <li><%= link_to chapter.name, chapter %></li>
-            <% end %>
-        </ul>
+        <% region.chapters.each do |chapter| %>
+        <%= render 'chapters/chapter', chapter: chapter %>
+        <% end %>
         <% else %>
         <div class="alert alert-primary">No chapters in this region</div>
         <% end %>
