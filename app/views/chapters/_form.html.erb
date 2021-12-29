@@ -40,7 +40,11 @@
       </div>
     </div>
     <div class="col-9">
-      <div id="map" class="map-box-form" data-controller="map" data-map-url-value="<%= chapter_path(@chapter, format: :json) %>" data-map-draggable-value="true"></div>
+      <% if chapter.id %>
+      <div id="map" class="map-box-form" data-controller="map" data-map-url-value="<%= chapter_path(chapter, format: :json) %>" data-map-draggable-value="true"></div>
+      <% else %>
+      <div id="map" class="map-box-form" data-controller="map" data-map-clickable-value="true"></div>
+      <% end %>
     </div>
   </div>
   <hr />

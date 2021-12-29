@@ -5,11 +5,16 @@ import L from "leaflet"
 export default class extends Controller {
   static values = {
     url: String,
-    draggable: Boolean
+    draggable: Boolean,
+    clickable: Boolean
   }
 
   urlValueChanged() {
     var that = this;
+
+    if (!this.urlValue) {
+      return;
+    }
 
     const ChapterIcon = L.Icon.extend({
       options: {
@@ -48,6 +53,10 @@ export default class extends Controller {
           data = [data]
         }
         data.forEach(chapter => {
+          if (!chapter.latitude || !chapter.longitude) {
+            console.error(`Cannot plot ${chapter.name} (${chapter.institution_name})`)
+            return
+          }
           let icon = chapter.slc ? new SLCChapterIcon() : new ChapterIcon()
           var marker = L.marker([chapter.latitude, chapter.longitude], {icon: icon, draggable: this.draggableValue });
           chapter['region_name'] = chapter.region.name
@@ -58,7 +67,6 @@ export default class extends Controller {
           marker.addTo(this.chaptersLayer)
           marker.on('dragend', function(event) {
             var draggedMarker = event.target
-            console.log(draggedMarker.getLatLng())
             document.getElementById('chapter_latitude').value = draggedMarker.getLatLng().lat
             document.getElementById('chapter_longitude').value = draggedMarker.getLatLng().lng
           })
@@ -80,7 +88,7 @@ export default class extends Controller {
           }
         })
       })
-      .then((data) => {
+      .then(() => {
         this.map.addLayer(this.chaptersLayer)
         L.control({
           'Chapters': this.chaptersLayer
@@ -116,6 +124,17 @@ export default class extends Controller {
       iconUrl: require('leaflet/dist/images/marker-icon.png').default,
       shadowUrl: require('leaflet/dist/images/marker-shadow.png').default,
     });
+  
+    // Map is being used to populate form fields
+    if (this.clickableValue && !this.urlValue) {
+      var marker = L.marker(this.map.getCenter(), {draggable: true}).addTo(this.map)
+      marker.on('dragend', function(event) {
+        var draggedMarker = event.target
+        document.getElementById('chapter_latitude').value = draggedMarker.getLatLng().lat
+        document.getElementById('chapter_longitude').value = draggedMarker.getLatLng().lng
+      })
+    }
+  
   }
  
   disconnect() {
