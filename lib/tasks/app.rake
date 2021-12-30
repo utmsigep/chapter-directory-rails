@@ -60,9 +60,9 @@ namespace :app do
     end
 
     CSV.open(path, 'wb') do |csv|
-      csv << 'name,slc,institution_name,location,latitude,longitude,region,district'.parse_csv
+      csv << 'name,slc,institution_name,location,website,latitude,longitude,region,district'.parse_csv
       Chapter.all.each do |chapter|
-        csv << [chapter.name, chapter.slc, chapter.institution_name, chapter.location, chapter.latitude, chapter.longitude, chapter.region.short_name, chapter.district.short_name]
+        csv << [chapter.name, chapter.slc, chapter.institution_name, chapter.location, chapter.website, chapter.latitude, chapter.longitude, chapter.region.short_name, chapter.district.short_name]
       end
     end
   end

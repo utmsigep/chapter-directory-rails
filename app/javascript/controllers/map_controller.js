@@ -92,7 +92,9 @@ export default class extends Controller {
       })
       .then(() => {
         this.map.addLayer(this.chaptersLayer)
-        this.map.fitBounds(mapBounds, {padding: [40, 40]})
+        if (mapBounds.length) {
+          this.map.fitBounds(mapBounds, {padding: [40, 40]})
+        }
         if (chapterList) {
           var chapterCount = document.createElement('div')
           chapterCount.innerHTML = `<div class="mt-3 text-center text-muted"> Chapters: ${mapBounds.length}</div>`
