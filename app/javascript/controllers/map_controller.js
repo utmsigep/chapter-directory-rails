@@ -79,7 +79,7 @@ export default class extends Controller {
           // Add to sidebar
           if (chapterList) {
             var chapterItem = document.createElement('div')
-            chapterItem.innerHTML = L.Util.template('<div class="h5">{name}</div>{slc}<div>{institution_name}</div><div>{location}</div><hr />', chapter)
+            chapterItem.innerHTML = L.Util.template('<div class="row mb-3"><div class="h5">{name}</div>{slc}<div><small>{institution_name}</small></div><div><small>{location}</small></div></div><hr />', chapter)
             chapterItem.onclick = function(_e) {
               document.getElementById('map').scrollIntoView(true)
               that.map.flyTo(marker.getLatLng(), 10)
@@ -105,17 +105,39 @@ export default class extends Controller {
 
   filterDistrict(event) {
     document.getElementById('region').value = ''
+    document.getElementById('search').value = ''
     this.urlValue = '/map/data.json?district_id=' + event.target.value
   }
 
   filterRegion(event) {
     document.getElementById('district').value = ''
+    document.getElementById('search').value = ''
     this.urlValue = '/map/data.json?region_id=' + event.target.value
+  }
+
+  filterSearch(event) {
+    var that = this;
+    let typingTimer;
+    let doneTypingInterval = 500;
+    event.target.addEventListener('keyup', () => {
+      clearTimeout(typingTimer);
+        if (event.target.value) {
+            console.log('has a value')
+            typingTimer = setTimeout(doneTyping, doneTypingInterval);
+        }
+    });
+    function doneTyping () {
+      console.log('done typing')
+      document.getElementById('region').value = ''
+      document.getElementById('district').value = ''
+      that.urlValue = '/map/data.json?q=' + event.target.value
+    }
   }
 
   resetForm(event) {
     document.getElementById('region').value = ''
     document.getElementById('district').value = ''
+    document.getElementById('search').value = ''
     this.urlValue = '/map/data.json'
     this.map.setView([39.828175, -98.5795], 4).closePopup()
   }
