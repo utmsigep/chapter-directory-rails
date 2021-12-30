@@ -1,0 +1,10 @@
+<%= render 'admin/admin_menu' %>
+
+<%= render @chapter %>
+
+<div>
+  <%= link_to "Edit this chapter", edit_admin_chapter_path(@chapter) %> |
+  <%= link_to "Back to chapters", admin_chapters_path %>
+
+  <%= button_to "Delete Chapter", admin_chapter_path(@chapter), method: :delete, class: 'btn btn-danger' %>
+</div>

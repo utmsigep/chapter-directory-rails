@@ -1,0 +1,24 @@
+<div class="card mb-3" id="<%= dom_id chapter %>">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-4">Name</dt>
+            <dd class="col-8"><%= link_to chapter.name, admin_chapter_path(chapter) %></dd>
+            <dt class="col-4">Institution Name</dt>
+            <dd class="col-8"><%= chapter.institution_name %></dd>
+            <dt class="col-4">SigEp Learning Community</dt>
+            <dd class="col-8"><%= chapter.slc ? 'Yes' : 'No' %></dd>
+            <dt class="col-4">Location</dt>
+            <dd class="col-8"><%= chapter.location %></dd>
+            <dt class="col-4">Website</dt>
+            <dd class="col-8"><%= link_to chapter.website, chapter.website unless chapter.website.nil? %></dd>
+            <dt class="col-4">District</dt>
+            <dd class="col-8"><%= link_to(chapter.district.name, admin_region_path(chapter.district)) if chapter.district %></dd>
+            <dt class="col-4">Region</dt>
+            <dd class="col-8"><%= link_to(chapter.region.name, admin_region_path(chapter.region)) if chapter.region %></dd>
+            <dt class="col-4">Latitude</dt>
+            <dd class="col-8"><tt><%= chapter.latitude %></tt></dd>
+            <dt class="col-4">Longitude</dt>
+            <dd class="col-8"><tt><%= chapter.longitude %></tt></dd>
+        </dl>
+    </div>
+</div>

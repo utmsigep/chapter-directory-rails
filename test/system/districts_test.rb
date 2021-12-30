@@ -6,12 +6,12 @@ class DistrictsTest < ApplicationSystemTestCase
   end
 
   test "visiting the index" do
-    visit districts_url
+    visit admin_districts_url
     assert_selector "h1", text: "Districts"
   end
 
   test "should create district" do
-    visit districts_url
+    visit admin_districts_url
     click_on "New district"
 
     click_on "Create District"
@@ -21,7 +21,7 @@ class DistrictsTest < ApplicationSystemTestCase
   end
 
   test "should update District" do
-    visit district_url(@district)
+    visit admin_district_url(@district)
     click_on "Edit this district", match: :first
 
     click_on "Update District"
@@ -31,7 +31,7 @@ class DistrictsTest < ApplicationSystemTestCase
   end
 
   test "should destroy District" do
-    visit district_url(@district)
+    visit admin_district_url(@district)
     click_on "Destroy this district", match: :first
 
     assert_text "District was successfully destroyed"

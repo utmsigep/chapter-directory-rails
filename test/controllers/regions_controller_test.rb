@@ -6,43 +6,43 @@ class RegionsControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get index" do
-    get regions_url
+    get admin_regions_url
     assert_response :success
   end
 
   test "should get new" do
-    get new_region_url
+    get new_admin_region_url
     assert_response :success
   end
 
   test "should create region" do
     assert_difference("Region.count") do
-      post regions_url, params: { region: { name: 'Test Long Name', short_name: 'Test Short' } }
+      post admin_regions_url, params: { region: { name: 'Test Long Name', short_name: 'Test Short' } }
     end
 
-    assert_redirected_to region_url(Region.last)
+    assert_redirected_to admin_region_url(Region.last)
   end
 
   test "should show region" do
-    get region_url(@region)
+    get admin_region_url(@region)
     assert_response :success
   end
 
   test "should get edit" do
-    get edit_region_url(@region)
+    get edit_admin_region_url(@region)
     assert_response :success
   end
 
   test "should update region" do
-    patch region_url(@region), params: { region: { name: 'Test Long Name', short_name: 'Test Short' } }
-    assert_redirected_to region_url(@region)
+    patch admin_region_url(@region), params: { region: { name: 'Test Long Name', short_name: 'Test Short' } }
+    assert_redirected_to admin_region_url(@region)
   end
 
   test "should destroy region" do
     assert_difference("Region.count", -1) do
-      delete region_url(@region)
+      delete admin_region_url(@region)
     end
 
-    assert_redirected_to regions_url
+    assert_redirected_to admin_regions_url
   end
 end

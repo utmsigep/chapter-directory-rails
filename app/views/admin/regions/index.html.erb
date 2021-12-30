@@ -1,0 +1,14 @@
+<%= render 'admin/admin_menu' %>
+
+<h1>Regions</h1>
+
+<div id="regions">
+  <% @regions.each do |region| %>
+    <%= render region %>
+    <p>
+      <%= link_to "Show this region", admin_region_path(region) %>
+    </p>
+  <% end %>
+</div>
+
+<%= link_to "New region", new_admin_region_path %>

@@ -6,12 +6,12 @@ class RegionsTest < ApplicationSystemTestCase
   end
 
   test "visiting the index" do
-    visit regions_url
+    visit admin_regions_url
     assert_selector "h1", text: "Regions"
   end
 
   test "should create region" do
-    visit regions_url
+    visit admin_regions_url
     click_on "New region"
 
     click_on "Create Region"
@@ -21,7 +21,7 @@ class RegionsTest < ApplicationSystemTestCase
   end
 
   test "should update Region" do
-    visit region_url(@region)
+    visit admin_region_url(@region)
     click_on "Edit this region", match: :first
 
     click_on "Update Region"
@@ -31,7 +31,7 @@ class RegionsTest < ApplicationSystemTestCase
   end
 
   test "should destroy Region" do
-    visit region_url(@region)
+    visit admin_region_url(@region)
     click_on "Destroy this region", match: :first
 
     assert_text "Region was successfully destroyed"

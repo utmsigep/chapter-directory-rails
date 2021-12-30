@@ -8,43 +8,43 @@ class ChaptersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get index" do
-    get chapters_url
+    get admin_chapters_url
     assert_response :success
   end
 
   test "should get new" do
-    get new_chapter_url
+    get new_admin_chapter_url
     assert_response :success
   end
 
   test "should create chapter" do
     assert_difference("Chapter.count") do
-      post chapters_url, params: { chapter: { name: 'Test Long Name', district_id: @district.id, region_id: @region.id } }
+      post admin_chapters_url, params: { chapter: { name: 'Test Long Name', district_id: @district.id, region_id: @region.id } }
     end
 
-    assert_redirected_to chapter_url(Chapter.last)
+    assert_redirected_to admin_chapter_url(Chapter.last)
   end
 
   test "should show chapter" do
-    get chapter_url(@chapter)
+    get admin_chapter_url(@chapter)
     assert_response :success
   end
 
   test "should get edit" do
-    get edit_chapter_url(@chapter)
+    get edit_admin_chapter_url(@chapter)
     assert_response :success
   end
 
   test "should update chapter" do
-    patch chapter_url(@chapter), params: { chapter: { name: 'Test Long Name', district_id: @district.id, region_id: @region.id } }
-    assert_redirected_to chapter_url(@chapter)
+    patch admin_chapter_url(@chapter), params: { chapter: { name: 'Test Long Name', district_id: @district.id, region_id: @region.id } }
+    assert_redirected_to admin_chapter_url(@chapter)
   end
 
   test "should destroy chapter" do
     assert_difference("Chapter.count", -1) do
-      delete chapter_url(@chapter)
+      delete admin_chapter_url(@chapter)
     end
 
-    assert_redirected_to chapters_url
+    assert_redirected_to admin_chapters_url
   end
 end

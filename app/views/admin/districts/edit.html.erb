@@ -1,0 +1,12 @@
+<%= render 'admin/admin_menu' %>
+
+<h1>Editing district</h1>
+
+<%= render "form", district: @district %>
+
+<br>
+
+<div>
+  <%= link_to "Show this district", admin_district_path(@district) %> |
+  <%= link_to "Back to districts", admin_districts_path %>
+</div>

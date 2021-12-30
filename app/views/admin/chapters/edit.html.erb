@@ -1,0 +1,12 @@
+<%= render 'admin/admin_menu' %>
+
+<h1>Editing chapter</h1>
+
+<%= render "form", chapter: @chapter %>
+
+<br>
+
+<div>
+  <%= link_to "Show this chapter", admin_chapter_path(@chapter) %> |
+  <%= link_to "Back to chapters", admin_chapters_path %>
+</div>

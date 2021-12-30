@@ -6,12 +6,12 @@ class ChaptersTest < ApplicationSystemTestCase
   end
 
   test "visiting the index" do
-    visit chapters_url
+    visit admin_chapters_url
     assert_selector "h1", text: "Chapters"
   end
 
   test "should create chapter" do
-    visit chapters_url
+    visit admin_chapters_url
     click_on "New chapter"
 
     click_on "Create Chapter"
@@ -21,7 +21,7 @@ class ChaptersTest < ApplicationSystemTestCase
   end
 
   test "should update Chapter" do
-    visit chapter_url(@chapter)
+    visit admin_chapter_url(@chapter)
     click_on "Edit this chapter", match: :first
 
     click_on "Update Chapter"
@@ -31,7 +31,7 @@ class ChaptersTest < ApplicationSystemTestCase
   end
 
   test "should destroy Chapter" do
-    visit chapter_url(@chapter)
+    visit admin_chapter_url(@chapter)
     click_on "Destroy this chapter", match: :first
 
     assert_text "Chapter was successfully destroyed"
