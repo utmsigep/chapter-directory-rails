@@ -10,10 +10,10 @@ export default class extends Controller {
   }
 
   urlValueChanged() {
-    var that = this;
+    var that = this
 
     if (!this.urlValue) {
-      return;
+      return
     }
 
     const ChapterIcon = L.Icon.extend({
@@ -58,12 +58,13 @@ export default class extends Controller {
             return
           }
           let icon = chapter.slc ? new SLCChapterIcon() : new ChapterIcon()
-          var marker = L.marker([chapter.latitude, chapter.longitude], {icon: icon, draggable: this.draggableValue });
+          var marker = L.marker([chapter.latitude, chapter.longitude], {icon: icon, draggable: this.draggableValue })
           chapter['region_name'] = chapter.region.name
           chapter['district_name'] = chapter.district.name
-          chapter['slc'] = chapter.slc ? '<div><img src="/assets/chapter-slc.svg" style="height:1em; padding-right:0.5em;"/><strong>SigEp Learning Community</strong></div>' : ''
+          chapter['slc'] = chapter.slc ? '<div><img src="/assets/chapter-slc.svg" style="height:1em; padding-right:0.5em"/><strong>SigEp Learning Community</strong></div>' : ''
+          chapter['website'] = chapter.website ? L.Util.template('<div><a href="{website}" target="_blank">{website}</a></div>', chapter) : ''
           marker.bindTooltip(L.Util.template('<div><strong>{name}</strong></div>{slc}<div>{institution_name}</div>', chapter))
-          marker.bindPopup(L.Util.template('<div class="h5">{name}</div>{slc}<div>{institution_name}</div><div>{location}</div><hr /><div>{region_name} &#8226; {district_name}</div>', chapter))
+          marker.bindPopup(L.Util.template('<div class="h5">{name}</div>{slc}<div>{institution_name}</div><div>{location}</div><hr />{website}<div>{region_name} &#8226 {district_name}</div>', chapter))
           marker.addTo(this.chaptersLayer)
           marker.on('dragend', function(event) {
             var draggedMarker = event.target
@@ -71,7 +72,7 @@ export default class extends Controller {
             document.getElementById('chapter_longitude').value = draggedMarker.getLatLng().lng
           })
           marker.on('click', function(event) {
-            that.map.flyTo(event.target.getLatLng(), 10);
+            that.map.flyTo(event.target.getLatLng(), 10)
           })
           mapBounds.push([chapter.latitude, chapter.longitude])
 
@@ -80,7 +81,8 @@ export default class extends Controller {
             var chapterItem = document.createElement('div')
             chapterItem.innerHTML = L.Util.template('<div class="h5">{name}</div>{slc}<div>{institution_name}</div><div>{location}</div><hr />', chapter)
             chapterItem.onclick = function(_e) {
-              that.map.flyTo(marker.getLatLng(), 10);
+              document.getElementById('map').scrollIntoView(true)
+              that.map.flyTo(marker.getLatLng(), 10)
               marker.openPopup()
             }
             chapterItem.style.cursor = 'pointer'
@@ -90,40 +92,49 @@ export default class extends Controller {
       })
       .then(() => {
         this.map.addLayer(this.chaptersLayer)
-        L.control({
-          'Chapters': this.chaptersLayer
-        })
         this.map.fitBounds(mapBounds, {padding: [40, 40]})
+        if (chapterList) {
+          var chapterCount = document.createElement('div')
+          chapterCount.innerHTML = `<div class="mt-3 text-center text-muted"> Chapters: ${mapBounds.length}</div>`
+          chapterList.appendChild(chapterCount)
+        }
       })
   }
 
   filterDistrict(event) {
     document.getElementById('region').value = ''
-    this.urlValue = '/map/data.json?district_id=' + event.target.value;
+    this.urlValue = '/map/data.json?district_id=' + event.target.value
   }
 
   filterRegion(event) {
     document.getElementById('district').value = ''
-    this.urlValue = '/map/data.json?region_id=' + event.target.value;
+    this.urlValue = '/map/data.json?region_id=' + event.target.value
+  }
+
+  resetForm(event) {
+    document.getElementById('region').value = ''
+    document.getElementById('district').value = ''
+    this.urlValue = '/map/data.json'
+    this.map.setView([39.828175, -98.5795], 4).closePopup()
   }
 
   connect() {
     // Configure base map
-    this.map = L.map(document.getElementById('map')).setView([39.828175, -98.5795], 4);
+    this.map = L.map(document.getElementById('map')).setView([39.828175, -98.5795], 4)
     L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}{r}.png', {
       subdomains: 'abcd',
       maxZoom: 19,
       minZoom: 1,
-      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright" target="blank">OpenStreetMap</a> &copy; <a href="http://cartodb.com/attributions" target="blank">CartoDB</a>'
-    }).addTo(this.map);
+      attribution: '&copy <a href="http://www.openstreetmap.org/copyright" target="blank">OpenStreetMap</a> &copy <a href="http://cartodb.com/attributions" target="blank">CartoDB</a>'
+    }).addTo(this.map)
 
     // Fix-up leaflet image paths
-    delete L.Icon.Default.prototype._getIconUrl;
+    delete L.Icon.Default.prototype._getIconUrl
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png').default,
       iconUrl: require('leaflet/dist/images/marker-icon.png').default,
       shadowUrl: require('leaflet/dist/images/marker-shadow.png').default,
-    });
+    })
   
     // Map is being used to populate form fields
     if (this.clickableValue && !this.urlValue) {

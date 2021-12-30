@@ -1,8 +1,18 @@
 @import 'bootstrap/scss/bootstrap';
 @import 'leaflet/dist/leaflet';
 
-.map-box {
+
+.nav-header {
+    background-color: #ef3224;
+}
+
+.map-box, .chapter-list {
     height: 80vh;
+}
+
+.chapter-list {
+    padding-top: 1em;
+    padding-bottom: 10em;
 }
 
 .map-box-form {

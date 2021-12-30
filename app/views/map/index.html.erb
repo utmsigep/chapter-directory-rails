@@ -1,16 +1,21 @@
-<div class="row" data-controller="map" data-map-url-value="<%= map_data_url(format: :json) %>">
-    <div class="col-3">
-        <div class="row mb-3">
-            <%= select_tag :region, options_from_collection_for_select(@regions, :id, :name), include_blank: 'Regions', class: 'form-select', data: { action: "change->map#filterRegion" } %>
+<div data-controller="map" data-map-url-value="<%= map_data_url(format: :json) %>">
+    <div class="d-flex flex-row mb-2">
+        <div class="p-1">
+            <%= select_tag :region, options_from_collection_for_select(@regions, :id, :name), include_blank: 'Regions', class: 'form-select', autocomplete: 'off', data: { action: "change->map#filterRegion" } %>
         </div>
-        <div class="row mb-3">
-            <%= select_tag :district, options_from_collection_for_select(@districts, :id, :name), include_blank: 'Districts', class: 'form-select', data: { action: "change->map#filterDistrict" } %>
+        <div class="p-1">
+            <%= select_tag :district, options_from_collection_for_select(@districts, :id, :name), include_blank: 'Districts', class: 'form-select', autocomplete: 'off', data: { action: "change->map#filterDistrict" } %>
         </div>
-        <hr />
-        <div id="chapter_list" class="overflow-auto" style="height: 60vh">
+        <div class="p-1">
+            <button class="btn btn-outline-secondary" data-action="click->map#resetForm">Reset</button>
         </div>
     </div>
-    <div class="col-9">
-        <div id="map" class="map-box" ></div>
-    </div>
+    <div class="row">
+        <div class="col-lg-9">
+            <div id="map" class="map-box" ></div>
+        </div>
+        <div class="col-lg-3">
+            <div id="chapter_list" class="chapter-list overflow-auto"></div>
+        </div>
+    <div>
 </div>

@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 2021_12_23_231607) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "location"
     t.boolean "slc"
+    t.string "website"
     t.index ["district_id"], name: "index_chapters_on_district_id"
     t.index ["region_id"], name: "index_chapters_on_region_id"
   end

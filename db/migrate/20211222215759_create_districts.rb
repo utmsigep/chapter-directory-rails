@@ -4,7 +4,7 @@ class CreateDistricts < ActiveRecord::Migration[7.0]
       t.string :name
       t.string :short_name
       t.integer :position
-      t.timestampsra
+      t.timestamps
     end
   end
 end

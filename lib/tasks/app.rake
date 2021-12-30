@@ -39,11 +39,12 @@ namespace :app do
     csv.each do |row|
       chapter = Chapter.find_or_create_by(name: row['name'])
       chapter.name = row['name']
-      chapter.slc = row['slc']
-      chapter.institution_name = row['institution_name']
-      chapter.location = row['location']
-      chapter.latitude = row['latitude']
-      chapter.longitude = row['longitude']
+      chapter.slc = row['slc'] unless row['slc'].nil?
+      chapter.institution_name = row['institution_name'] unless row['institution_name'].nil?
+      chapter.location = row['location'] unless row['location'].nil?
+      chapter.latitude = row['latitude'] unless row['latitude'].nil?
+      chapter.longitude = row['longitude'] unless row['longitude'].nil?
+      chapter.website = row['website'] unless row['website'].nil?
       chapter.district = District.find_by(short_name: row['district'])
       chapter.region = Region.find_by(short_name: row['region'])
       chapter.save!
