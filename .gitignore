@@ -39,6 +39,9 @@
 
 /node_modules
 
+# Ignore NPM lockfile in favor of Yarn's
+package-lock.json
+
 # RVM/rbenv
 .ruby-version
 
