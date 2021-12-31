@@ -46,5 +46,5 @@ package-lock.json
 .ruby-version
 
 # Environment Loading
-.env
-.env.*
+/.env.local
+/.env.*.local

@@ -2,9 +2,7 @@ default: &default
   adapter: mysql2
   encoding: utf8
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: root
-  password:
-  socket: /tmp/mysql.sock
+  url: <%= ENV.fetch("DATABASE_URL") %>
 
 development:
   <<: *default
@@ -13,7 +11,6 @@ development:
 test:
   <<: *default
   database: chapter_directory_test
-  host: 127.0.0.1
 
 production:
   <<: *default
