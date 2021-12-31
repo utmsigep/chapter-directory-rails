@@ -41,7 +41,7 @@ jobs:
       - name: Run Tests
         env:
           RAILS_ENV: test
-          DATABASE_URL: mysql://root:rails@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/chapter_directory_test
+          DATABASE_URL: mysql2://root:rails@127.0.0.1:${{ job.services.mysql.ports['3306'] }}/chapter_directory_test
         run: |
           bin/rails db:create
           bin/rails db:schema:load
