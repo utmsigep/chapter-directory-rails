@@ -19,7 +19,12 @@ jobs:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_PASSWORD:
         ports:
-          - "3306:3306"
+          - 3306/tcp
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    strategy:
+        matrix:
+          ruby-version: ['2.7', '3.0']
 
     steps:
       - uses: actions/checkout@v2
@@ -27,7 +32,7 @@ jobs:
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
+          ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
       - name: Build Assets
@@ -35,7 +40,7 @@ jobs:
           bin/rails css:build
           bin/rails javascript:build
 
-      - name: Run tests
+      - name: Run Tests
         env:
           RAILS_ENV: test
           DATABASE_PORT: 3306
