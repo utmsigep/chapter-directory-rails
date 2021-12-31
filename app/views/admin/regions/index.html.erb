@@ -2,13 +2,21 @@
 
 <h1>Regions</h1>
 
-<div id="regions">
-  <% @regions.each do |region| %>
-    <%= render region %>
-    <p>
-      <%= link_to "Show this region", admin_region_path(region) %>
-    </p>
-  <% end %>
+<div id="regions" data-controller="admin">
+  <table class="table table-admin">
+    <thead>
+      <th>Region</th>
+      <th>Short Name</th>
+    </thead>
+    <tbody>
+      <% @regions.each do |region| %>
+      <tr>
+        <td data-order="<%= region.position %>"><%= link_to region.name, admin_region_path(region) %></td>
+        <td><%= region.short_name %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
 </div>
 
 <%= link_to "New region", new_admin_region_path %>

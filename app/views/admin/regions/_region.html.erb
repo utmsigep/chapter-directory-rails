@@ -9,8 +9,6 @@
     </div>
     <% unless current_page?(admin_regions_url) %>
 
-    <div id="map" class="map-box" data-controller="map" data-map-url-value="<%= admin_region_chapters_path(@region, format: 'json') %>"></div>
-
     <div class="card-body border_top">
         <% unless region.chapters.empty? %>
         <h5>Chapters</h5>

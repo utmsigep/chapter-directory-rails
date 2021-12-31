@@ -1,6 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 import L from "leaflet"
 
+const MAX_ZOOM_LEVEL = 12
+
 // Connects to data-controller="map"
 export default class extends Controller {
   static values = {
@@ -63,7 +65,9 @@ export default class extends Controller {
           chapter['district_name'] = chapter.district.name
           chapter['slc'] = chapter.slc ? '<div><img src="/assets/chapter-slc.svg" style="height:1em; padding-right:0.5em"/><strong>SigEp Learning Community</strong></div>' : ''
           chapter['website'] = chapter.website ? L.Util.template('<div><a href="{website}" target="_blank">{website}</a></div>', chapter) : ''
-          marker.bindTooltip(L.Util.template('<div><strong>{name}</strong></div>{slc}<div>{institution_name}</div>', chapter))
+          if (!L.Browser.mobile) {
+            marker.bindTooltip(L.Util.template('<div><strong>{name}</strong></div>{slc}<div>{institution_name}</div>', chapter))
+          }
           marker.bindPopup(L.Util.template('<div class="h5">{name}</div>{slc}<div>{institution_name}</div><div>{location}</div><hr />{website}<div>{region_name} &#8226 {district_name}</div>', chapter))
           marker.addTo(this.chaptersLayer)
           marker.on('dragend', function(event) {
@@ -72,7 +76,7 @@ export default class extends Controller {
             document.getElementById('chapter_longitude').value = draggedMarker.getLatLng().lng
           })
           marker.on('click', function(event) {
-            that.map.flyTo(event.target.getLatLng(), 10)
+            that.map.flyTo(event.target.getLatLng(), MAX_ZOOM_LEVEL)
           })
           mapBounds.push([chapter.latitude, chapter.longitude])
 
@@ -82,7 +86,7 @@ export default class extends Controller {
             chapterItem.innerHTML = L.Util.template('<div class="row mb-3"><div class="h5">{name}</div>{slc}<div><small>{institution_name}</small></div><div><small>{location}</small></div></div><hr />', chapter)
             chapterItem.onclick = function(_e) {
               document.getElementById('map').scrollIntoView(true)
-              that.map.flyTo(marker.getLatLng(), 10)
+              that.map.flyTo(marker.getLatLng(), MAX_ZOOM_LEVEL)
               marker.openPopup()
             }
             chapterItem.style.cursor = 'pointer'
@@ -138,17 +142,25 @@ export default class extends Controller {
     document.getElementById('region').value = ''
     document.getElementById('district').value = ''
     document.getElementById('search').value = ''
-    this.urlValue = '/map/data.json'
-    this.map.setView([39.828175, -98.5795], 4).closePopup()
+    this.urlValue = '/map/data.json?nonce=' + Math.random()
+    this.map.closePopup()
   }
 
   connect() {
     // Configure base map
-    this.map = L.map(document.getElementById('map')).setView([39.828175, -98.5795], 4)
+    this.map = L.map(document.getElementById('map'), {
+      center: L.latLng(44.967243, -103.771556),
+      maxBounds: L.latLngBounds(
+        L.latLng(64.858889, -147.835556), // northwest
+        L.latLng(18.4643137, -66.105905) // southeast
+      ),
+      zoom: 4,
+      minZoom: 4
+    })
     L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}{r}.png', {
       subdomains: 'abcd',
-      maxZoom: 19,
-      minZoom: 1,
+      maxZoom: MAX_ZOOM_LEVEL,
+      minZoom: 4,
       attribution: '&copy <a href="http://www.openstreetmap.org/copyright" target="blank">OpenStreetMap</a> &copy <a href="http://cartodb.com/attributions" target="blank">CartoDB</a>'
     }).addTo(this.map)
 
@@ -169,7 +181,6 @@ export default class extends Controller {
         document.getElementById('chapter_longitude').value = draggedMarker.getLatLng().lng
       })
     }
-  
   }
  
   disconnect() {

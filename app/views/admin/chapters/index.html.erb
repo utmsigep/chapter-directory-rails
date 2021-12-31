@@ -2,13 +2,27 @@
 
 <h1>Chapters</h1>
 
-<div id="chapters">
-  <% @chapters.each do |chapter| %>
-    <%= render chapter %>
-    <p>
-      <%= link_to "Show this chapter", admin_chapter_path(chapter) %>
-    </p>
-  <% end %>
+<div id="chapters" data-controller="admin">
+  <table class="table table-admin">
+    <thead>
+      <th>Chapter</th>
+      <th>Institution</th>
+      <th>Location</th>
+      <th>Region</th>
+      <th>District</th>
+    </thead>
+    <tbody>
+      <% @chapters.each do |chapter| %>
+      <tr>
+        <td><%= link_to chapter.name, admin_chapter_path(chapter) %></td>
+        <td><%= chapter.institution_name %></td>
+        <td><%= chapter.location %></td>
+        <td data-order="<%= chapter.region.position %>"><%= link_to chapter.region.name, admin_region_path(chapter.region) %></td>
+        <td data-order="<%= chapter.district.position %>"><%= link_to chapter.district.name, admin_district_path(chapter.district) %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
 </div>
 
 <%= link_to "New chapter", new_admin_chapter_path %>

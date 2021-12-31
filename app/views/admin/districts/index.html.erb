@@ -2,13 +2,21 @@
 
 <h1>Districts</h1>
 
-<div id="districts">
-  <% @districts.each do |district| %>
-    <%= render district %>
-    <p>
-      <%= link_to "Show this district", admin_district_path(district) %>
-    </p>
-  <% end %>
+<div id="districts" data-controller="admin">
+  <table class="table table-admin">
+    <thead>
+      <th>District</th>
+      <th>Short Name</th>
+    </thead>
+    <tbody>
+      <% @districts.each do |district| %>
+      <tr>
+        <td data-order="<%= district.position %>"><%= link_to district.name, admin_district_path(district) %></td>
+        <td><%= district.short_name %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
 </div>
 
 <%= link_to "New district", new_admin_district_path %>

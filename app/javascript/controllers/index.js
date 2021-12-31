@@ -6,3 +6,6 @@ import { application } from "./application"
 
 import MapController from "./map_controller.js"
 application.register("map", MapController)
+
+import AdminController from "./admin_controller.js"
+application.register("admin", AdminController)
