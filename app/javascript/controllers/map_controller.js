@@ -25,7 +25,7 @@ export default class extends Controller {
         shadowUrl: null
       }
     })
-    
+
     const SLCChapterIcon = L.Icon.extend({
       options: {
         iconUrl: '/assets/chapter-slc.svg',
@@ -56,7 +56,7 @@ export default class extends Controller {
         }
         data.forEach(chapter => {
           if (!chapter.latitude || !chapter.longitude) {
-            console.error(`Cannot plot ${chapter.name} (${chapter.institution_name})`)
+            console.error(`Cannot plot ${chapter.name} (${chapter.institution_name})`, chapter)
             return
           }
           let icon = chapter.slc ? new SLCChapterIcon() : new ChapterIcon()
@@ -101,7 +101,10 @@ export default class extends Controller {
         }
         if (chapterList) {
           var chapterCount = document.createElement('div')
-          chapterCount.innerHTML = `<div class="mt-3 text-center text-muted"> Chapters: ${mapBounds.length}</div>`
+          chapterCount.innerHTML = '<div class="text-center p-4">No chapters matched your criteria.</div>'
+          if (mapBounds.length > 0) {
+            chapterCount.innerHTML = `<div class="mt-3 text-center text-muted"> Chapters: ${mapBounds.length}</div>`
+          }
           chapterList.appendChild(chapterCount)
         }
       })
@@ -126,12 +129,10 @@ export default class extends Controller {
     event.target.addEventListener('keyup', () => {
       clearTimeout(typingTimer);
         if (event.target.value) {
-            console.log('has a value')
             typingTimer = setTimeout(doneTyping, doneTypingInterval);
         }
     });
     function doneTyping () {
-      console.log('done typing')
       document.getElementById('region').value = ''
       document.getElementById('district').value = ''
       that.urlValue = '/map/data.json?q=' + event.target.value
@@ -171,7 +172,7 @@ export default class extends Controller {
       iconUrl: require('leaflet/dist/images/marker-icon.png').default,
       shadowUrl: require('leaflet/dist/images/marker-shadow.png').default,
     })
-  
+
     // Map is being used to populate form fields
     if (this.clickableValue && !this.urlValue) {
       var marker = L.marker(this.map.getCenter(), {draggable: true}).addTo(this.map)
@@ -182,7 +183,7 @@ export default class extends Controller {
       })
     }
   }
- 
+
   disconnect() {
     this.map.remove()
   }
