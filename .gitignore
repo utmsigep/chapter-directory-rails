@@ -39,5 +39,9 @@
 
 /node_modules
 
-# RVM/rubyenv
+# RVM/rbenv
 .ruby-version
+
+# Environment Loading
+.env
+.env.*
