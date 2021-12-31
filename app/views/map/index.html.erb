@@ -7,7 +7,7 @@
             <%= select_tag :district, options_from_collection_for_select(@districts, :id, :name), include_blank: 'Districts', class: 'form-select', autocomplete: 'off', data: { action: "change->map#filterDistrict" } %>
         </div>
         <div class="p-1">
-            <%= search_field_tag :search, nil, class: 'form-control', autocomplete: 'off', data: { action: "input->map#filterSearch:capture" } %>
+            <%= search_field_tag :search, nil, class: 'form-control', placeholder: 'Search ...', autocomplete: 'off', data: { action: "input->map#filterSearch:capture" } %>
         </div>
         <div class="p-1">
             <button class="btn btn-outline-secondary" data-action="click->map#resetForm">Reset</button>
