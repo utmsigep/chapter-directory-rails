@@ -34,15 +34,21 @@ jobs:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
-    - name: Build Database
-      run: |
-        bin/rails db:setup
-        bin/rails db:migrate
-
     - name: Build Assets
       run: |
         bin/rails css:build
         bin/rails javascript:build
 
-    - name: Run tests
-      run: bundle exec rake
+    - name: Build Database
+      env:
+        RAILS_ENV: test
+        DATABASE_PORT: 3306
+      run: |
+        bin/rails db:setup
+        bin/rails db:migrate
+
+    - name: Run Tests
+      env:
+        RAILS_ENV: test
+        DATABASE_PORT: 3306
+      run: bin/rails test
