@@ -4,6 +4,9 @@ class Admin::RegionsController < ApplicationController
   # GET /regions or /regions.json
   def index
     @regions = Region.order(:position)
+    if params[:format] == 'csv'
+      send_data Region.generate_csv, filename: 'regions.csv'
+    end
   end
 
   # GET /regions/1 or /regions/1.json

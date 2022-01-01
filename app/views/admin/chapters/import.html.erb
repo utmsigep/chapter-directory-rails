@@ -1,0 +1,14 @@
+<%= render 'admin/admin_menu' %>
+
+<h1>Import Chapters</h1>
+
+<div id="chapters_import">
+    <%= form_with multipart: true do |form| %>
+    <div class="mb-3">
+        <%= label_tag :file %>
+        <%= form.file_field :file, class: 'form-control w-50' %>
+    </div>
+    <%= form.submit nil, class: 'btn btn-primary' %>
+    <% end %>
+</div>
+

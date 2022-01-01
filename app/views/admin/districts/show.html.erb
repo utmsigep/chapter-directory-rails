@@ -1,10 +1,16 @@
 <%= render 'admin/admin_menu' %>
 
+<div class="row mb-3">
+  <div class="col-md text-center text-md-start">
+    <h1><%= @district.name %></h1>
+  </div>
+  <div class="col-md text-center text-md-end">
+    <%= link_to raw('<i class="fas fa-pencil"></i> Edit'), edit_admin_district_path(@district), class: 'btn btn-secondary' %>
+  </div>
+</div>
+
 <%= render @district %>
 
-<div>
-  <%= link_to "Edit this district", edit_admin_district_path(@district) %> |
-  <%= link_to "Back to districts", admin_districts_path %>
-
+<div class="my-3">
   <%= button_to "Delete District", admin_district_path(@district), method: :delete, class: 'btn btn-danger' %>
 </div>

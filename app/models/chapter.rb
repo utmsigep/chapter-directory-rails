@@ -3,6 +3,8 @@ class Chapter < ApplicationRecord
     belongs_to :district
     validates_presence_of :name
 
+    include GenerateCsv
+
     def self.search(query)
         wheres = [
             self.where("name LIKE ?", "%#{query}%"),
@@ -10,6 +12,5 @@ class Chapter < ApplicationRecord
             self.where("location LIKE ?", "%#{query}%"),
         ]
         wheres.reduce(:or)
-
     end
 end

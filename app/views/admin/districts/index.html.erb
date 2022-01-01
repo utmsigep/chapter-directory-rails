@@ -1,6 +1,15 @@
 <%= render 'admin/admin_menu' %>
 
-<h1>Districts</h1>
+<div class="row mb-3">
+  <div class="col-md text-center text-md-start">
+    <h1>Districts</h1>
+  </div>
+  <div class="col-md text-center text-md-end">
+    <%= link_to raw('<i class="fas fa-download"></i> Export'), admin_districts_path(format: :csv), class: 'btn btn-secondary' %>
+    <%= link_to raw('<i class="fas fa-plus"></i> New'), new_admin_district_path, class: 'btn btn-primary' %>
+  </div>
+</div>
+
 
 <div id="districts" data-controller="admin">
   <table class="table table-admin">
@@ -18,5 +27,3 @@
     </tbody>
   </table>
 </div>
-
-<%= link_to "New district", new_admin_district_path %>

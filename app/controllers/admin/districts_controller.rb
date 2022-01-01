@@ -4,6 +4,9 @@ class Admin::DistrictsController < ApplicationController
   # GET /districts or /districts.json
   def index
     @districts = District.order(:position)
+    if params[:format] == 'csv'
+      send_data District.generate_csv, filename: 'districts.csv'
+    end
   end
 
   # GET /districts/1 or /districts/1.json
