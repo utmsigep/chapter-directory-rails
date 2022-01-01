@@ -8,16 +8,17 @@
         </dl>
     </div>
     <% unless current_page?(admin_regions_url) %>
-
     <div class="card-body border_top">
-        <% unless region.chapters.empty? %>
-        <h5>Chapters</h5>
-        <% region.chapters.each do |chapter| %>
-        <%= render 'admin/chapters/chapter', chapter: chapter %>
-        <% end %>
-        <% else %>
-        <div class="alert alert-primary">No chapters in this region</div>
-        <% end %>
+        <div data-controller="map" data-map-url-value="<%= map_data_path(format: :json, region_id: region.id) %>">
+            <div class="row">
+                <div class="col-lg-9">
+                    <div id="map" class="map-box"></div>
+                </div>
+                <div class="col-lg-3">
+                    <div id="chapter_list" class="chapter-list overflow-scroll"></div>
+                </div>
+            <div>
+        </div>
     </div>
     <% end %>
 </div>

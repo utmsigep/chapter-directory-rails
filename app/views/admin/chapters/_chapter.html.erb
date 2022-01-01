@@ -12,7 +12,7 @@
             <dt class="col-4">Website</dt>
             <dd class="col-8"><%= link_to chapter.website, chapter.website unless chapter.website.nil? %></dd>
             <dt class="col-4">District</dt>
-            <dd class="col-8"><%= link_to(chapter.district.name, admin_region_path(chapter.district)) if chapter.district %></dd>
+            <dd class="col-8"><%= link_to(chapter.district.name, admin_district_path(chapter.district)) if chapter.district %></dd>
             <dt class="col-4">Region</dt>
             <dd class="col-8"><%= link_to(chapter.region.name, admin_region_path(chapter.region)) if chapter.region %></dd>
             <dt class="col-4">Latitude</dt>
