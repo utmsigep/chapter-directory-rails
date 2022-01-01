@@ -83,7 +83,7 @@ export default class extends Controller {
           // Add to sidebar
           if (chapterList) {
             var chapterItem = document.createElement('div')
-            chapterItem.innerHTML = L.Util.template('<div class="row mb-3"><div class="h5">{name}</div>{slc}<div><small>{institution_name}</small></div><div><small>{location}</small></div></div><hr />', chapter)
+            chapterItem.innerHTML = L.Util.template('<div class="mb-3"><div class="h5">{name}</div>{slc}<div><small>{institution_name}</small></div><div><small>{location}</small></div></div><hr />', chapter)
             chapterItem.onclick = function(_e) {
               document.getElementById('map').scrollIntoView(true)
               that.map.flyTo(marker.getLatLng(), MAX_ZOOM_LEVEL)
