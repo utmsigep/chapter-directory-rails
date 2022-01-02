@@ -3,6 +3,7 @@
 tnkappa:
   name: Tennessee Kappa
   institution_name: University of Tennessee at Martin
+  location: Martin, Tennessee
   slc: false
   longitude: -88.86424541473389
   latitude: 36.34157434451597
@@ -12,6 +13,7 @@ tnkappa:
 kyepsilon:
   name: Kentucky Epsilon
   institution_name: Murray State University
+  location: Murray, Kentucky
   slc: true
   longitude: -88.32213878631592
   latitude: 36.61311635595831
@@ -21,6 +23,7 @@ kyepsilon:
 inepsilon:
   name: Indiana Epsilon
   institution_name: University of Evansville
+  location: Evansville, Indiana
   slc: false
   longitude: -87.53168106079102
   latitude: 37.97187624347616
@@ -30,6 +33,7 @@ inepsilon:
 kygamma:
   name: Kentucky Gamma
   institution_name: Kentucky Wesleyan University
+  location: Owensboro, Kentucky
   slc: false
   longitude: -87.12025165557861
   latitude: 37.74367299436812
@@ -39,6 +43,7 @@ kygamma:
 tneta:
   name: Tennessee Eta
   institution_name: Austin Peay State University
+  location: Clarksville, Tennessee
   slc: false
   longitude: -87.35444068908691
   latitude: 36.53467438716704
@@ -48,6 +53,7 @@ tneta:
 kydelta:
   name: Kentucky Delta
   institution_name: Western Kentucky University
+  location: Bowling Green, Kentucky
   slc: false
   longitude: -86.45519256591797
   latitude: 36.98538017716605

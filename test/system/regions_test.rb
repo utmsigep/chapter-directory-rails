@@ -1,7 +1,10 @@
 require "application_system_test_case"
 
 class RegionsTest < ApplicationSystemTestCase
+  include Devise::Test::IntegrationHelpers
+
   setup do
+    sign_in users(:admin)
     @region = regions(:region_1)
   end
 
@@ -12,27 +15,28 @@ class RegionsTest < ApplicationSystemTestCase
 
   test "should create region" do
     visit admin_regions_url
-    click_on "New region"
+    click_on "New"
+
+    fill_in "region_name", with: 'Test Region'
+    fill_in "region_short_name", with: "T1"
 
     click_on "Create Region"
 
     assert_text "Region was successfully created"
-    click_on "Back"
   end
 
   test "should update Region" do
     visit admin_region_url(@region)
-    click_on "Edit this region", match: :first
+    click_on "Edit", match: :first
 
     click_on "Update Region"
 
     assert_text "Region was successfully updated"
-    click_on "Back"
   end
 
   test "should destroy Region" do
     visit admin_region_url(@region)
-    click_on "Destroy this region", match: :first
+    click_on "Delete Region", match: :first
 
     assert_text "Region was successfully destroyed"
   end

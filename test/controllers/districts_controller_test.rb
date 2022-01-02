@@ -1,8 +1,11 @@
 require "test_helper"
 
 class DistrictsControllerTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
   setup do
     @district = districts(:district_1)
+    sign_in users(:admin)
   end
 
   test "should get index" do
