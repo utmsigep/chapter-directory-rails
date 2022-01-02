@@ -1,5 +1,7 @@
 import { Controller } from "@hotwired/stimulus"
 import L from "leaflet"
+const ChapterIconSVG = new URL("./../../assets/images/chapter.svg", import.meta.url)
+const SLCChapterIconSVG = new URL("./../../assets/images/chapter-slc.svg", import.meta.url)
 
 const MAX_ZOOM_LEVEL = 12
 
@@ -20,7 +22,7 @@ export default class extends Controller {
 
     const ChapterIcon = L.Icon.extend({
       options: {
-        iconUrl: '/assets/chapter.svg',
+        iconUrl: ChapterIconSVG,
         iconSize: [24, 24],
         shadowUrl: null
       }
@@ -28,7 +30,7 @@ export default class extends Controller {
 
     const SLCChapterIcon = L.Icon.extend({
       options: {
-        iconUrl: '/assets/chapter-slc.svg',
+        iconUrl: SLCChapterIconSVG,
         iconSize: [24, 24],
         shadowUrl: null
       }
@@ -63,7 +65,7 @@ export default class extends Controller {
           var marker = L.marker([chapter.latitude, chapter.longitude], {icon: icon, draggable: this.draggableValue })
           chapter['region_name'] = chapter.region.name
           chapter['district_name'] = chapter.district.name
-          chapter['slc'] = chapter.slc ? '<div><img src="/assets/chapter-slc.svg" style="height:1em; padding-right:0.5em"/><strong>SigEp Learning Community</strong></div>' : ''
+          chapter['slc'] = chapter.slc ? '<div><img src="' + SLCChapterIconSVG + '" style="height:1em; padding-right:0.5em"/><strong>SigEp Learning Community</strong></div>' : ''
           chapter['website'] = chapter.website ? L.Util.template('<div><a href="{website}" target="_blank">{website}</a></div>', chapter) : ''
           if (!L.Browser.mobile) {
             marker.bindTooltip(L.Util.template('<div><strong>{name}</strong></div>{slc}<div>{institution_name}</div>', chapter))
@@ -168,9 +170,9 @@ export default class extends Controller {
     // Fix-up leaflet image paths
     delete L.Icon.Default.prototype._getIconUrl
     L.Icon.Default.mergeOptions({
-      iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png').default,
-      iconUrl: require('leaflet/dist/images/marker-icon.png').default,
-      shadowUrl: require('leaflet/dist/images/marker-shadow.png').default,
+      iconRetinaUrl: new URL('leaflet/dist/images/marker-icon-2x.png', import.meta.url),
+      iconUrl: new URL('leaflet/dist/images/marker-icon.png', import.meta.url),
+      shadowUrl: new URL('leaflet/dist/images/marker-shadow.png', import.meta.url)
     })
 
     // Map is being used to populate form fields
