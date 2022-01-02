@@ -76,6 +76,6 @@ class Admin::RegionsController < Admin::AdminController
 
     # Only allow a list of trusted parameters through.
     def region_params
-      params.fetch(:region, {}).permit(:name, :short_name)
+      params.fetch(:region, {}).permit(:name, :short_name, :position)
     end
 end

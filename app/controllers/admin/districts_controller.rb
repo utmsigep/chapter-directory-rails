@@ -76,6 +76,6 @@ class Admin::DistrictsController < Admin::AdminController
 
     # Only allow a list of trusted parameters through.
     def district_params
-      params.fetch(:district, {}).permit(:name, :short_name)
+      params.fetch(:district, {}).permit(:name, :short_name, :position)
     end
 end
