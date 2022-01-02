@@ -1,4 +1,4 @@
-class Admin::DistrictsController < ApplicationController
+class Admin::DistrictsController < Admin::AdminController
   before_action :set_district, only: %i[ show edit update destroy chapters ]
 
   # GET /districts or /districts.json

@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :users
   get 'map/index'
   get 'map/data', to: 'map#map_data', as: 'map_data'
 

@@ -1,4 +1,4 @@
-class Admin::RegionsController < ApplicationController
+class Admin::RegionsController < Admin::AdminController
   before_action :set_region, only: %i[ show edit update destroy chapters ]
 
   # GET /regions or /regions.json
