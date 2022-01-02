@@ -1,5 +1,5 @@
 <%= form_with(model: [:admin, district]) do |form| %>
-  <%= render'/save_error_details', record: district if district.errors.any? %>
+  <%= render'admin/save_error_details', record: district if district.errors.any? %>
 
   <div class="mb-3">
     <%= label_tag :name %>

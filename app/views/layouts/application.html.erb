@@ -33,12 +33,10 @@
     </nav>
 
     <div class="container-fluid">
-      <% if flash[:notice] %>
-        <div class="alert alert-primary"><%= flash[:notice] %></div>
-      <% end %>
-      <% if flash[:error] %>
-        <div class="alert alert-danger"><%= flash[:error] %></div>
-      <% end %>
+      <%- flash.each do |name, msg| -%>
+      <div class="<%= flash_class(name) %>" role="alert"><%= content_tag :div, msg, :id => "flash_#{name}" if msg.is_a?(String) %></div>
+      <%- end -%>
+
       <%= yield %>
     </div>
   </body>

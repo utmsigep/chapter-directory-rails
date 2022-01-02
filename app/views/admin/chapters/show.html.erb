@@ -1,10 +1,16 @@
 <%= render 'admin/admin_menu' %>
 
+<div class="row mb-3">
+  <div class="col-md text-center text-md-start">
+    <h1><%= @chapter.name %></h1>
+  </div>
+  <div class="col-md text-center text-md-end">
+    <%= link_to raw('<i class="fas fa-pencil"></i> Edit'), edit_admin_chapter_path(@chapter), class: 'btn btn-secondary' %>
+  </div>
+</div>
+
 <%= render @chapter %>
 
-<div>
-  <%= link_to "Edit this chapter", edit_admin_chapter_path(@chapter) %> |
-  <%= link_to "Back to chapters", admin_chapters_path %>
-
+<div class="my-5">
   <%= button_to "Delete Chapter", admin_chapter_path(@chapter), method: :delete, class: 'btn btn-danger' %>
 </div>

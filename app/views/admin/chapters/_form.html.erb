@@ -1,5 +1,5 @@
 <%= form_with(model: [:admin, @chapter]) do |form| %>
-  <%= render'/save_error_details', record: chapter if chapter.errors.any? %>
+  <%= render'admin/save_error_details', record: chapter if chapter.errors.any? %>
 
   <div class="mb-3">
     <%= form.label :name %>

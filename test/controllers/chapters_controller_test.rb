@@ -1,10 +1,13 @@
 require "test_helper"
 
 class ChaptersControllerTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
   setup do
     @chapter = chapters(:tnkappa)
     @region = regions(:region_4)
     @district = districts(:district_17)
+    sign_in users(:admin)
   end
 
   test "should get index" do

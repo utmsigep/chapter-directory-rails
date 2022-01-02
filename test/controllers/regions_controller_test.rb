@@ -1,8 +1,11 @@
 require "test_helper"
 
 class RegionsControllerTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
   setup do
     @region = regions(:region_1)
+    sign_in users(:admin)
   end
 
   test "should get index" do
