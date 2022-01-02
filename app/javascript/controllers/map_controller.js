@@ -1,8 +1,10 @@
+/* global ImagePaths */
+
 import { Controller } from "@hotwired/stimulus"
 import L from "leaflet"
-const ChapterIconSVG = new URL("./../../assets/images/chapter.svg", import.meta.url)
-const SLCChapterIconSVG = new URL("./../../assets/images/chapter-slc.svg", import.meta.url)
 
+const ChapterIconSVG = ImagePaths.chapterIcon
+const SLCChapterIconSVG = ImagePaths.slcChapterIcon
 const MAX_ZOOM_LEVEL = 12
 
 // Connects to data-controller="map"
@@ -167,17 +169,9 @@ export default class extends Controller {
       attribution: '&copy <a href="http://www.openstreetmap.org/copyright" target="blank">OpenStreetMap</a> &copy <a href="http://cartodb.com/attributions" target="blank">CartoDB</a>'
     }).addTo(this.map)
 
-    // Fix-up leaflet image paths
-    delete L.Icon.Default.prototype._getIconUrl
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: new URL('leaflet/dist/images/marker-icon-2x.png', import.meta.url),
-      iconUrl: new URL('leaflet/dist/images/marker-icon.png', import.meta.url),
-      shadowUrl: new URL('leaflet/dist/images/marker-shadow.png', import.meta.url)
-    })
-
     // Map is being used to populate form fields
     if (this.clickableValue && !this.urlValue) {
-      var marker = L.marker(this.map.getCenter(), {draggable: true}).addTo(this.map)
+      var marker = L.marker(this.map.getCenter(), {icon: ChapterIconSVG, draggable: true}).addTo(this.map)
       marker.on('dragend', function(event) {
         var draggedMarker = event.target
         document.getElementById('chapter_latitude').value = draggedMarker.getLatLng().lat
