@@ -74,5 +74,3 @@ end
 
 gem 'dotenv-rails', groups: [:development, :test]
 gem "devise", "~> 4.8"
-
-gem "omniauth-google-oauth2", "~> 1.0"
