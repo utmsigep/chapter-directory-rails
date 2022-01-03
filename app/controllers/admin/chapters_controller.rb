@@ -1,4 +1,4 @@
-class Admin::ChaptersController < Admin::AdminController
+class Admin::ChaptersController < ApplicationController
   before_action :set_chapter, only: %i[ show edit update destroy ]
 
   # GET /chapters or /chapters.json

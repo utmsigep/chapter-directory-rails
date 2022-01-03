@@ -1,0 +1,1 @@
+json.extract! district, :name, :short_name

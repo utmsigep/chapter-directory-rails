@@ -1,0 +1,14 @@
+<% @chapters.each do |chapter| %>
+<div class="card mb-3">
+    <h3 class="card-header"><%= chapter.name %></h3>
+    <div class="card-body">
+        <p><%= chapter.institution_name %></p>
+        <p><%= chapter.location %></p>
+        <hr />
+        <% if chapter.website %>
+        <p><%= link_to chapter.website, chapter.website %></p>
+        <% end %>
+        <p><%= chapter.region.name %> &bullet; <%= chapter.district.name %></p>
+    </div>
+</div>
+<% end %>
