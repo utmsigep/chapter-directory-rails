@@ -1,24 +1,7 @@
-# README
+# Chapter Directory
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+[![Run CI Tasks](https://github.com/stephenyeargin/chapter-directory-rails/actions/workflows/ci.yml/badge.svg)](https://github.com/stephenyeargin/chapter-directory-rails/actions/workflows/ci.yml)
 
-Things you may want to cover:
+![screenshot](screenshot.png)
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+[Developer Quick Start](https://github.com/utmsigep/chapter-directory-rails/wiki/Developer-Quick-Start)
