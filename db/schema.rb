@@ -12,7 +12,7 @@
 
 ActiveRecord::Schema.define(version: 2022_02_11_203954) do
 
-  create_table "chapters", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "chapters", charset: "utf8mb4", force: :cascade do |t|
     t.string "name"
     t.string "institution_name"
     t.decimal "latitude", precision: 10, scale: 6
