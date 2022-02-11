@@ -65,14 +65,9 @@ class Admin::ChaptersController < ApplicationController
   end
 
   def do_import
-    begin
-      uploaded_file = params[:file]
-      puts uploaded_file.inspect
-      csv = CSV.parse(uploaded_file.read, headers: true)
-    rescue CSV::MalformedCSVError => error
-      flash[:error] = "Parsing Error: #{error}"
-      redirect_to(admin_chapters_import_url)
-    end
+    uploaded_file = params[:file]
+    raise "No file provided" if uploaded_file.nil?
+    csv = CSV.parse(uploaded_file.read, headers: true)
 
     # Create Regions and Districts if Missing
     csv.each do |row|
@@ -103,6 +98,7 @@ class Admin::ChaptersController < ApplicationController
       chapter.latitude = row['latitude'] unless row['latitude'].nil?
       chapter.longitude = row['longitude'] unless row['longitude'].nil?
       chapter.website = row['website'] unless row['website'].nil?
+      chapter.status = row['status'] unless row['status'].nil?
       chapter.district = District.find_by(short_name: row['district']) unless row['district'].nil?
       chapter.district = District.find(row['district_id']) unless row['district_id'].nil?
       chapter.region = Region.find_by(short_name: row['region']) unless row['region'].nil?
@@ -112,6 +108,9 @@ class Admin::ChaptersController < ApplicationController
 
     flash[:notice] = 'Upload complete!'
     redirect_to(admin_chapters_url)
+  rescue CSV::MalformedCSVError => error
+    flash[:error] = "Parsing Error: #{error}"
+    redirect_to(admin_chapters_import_url)
   rescue => error
     flash[:error] = "#{error}"
     redirect_to(admin_chapters_import_url)
@@ -125,6 +124,6 @@ class Admin::ChaptersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def chapter_params
-      params.fetch(:chapter, {}).permit(:name, :institution_name, :location, :website, :slc, :region_id, :district_id, :longitude, :latitude)
+      params.fetch(:chapter, {}).permit(:name, :institution_name, :location, :website, :slc, :status, :region_id, :district_id, :longitude, :latitude)
     end
 end

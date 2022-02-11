@@ -11,6 +11,6 @@ class Chapter < ApplicationRecord
             self.where("institution_name LIKE ?", "%#{query}%"),
             self.where("location LIKE ?", "%#{query}%"),
         ]
-        wheres.reduce(:or)
+        wheres.reduce(:or).where('status = ?', 1)
     end
 end

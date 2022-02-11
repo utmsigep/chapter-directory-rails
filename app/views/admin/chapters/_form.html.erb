@@ -23,6 +23,11 @@
     <%= form.url_field :website, class: 'form-control' %>
   </div>
   <hr />
+  </div>
+    <div class="form-check mb-3">
+    <%= form.check_box :status, class: 'form-check-input' %>
+    <%= form.label :status, 'Active Chapter?', class: 'form-check-label' %>
+  </div>
   <div class="mb-3">
     <%= form.label :region %>
     <%= form.collection_select :region_id, Region.order(:position), :id, :name, {}, class: 'form-select' %>
