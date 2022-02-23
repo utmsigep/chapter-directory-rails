@@ -46,24 +46,41 @@ namespace :chapter do
   task :check_active, [:path] => [:environment] do |t, args|
     url = URI.parse("https://sigep.org/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=18473&target_action=get-all-data&default_sorting=old_first")
     response = Net::HTTP.get_response(url)
-    active_chapters = JSON.parse(response.body)
+    json_list = JSON.parse(response.body)
     # Removes the "N/A" records
-    active_chapters = active_chapters.delete_if { |c| c['chapterdesignation'].empty? }
+    json_list = json_list.delete_if { |c| c['chapterdesignation'].empty? }
 
-    all_chapters = Chapter.where('status', 1)
+    all_chapters = Chapter.all
+    active_chapters = Chapter.where('status = ?', 1)
+    inactive_chapters = Chapter.where('status = ?', 0)
 
     puts ""
-    puts "Chapters not currently in the database:"
+    puts "Chapters not appearing in the database:"
     puts "======================================="
-    active_chapters.each do |chapter|
-      puts "#{chapter['chapterdesignation']}" unless all_chapters.any? { |h| h['name'] == chapter['chapterdesignation'] }
+    json_list.each do |chapter|
+      puts "#{chapter['chapterdesignation']}" unless all_chapters.any? { |db| db['name'] == chapter['chapterdesignation'] }
+    end
+
+    puts ""
+    puts "Previously inactive chapters now active:"
+    puts "========================================"
+    inactive_chapters.each do |chapter|
+      if json_list.any? { |js| js['chapterdesignation'] == chapter['name'] }
+        puts "#{chapter['name']}"
+        chapter.status = true
+        chapter.save!
+      end
     end
 
     puts ""
     puts "Chapters no longer appearing on the active list:"
     puts "================================================"
-    all_chapters.each do |chapter|
-      puts "#{chapter['name']}" unless active_chapters.any? { |h| h['chapterdesignation'] == chapter['name'] }
+    active_chapters.each do |chapter|
+      unless json_list.any? { |js| js['chapterdesignation'] == chapter['name'] }
+        puts "#{chapter['name']}"
+        chapter.status = false
+        chapter.save!
+      end
     end
 
     puts ""
