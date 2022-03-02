@@ -3,7 +3,7 @@ require 'net/http'
 
 namespace :chapter do
   desc "Update chapters without latitude/longitude from Wikipedia"
-  task :geocode, [:path] => [:environment] do |t, args|
+  task geocode: :environment do
     chapters = Chapter.where(latitude: nil, longitude: nil)
     chapters.each do |chapter|
       geocoded_by = 'institution'
@@ -43,7 +43,7 @@ namespace :chapter do
   end
 
   desc "Check active chapters"
-  task :check_active, [:path] => [:environment] do |t, args|
+  task check_active: :environment do
     url = URI.parse("https://sigep.org/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=18473&target_action=get-all-data&default_sorting=old_first")
     response = Net::HTTP.get_response(url)
     json_list = JSON.parse(response.body)
@@ -87,7 +87,7 @@ namespace :chapter do
   end
 
   desc "Update SLC status"
-  task :update_slc, [:path] => [:environment] do |t, args|
+  task update_slc: :environment do
     url = URI.parse("https://sigep.org/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=18473&target_action=get-all-data&default_sorting=old_first")
     response = Net::HTTP.get_response(url)
     slc_chapters = JSON.parse(response.body)
