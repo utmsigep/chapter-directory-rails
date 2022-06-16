@@ -29,11 +29,11 @@
   </div>
   <div class="mb-3">
     <%= form.label :region %>
-    <%= form.collection_select :region_id, Region.order(:position), :id, :name, {}, class: 'form-select' %>
+    <%= form.collection_select :region_id, Region.order(:position), :id, :name, {include_blank: 'Select a Region'}, class: 'form-select' %>
   </div>
   <div class="mb-3">
     <%= form.label :district %>
-    <%= form.collection_select :district_id, District.order(:position), :id, :name, {}, class: 'form-select' %>
+    <%= form.collection_select :district_id, District.order(:position), :id, :name, {include_blank: 'Select a District'}, class: 'form-select' %>
   </div>
   <hr />
   <div class="row">
