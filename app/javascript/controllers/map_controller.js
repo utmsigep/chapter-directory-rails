@@ -66,7 +66,7 @@ export default class extends Controller {
           let icon = chapter.slc ? new SLCChapterIcon() : new ChapterIcon()
           var marker = L.marker([chapter.latitude, chapter.longitude], {icon: icon, draggable: this.draggableValue })
           console.log(chapter.region)
-          chapter['region_name'] = chapter.region.region ? chapter.region.name : '(Region Unavailable)'
+          chapter['region_name'] = chapter.region.name ? chapter.region.name : '(Region Unavailable)'
           chapter['district_name'] = chapter.district.name ? chapter.district.name : '(District Unavailable)'
           chapter['slc'] = chapter.slc ? '<div><img src="' + SLCChapterIconSVG + '" style="height:1em; padding-right:0.5em"/><strong>SigEp Learning Community</strong></div>' : ''
           chapter['website'] = chapter.website ? L.Util.template('<div><a href="{website}" target="_blank">{website}</a></div>', chapter) : ''
