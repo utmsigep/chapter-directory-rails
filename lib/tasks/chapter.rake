@@ -114,6 +114,9 @@ namespace :chapter do
     response = Net::HTTP.get_response(url)
     regions = JSON.parse(response.body)
 
+    # Null out all values
+    Chapter.all.update_all(region_id: nil)
+
     regions.each do |record|
       region = Region.find_by(name: record['region'])
       if region.nil?
@@ -132,6 +135,14 @@ namespace :chapter do
         end
         chapter.region = region
         chapter.save!
+      end
+    end
+
+    orphaned_chapters = Chapter.where(region: nil, status: 1)
+    if orphaned_chapters
+      puts '[WARNING] The following chapters do not have a region assigned:'
+      orphaned_chapters.each do |chapter|
+        puts "- #{chapter['name']} - #{chapter['institution_name']}"
       end
     end
   end
