@@ -4,6 +4,8 @@ class Admin::ChaptersController < ApplicationController
   # GET /chapters or /chapters.json
   def index
     @chapters = Chapter.order(:name)
+    @missing_region = Chapter.where(region: nil, status: true)
+    @missing_district = Chapter.where(district: nil, status: true)
     if params[:format] == 'csv'
       send_data Chapter.generate_csv, filename: 'chapters.csv'
     end

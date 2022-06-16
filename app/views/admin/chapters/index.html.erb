@@ -11,32 +11,44 @@
   </div>
 </div>
 
+<% if @missing_region.length > 0 %>
+<div class="card border-danger mb-3">
+  <div class="card-header text-white bg-danger">Missing Region</div>
+  <div class="card-body">
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Chapter</th>
+          <th>Institution</th>
+          <th>Location</th>
+          <th>Region</th>
+          <th>District</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @missing_region.each do |chapter| %>
+        <%= render 'chapter_row', chapter: chapter %>
+      <% end %>
+      <tbody>
+    </table>
+  </div>
+</div>
+<% end %>
+
 <div id="chapters" data-controller="admin">
   <table class="table table-admin">
     <thead>
-      <th>Chapter</th>
-      <th>Institution</th>
-      <th>Location</th>
-      <th>Region</th>
-      <th>District</th>
+      <tr>
+        <th>Chapter</th>
+        <th>Institution</th>
+        <th>Location</th>
+        <th>Region</th>
+        <th>District</th>
+      </tr>
     </thead>
     <tbody>
       <% @chapters.each do |chapter| %>
-      <tr class="<%= "text-muted" unless chapter.status %>">
-        <td><%= link_to chapter.name, admin_chapter_path(chapter) %> <%= "(Inactive)" unless chapter.status %></td>
-        <td><%= chapter.institution_name %></td>
-        <td><%= chapter.location %></td>
-        <% if chapter.region %>
-        <td data-order="<%= chapter.region.position %>"><%= link_to chapter.region.name, admin_region_path(chapter.region) %></td>
-        <% else %>
-        <td class="text-muted">Region Unavailable</td>
-        <% end %>
-        <% if chapter.district %>
-        <td data-order="<%= chapter.district.position %>"><%= link_to chapter.district.name, admin_district_path(chapter.district) %></td>
-        <% else %>
-        <td class="text-muted">District Unavailable</td>
-        <% end %>
-      </tr>
+        <%= render 'chapter_row', chapter: chapter %>
       <% end %>
     </tbody>
   </table>
