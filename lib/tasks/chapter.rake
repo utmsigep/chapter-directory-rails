@@ -86,9 +86,9 @@ namespace :chapter do
     puts ""
   end
 
-  desc "Update SLC status"
+  desc 'Update SLC status'
   task update_slc: :environment do
-    url = URI.parse("https://sigep.org/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=18473&target_action=get-all-data&default_sorting=old_first")
+    url = URI.parse('https://sigep.org/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=18473&target_action=get-all-data&default_sorting=old_first')
     response = Net::HTTP.get_response(url)
     slc_chapters = JSON.parse(response.body)
     # Removes the "N/A" records
@@ -103,6 +103,31 @@ namespace :chapter do
         chapter.slc = 0
       end
       chapter.save!
+    end
+  end
+
+  desc 'Update Region Alignment'
+  task update_regions: :environment do
+    url = URI.parse('https://sigep.org/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=20940&target_action=get-all-data&default_sorting=old_first&ninja_table_public_nonce=6754dd4327')
+    response = Net::HTTP.get_response(url)
+    regions = JSON.parse(response.body)
+
+    regions.each do |record|
+      region = Region.find_by(name: record['region'])
+      if region.nil?
+        region = Region.new
+        region.name = record['region']
+        region.short_name = record['lookup']
+        region.save!
+      end
+
+      chapters = record['chaptersinregion'].split(', ')
+      chapters.each do |chapter_record|
+        chapter = Chapter.find_by(name: chapter_record)
+        next and puts "Chapter #{chapter} not found!" if chapter.nil?
+        chapter.region = region
+        chapter.save!
+      end
     end
   end
 end
