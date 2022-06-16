@@ -124,7 +124,10 @@ namespace :chapter do
       chapters = record['chaptersinregion'].split(', ')
       chapters.each do |chapter_record|
         chapter = Chapter.find_by(name: chapter_record)
-        next and puts "Chapter #{chapter} not found!" if chapter.nil?
+        if chapter.nil?
+          puts "[WARNING] Chapter #{chapter} not found!"
+          next
+        end
         chapter.region = region
         chapter.save!
       end
