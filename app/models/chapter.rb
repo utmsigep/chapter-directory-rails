@@ -1,6 +1,6 @@
 class Chapter < ApplicationRecord
-    belongs_to :region
-    belongs_to :district
+    belongs_to :region, optional: true
+    belongs_to :district, optional: true
     validates_presence_of :name
 
     include GenerateCsv
