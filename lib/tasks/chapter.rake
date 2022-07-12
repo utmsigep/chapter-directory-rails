@@ -110,7 +110,7 @@ namespace :chapter do
 
   desc 'Update Region Alignment'
   task update_regions: :environment do
-    url = URI.parse('https://sigep.org/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=20940&target_action=get-all-data&default_sorting=old_first&ninja_table_public_nonce=6754dd4327')
+    url = URI.parse('https://sigep.org/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=20940&target_action=get-all-data&default_sorting=old_first')
     response = Net::HTTP.get_response(url)
     regions = JSON.parse(response.body)
 
@@ -139,8 +139,48 @@ namespace :chapter do
     end
 
     orphaned_chapters = Chapter.where(region: nil, status: 1)
-    if orphaned_chapters
+    unless orphaned_chapters.empty?
       puts '[WARNING] The following chapters do not have a region assigned:'
+      orphaned_chapters.each do |chapter|
+        puts "- #{chapter['name']} - #{chapter['institution_name']}"
+      end
+    end
+  end
+
+  desc 'Update District Alignment'
+  task update_districts: :environment do
+    url = URI.parse('https://sigep.org/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=19285&target_action=get-all-data&default_sorting=old_first')
+    response = Net::HTTP.get_response(url)
+    districts = JSON.parse(response.body)
+
+    # Null out all values
+    # Skip this step for now. Usually not needed.
+    # Chapter.all.update_all(district_id: nil)
+
+    districts.each do |record|
+      district = District.find_by(name: record['district'])
+      if district.nil?
+        district = District.new
+        district.name = record['district']
+        district.short_name = record['district'].gsub('District ', '')
+        district.save!
+      end
+
+      chapters = record['activechapters'].split(', ')
+      chapters.each do |chapter_record|
+        chapter = Chapter.find_by(name: chapter_record)
+        if chapter.nil?
+          puts "[WARNING] Chapter #{chapter} not found!"
+          next
+        end
+        chapter.district = district
+        chapter.save!
+      end
+    end
+
+    orphaned_chapters = Chapter.where(district: nil, status: 1)
+    unless orphaned_chapters.empty?
+      puts '[WARNING] The following chapters do not have a district assigned:'
       orphaned_chapters.each do |chapter|
         puts "- #{chapter['name']} - #{chapter['institution_name']}"
       end
