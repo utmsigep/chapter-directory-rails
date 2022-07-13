@@ -15,12 +15,14 @@
     <thead>
       <th>Region</th>
       <th>Short Name</th>
+      <th>Chapter Count</th>
     </thead>
     <tbody>
       <% @regions.each do |region| %>
       <tr>
         <td data-order="<%= region.position %>"><%= link_to region.name, admin_region_path(region) %></td>
         <td><%= region.short_name %></td>
+        <td class="text-end"><%= region.chapters.count %></td>
       </tr>
       <% end %>
     </tbody>

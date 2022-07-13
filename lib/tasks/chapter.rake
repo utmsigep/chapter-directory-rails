@@ -123,6 +123,7 @@ namespace :chapter do
         region = Region.new
         region.name = record['region']
         region.short_name = record['lookup']
+        region.position = record['lookup'] if record['lookup'].match? /^\d+$/
         region.save!
       end
 
@@ -163,6 +164,7 @@ namespace :chapter do
         district = District.new
         district.name = record['district']
         district.short_name = record['district'].gsub('District ', '')
+        district.position = record['district'].gsub('District ', '') if record['district'].match? /^District \d+$/
         district.save!
       end
 

@@ -10,18 +10,19 @@
   </div>
 </div>
 
-
 <div id="districts" data-controller="admin">
   <table class="table table-admin">
     <thead>
       <th>District</th>
       <th>Short Name</th>
+      <th>Chapter Count</th>
     </thead>
     <tbody>
       <% @districts.each do |district| %>
       <tr>
         <td data-order="<%= district.position %>"><%= link_to district.name, admin_district_path(district) %></td>
         <td><%= district.short_name %></td>
+        <td class="text-end"><%= district.chapters.length %></td>
       </tr>
       <% end %>
     </tbody>
