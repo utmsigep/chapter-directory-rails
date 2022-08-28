@@ -22,9 +22,9 @@ ActiveRecord::Schema.define(version: 2022_02_11_203954) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "location"
-    t.boolean "slc"
+    t.boolean "slc", default: false
     t.string "website"
-    t.boolean "status"
+    t.boolean "status", default: false
     t.index ["district_id"], name: "index_chapters_on_district_id"
     t.index ["region_id"], name: "index_chapters_on_region_id"
   end
