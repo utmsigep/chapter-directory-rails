@@ -1,7 +1,12 @@
 <tr class="<%= "text-muted" unless chapter.status %>">
   <td><%= link_to chapter.name, admin_chapter_path(chapter) %> <%= "(Inactive)" unless chapter.status %></td>
   <td><%= chapter.institution_name %></td>
-  <td><%= chapter.location %></td>
+  <td>
+    <% if !chapter.latitude || !chapter.longitude %>
+    <span title="Geolocation missing"><i class="fas fa-circle-question"></i></span>
+    <% end %>
+    <%= chapter.location %>
+  </td>
   <% if chapter.region %>
   <td data-order="<%= chapter.region.position %>"><%= link_to chapter.region.name, admin_region_path(chapter.region) %></td>
   <% else %>

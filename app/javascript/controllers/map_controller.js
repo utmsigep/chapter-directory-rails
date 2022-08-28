@@ -65,15 +65,14 @@ export default class extends Controller {
           }
           let icon = chapter.slc ? new SLCChapterIcon() : new ChapterIcon()
           var marker = L.marker([chapter.latitude, chapter.longitude], {icon: icon, draggable: this.draggableValue })
-          console.log(chapter.region)
           chapter['region_name'] = chapter.region.name ? chapter.region.name : '(Region Unavailable)'
           chapter['district_name'] = chapter.district.name ? chapter.district.name : '(District Unavailable)'
           chapter['slc'] = chapter.slc ? '<div><img src="' + SLCChapterIconSVG + '" style="height:1em; padding-right:0.5em"/><strong>SigEp Learning Community</strong></div>' : ''
           chapter['website'] = chapter.website ? L.Util.template('<div><a href="{website}" target="_blank">{website}</a></div>', chapter) : ''
+          chapter['status'] = chapter.status ? 'Active' : 'Dormant'
           if (!L.Browser.mobile) {
             marker.bindTooltip(L.Util.template('<div><strong>{name}</strong></div>{slc}<div>{institution_name}</div>', chapter))
           }
-          console.log(chapter);
           marker.bindPopup(L.Util.template('<div class="h5">{name}</div>{slc}<div>{institution_name}</div><div>{location}</div><hr />{website}<div>{region_name} &#8226 {district_name}</div>', chapter))
           marker.addTo(this.chaptersLayer)
           marker.on('dragend', function(event) {

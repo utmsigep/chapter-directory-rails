@@ -10,7 +10,7 @@ namespace :chapter do
     chapters.each do |chapter|
       geocoded_by = 'institution'
       begin
-        url = URI.parse("https://en.wikipedia.org/w/api.php?action=query&titles=#{chapter.institution_name}&prop=coordinates&redirects&format=json")
+        url = URI.parse("https://en.wikipedia.org/w/api.php?action=query&titles=#{CGI.escape(chapter.institution_name)}&prop=coordinates&redirects&format=json")
         response = Net::HTTP.get_response(url)
         json = JSON.parse(response.body)
       rescue StandardError => e
@@ -29,6 +29,10 @@ namespace :chapter do
         rescue StandardError => e
           puts "Failed retrieving data for #{chapter.name} (#{chapter.institution_name})"
           puts e.message
+          next
+        end
+        unless json['query']
+          puts "Unable to find coordinates for #{chapter.name} (#{chapter.institution_name})"
           next
         end
         k, wiki = json['query']['pages'].first
@@ -188,4 +192,26 @@ namespace :chapter do
       end
     end
   end
+
+  desc 'Update chapter information'
+  task update_info: :environment do
+    url = URI.parse('https://sigep.org/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=18473&target_action=get-all-data&default_sorting=old_first')
+    response = Net::HTTP.get_response(url)
+    json_list = JSON.parse(response.body)
+    # Removes the "N/A" records
+    json_list = json_list.delete_if { |c| c['chapterdesignation'].empty? }
+
+    json_list.each do |chapter_record|
+      chapter = Chapter.find_by(name: chapter_record['chapterdesignation'])
+      if chapter.nil?
+        chapter = Chapter.new
+        chapter.name = chapter_record['chapterdesignation']
+        chapter.status = true
+      end
+      chapter.location = "#{chapter_record['city']}, #{chapter_record['state']}"
+      chapter.institution_name = chapter_record['dyadinstitutionalid']
+      chapter.save!
+    end
+  end
+
 end
