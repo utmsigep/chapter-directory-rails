@@ -5,6 +5,7 @@ import L from "leaflet"
 
 const ChapterIconSVG = ImagePaths.chapterIcon
 const SLCChapterIconSVG = ImagePaths.slcChapterIcon
+const InactiveChapterIconSVG = ImagePaths.inactiveChapterIcon
 const MAX_ZOOM_LEVEL = 12
 
 // Connects to data-controller="map"
@@ -38,6 +39,14 @@ export default class extends Controller {
       }
     })
 
+    const InactiveChapterIcon = L.Icon.extend({
+      options: {
+        iconUrl: InactiveChapterIconSVG,
+        iconSize: [16, 16],
+        shadowUrl: null
+      }
+    })
+
     let chapterList = document.getElementById('chapter_list')
     if (chapterList) {
       chapterList.innerHTML = ''
@@ -64,6 +73,9 @@ export default class extends Controller {
             return
           }
           let icon = chapter.slc ? new SLCChapterIcon() : new ChapterIcon()
+          if (chapter.status == false) {
+            icon = new InactiveChapterIcon()
+          }
           var marker = L.marker([chapter.latitude, chapter.longitude], {icon: icon, draggable: this.draggableValue })
           chapter['region_name'] = chapter.region.name ? chapter.region.name : '(Region Unavailable)'
           chapter['district_name'] = chapter.district.name ? chapter.district.name : '(District Unavailable)'
