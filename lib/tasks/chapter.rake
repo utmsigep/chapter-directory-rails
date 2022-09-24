@@ -60,36 +60,57 @@ namespace :chapter do
     active_chapters = Chapter.where('status = ?', 1)
     inactive_chapters = Chapter.where('status = ?', 0)
 
-    puts ''
-    puts 'Chapters not appearing in the database:'
-    puts '======================================='
+    exit_code = 0
+    output = { not_in_db: [], inactive_now_active: [], no_longer_active: [] }
+
     json_list.each do |chapter|
-      puts chapter['chapterdesignation'] unless all_chapters.any? { |db| db['name'] == chapter['chapterdesignation'] }
+      output[:not_in_db] << chapter['chapterdesignation'] unless all_chapters.any? { |db| db['name'] == chapter['chapterdesignation'] }
     end
 
-    puts ''
-    puts 'Previously inactive chapters now active:'
-    puts '========================================'
     inactive_chapters.each do |chapter|
       next unless json_list.any? { |js| js['chapterdesignation'] == chapter['name'] }
 
-      puts chapter['name']
+      output[:inactive_now_active] << chapter['name']
       chapter.status = true
       chapter.save!
     end
 
-    puts ''
-    puts 'Chapters no longer appearing on the active list:'
-    puts '================================================'
     active_chapters.each do |chapter|
       next if json_list.any? { |js| js['chapterdesignation'] == chapter['name'] }
 
-      puts chapter['name']
+      output[:no_longer_active] << chapter['name']
       chapter.status = false
       chapter.save!
     end
 
-    puts ''
+    unless output[:not_in_db].length.zero?
+      puts ''
+      puts 'Chapters not appearing in the database:'
+      puts '======================================='
+      puts output[:not_in_db].join("\n")
+      puts ''
+      exit_code = 1
+    end
+
+    unless output[:inactive_now_active].length.zero?
+      puts ''
+      puts 'Previously inactive chapters now active:'
+      puts '========================================'
+      puts output[:inactive_now_active].join("\n")
+      puts ''
+      exit_code = 1
+    end
+
+    unless output[:no_longer_active].length.zero?
+      puts ''
+      puts 'Chapters no longer appearing on the active list:'
+      puts '================================================'
+      puts output[:no_longer_active].join("\n")
+      puts ''
+      exit_code = 1
+    end
+
+    exit(exit_code)
   end
 
   desc 'Update SLC status'
