@@ -11,7 +11,7 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.0].define(version: 2022_02_11_203954) do
-  create_table "chapters", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "chapters", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name"
     t.string "institution_name"
     t.decimal "latitude", precision: 10, scale: 6
@@ -28,7 +28,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_02_11_203954) do
     t.index ["region_id"], name: "index_chapters_on_region_id"
   end
 
-  create_table "districts", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "districts", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name"
     t.string "short_name"
     t.integer "position", default: 0
@@ -36,7 +36,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_02_11_203954) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "regions", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+  create_table "regions", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name"
     t.string "short_name"
     t.integer "position", default: 0
