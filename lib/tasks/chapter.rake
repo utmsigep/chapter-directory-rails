@@ -56,6 +56,13 @@ namespace :chapter do
     # Removes the "N/A" records
     json_list = json_list.delete_if { |c| c['chapterdesignation'].empty? }
 
+    # Guard against data issues
+    if json_list.length.zero?
+      puts '[Error] Chapter list is empty.'
+      puts "```\n#{response.body}\n```"
+      exit(1)
+    end
+
     all_chapters = Chapter.all
     active_chapters = Chapter.where('status = ?', 1)
     inactive_chapters = Chapter.where('status = ?', 0)
