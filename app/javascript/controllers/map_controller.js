@@ -143,11 +143,11 @@ export default class extends Controller {
             groupPoints.push([chapter.latitude, chapter.longitude]);
           })
           const center = L.bounds(groupPoints).getCenter();
-          if (!center.x || !center.y) {
-            return;
+          if (isNaN(center.x) || isNaN(center.y)) {
+            continue;
           }
           chapterGrouping[groupName].map((chapter, i) => {
-            if (!chapter.latitude || !chapter.longitude) {
+            if (isNaN(chapter.latitude) || isNaN(chapter.longitude)) {
               return;
             }
             const angle = GeometryUtil.angle(this.map, new L.LatLng(center.x, center.y), new L.LatLng(chapter.latitude, chapter.longitude));
