@@ -28,7 +28,7 @@
         slcChapterIcon: "<%= asset_path('chapter-slc.svg') %>"
       }
     </script>
-    <% unless ENV['MATOMO_ANALYTICS_URL'] && ENV['MATOMO_ANALYTICS_SITE_ID'] %>
+    <% unless ENV['MATOMO_ANALYTICS_URL'].empty? || ENV['MATOMO_ANALYTICS_SITE_ID'].empty? %>
     <!-- Matomo -->
     <script>
       var _paq = window._paq = window._paq || [];
