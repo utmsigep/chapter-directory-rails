@@ -1,74 +1,76 @@
-class Admin::DistrictsController < ApplicationController
-  before_action :set_district, only: %i[ show edit update destroy chapters ]
+# frozen_string_literal: true
 
-  # GET /districts or /districts.json
-  def index
-    @districts = District.order(:position)
-    if params[:format] == 'csv'
+module Admin
+  class DistrictsController < ApplicationController
+    before_action :set_district, only: %i[show edit update destroy chapters]
+
+    # GET /districts or /districts.json
+    def index
+      @districts = District.order(:position)
+      return unless params[:format] == 'csv'
+
       send_data District.generate_csv, filename: 'districts.csv'
     end
-  end
 
-  # GET /districts/1 or /districts/1.json
-  def show
-  end
+    # GET /districts/1 or /districts/1.json
+    def show; end
 
-  # GET /districts/new
-  def new
-    @district = District.new
-  end
+    # GET /districts/new
+    def new
+      @district = District.new
+    end
 
-  # GET /districts/1/edit
-  def edit
-  end
+    # GET /districts/1/edit
+    def edit; end
 
-  # POST /districts or /districts.json
-  def create
-    @district = District.new(district_params)
+    # POST /districts or /districts.json
+    def create
+      @district = District.new(district_params)
 
-    respond_to do |format|
-      if @district.save
-        format.html { redirect_to admin_district_url(@district), notice: "District was successfully created." }
-        format.json { render :show, status: :created, location: @district }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @district.errors, status: :unprocessable_entity }
+      respond_to do |format|
+        if @district.save
+          format.html { redirect_to admin_district_url(@district), notice: 'District was successfully created.' }
+          format.json { render :show, status: :created, location: @district }
+        else
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @district.errors, status: :unprocessable_entity }
+        end
       end
     end
-  end
 
-  # PATCH/PUT /districts/1 or /districts/1.json
-  def update
-    respond_to do |format|
-      if @district.update(district_params)
-        format.html { redirect_to admin_district_url(@district), notice: "District was successfully updated." }
-        format.json { render :show, status: :ok, location: @district }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @district.errors, status: :unprocessable_entity }
+    # PATCH/PUT /districts/1 or /districts/1.json
+    def update
+      respond_to do |format|
+        if @district.update(district_params)
+          format.html { redirect_to admin_district_url(@district), notice: 'District was successfully updated.' }
+          format.json { render :show, status: :ok, location: @district }
+        else
+          format.html { render :edit, status: :unprocessable_entity }
+          format.json { render json: @district.errors, status: :unprocessable_entity }
+        end
       end
     end
-  end
 
-  # DELETE /districts/1 or /districts/1.json
-  def destroy
-    @district.destroy
+    # DELETE /districts/1 or /districts/1.json
+    def destroy
+      @district.destroy
 
-    respond_to do |format|
-      format.html { redirect_to admin_districts_url, notice: "District was successfully destroyed." }
-      format.json { head :no_content }
+      respond_to do |format|
+        format.html { redirect_to admin_districts_url, notice: 'District was successfully destroyed.' }
+        format.json { head :no_content }
+      end
     end
-  end
 
-  # GET /districts/1/chapters or /districts/1/chapters.json
-  def chapters
-    respond_to do |format|
-      format.html { render template: 'chapters/index', locals: {'@chapters': @district.chapters} }
-      format.json { render template: 'chapters/index', locals: {'@chapters': @district.chapters} }
+    # GET /districts/1/chapters or /districts/1/chapters.json
+    def chapters
+      respond_to do |format|
+        format.html { render template: 'chapters/index', locals: { '@chapters': @district.chapters } }
+        format.json { render template: 'chapters/index', locals: { '@chapters': @district.chapters } }
+      end
     end
-  end
 
-  private
+    private
+
     # Use callbacks to share common setup or constraints between actions.
     def set_district
       @district = District.find(params[:id])
@@ -78,4 +80,5 @@ class Admin::DistrictsController < ApplicationController
     def district_params
       params.fetch(:district, {}).permit(:name, :short_name, :position)
     end
+  end
 end

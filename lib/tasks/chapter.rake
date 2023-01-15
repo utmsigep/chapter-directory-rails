@@ -71,7 +71,9 @@ namespace :chapter do
     output = { not_in_db: [], inactive_now_active: [], no_longer_active: [] }
 
     json_list.each do |chapter|
-      output[:not_in_db] << chapter['chapterdesignation'] unless all_chapters.any? { |db| db['name'] == chapter['chapterdesignation'] }
+      output[:not_in_db] << chapter['chapterdesignation'] unless all_chapters.any? do |db|
+                                                                   db['name'] == chapter['chapterdesignation']
+                                                                 end
     end
 
     inactive_chapters.each do |chapter|
@@ -131,11 +133,13 @@ namespace :chapter do
     all_chapters = Chapter.all
 
     all_chapters.each do |chapter|
-      if slc_chapters.any? { |h| h['chapterdesignation'] == chapter['name'] && h['slcstatus'].match(/SLC/i) }
-        chapter.slc = 1
-      else
-        chapter.slc = 0
-      end
+      chapter.slc = if slc_chapters.any? do |h|
+                         h['chapterdesignation'] == chapter['name'] && h['slcstatus'].match(/SLC/i)
+                       end
+                      1
+                    else
+                      0
+                    end
       chapter.save!
     end
   end
@@ -241,5 +245,4 @@ namespace :chapter do
       chapter.save!
     end
   end
-
 end
