@@ -3,16 +3,16 @@
   "private": "true",
   "dependencies": {
     "@hotwired/stimulus": "^3.2.1",
-    "@hotwired/turbo-rails": "^7.2.4",
+    "@hotwired/turbo-rails": "^7.3.0",
     "@popperjs/core": "^2.11.6",
     "bootstrap": "^5.2.3",
-    "datatables.net": "^1.13.1",
-    "datatables.net-bs5": "^1.13.1",
-    "jquery": "^3.6.3",
+    "datatables.net": "^1.13.4",
+    "datatables.net-bs5": "^1.13.4",
+    "jquery": "^3.6.4",
     "leaflet": "^1.9.3",
     "leaflet-geometryutil": "^0.10.1",
-    "sass": "^1.57.1",
-    "webpack": "^5.75.0",
+    "sass": "^1.59.3",
+    "webpack": "^5.76.1",
     "webpack-cli": "^5.0.1"
   },
   "scripts": {
