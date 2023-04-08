@@ -160,8 +160,10 @@ namespace :chapter do
         region.name = record['region']
         region.short_name = record['lookup']
         region.position = record['lookup'] if record['lookup'].match?(/^\d+$/)
-        region.save!
       end
+      region.staff_name = record['name']
+      region.staff_url = record['linktobio']
+      region.save!
 
       chapters = record['chaptersinregion'].split(', ')
       chapters.each do |chapter_record|
@@ -201,8 +203,9 @@ namespace :chapter do
         district.name = record['district']
         district.short_name = record['district'].gsub('District ', '')
         district.position = record['district'].gsub('District ', '') if record['district'].match?(/^District \d+$/)
-        district.save!
       end
+      district.staff_name = record['name']
+      district.save!
 
       chapters = record['activechapters'].split(', ')
       chapters.each do |chapter_record|

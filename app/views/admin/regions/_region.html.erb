@@ -5,6 +5,10 @@
             <dd class="col-10"><%= link_to region.name, admin_region_path(region) %></dd>
             <dt class="col-2">Short Name</dt>
             <dd class="col-10"><%= region.short_name %></dd>
+            <dt class="col-2">Regional Director</dt>
+            <dd class="col-10"><%= region.staff_name %></dd>
+            <dt class="col-2">Bio Link</dt>
+            <dd class="col-10"><%= link_to('Bio', region.staff_url) %></dd>
         </dl>
     </div>
 </div>

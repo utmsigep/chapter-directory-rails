@@ -15,6 +15,7 @@
     <thead>
       <th>District</th>
       <th>Short Name</th>
+      <th>District Governor</th>
       <th>Chapter Count</th>
     </thead>
     <tbody>
@@ -22,6 +23,7 @@
       <tr>
         <td data-order="<%= district.position %>"><%= link_to district.name, admin_district_path(district) %></td>
         <td><%= district.short_name %></td>
+        <td><%= district.staff_name %></td>
         <td class="text-end"><%= district.chapters.length %></td>
       </tr>
       <% end %>
