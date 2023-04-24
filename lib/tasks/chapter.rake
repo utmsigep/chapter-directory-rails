@@ -245,6 +245,7 @@ namespace :chapter do
       end
       chapter.location = "#{chapter_record['city']}, #{chapter_record['state']}"
       chapter.institution_name = chapter_record['dyadinstitutionalid']
+      chapter.website = chapter_record['website']
       chapter.save!
     end
   end
