@@ -17,6 +17,7 @@
       <th>Short Name</th>
       <th>District Governor</th>
       <th>Chapter Count</th>
+      <th>Total Manpower</th>
     </thead>
     <tbody>
       <% @districts.each do |district| %>
@@ -25,6 +26,7 @@
         <td><%= district.short_name %></td>
         <td><%= district.staff_name %></td>
         <td class="text-end"><%= district.chapters.length %></td>
+        <td class="text-end"><%= district.chapters.sum(:manpower) %></td>
       </tr>
       <% end %>
     </tbody>

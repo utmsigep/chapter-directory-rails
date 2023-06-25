@@ -18,6 +18,7 @@
       <th>Active?</th>
       <th>Regional Director</th>
       <th>Chapter Count</th>
+      <th>Total Manpower</th>
     </thead>
     <tbody>
       <% @regions.each do |region| %>
@@ -27,6 +28,7 @@
         <td><%= region.status ? 'Yes' : 'No' %></td>
         <td><%= region.staff_name %></td>
         <td class="text-end"><%= region.chapters.count %></td>
+        <td class="text-end"><%= region.chapters.sum(:manpower) %></td>
       </tr>
       <% end %>
     </tbody>

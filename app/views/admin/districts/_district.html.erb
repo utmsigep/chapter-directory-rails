@@ -7,6 +7,10 @@
             <dd class="col-10"><%= district.short_name %></dd>
             <dt class="col-2">District Governor</dt>
             <dd class="col-10"><%= district.staff_name %></dd>
+            <dt class="col-2">Chapter Count</dt>
+            <dd class="col-10"><%= district.chapters.length %></dd>
+            <dt class="col-2">Total Manpower</dt>
+            <dd class="col-10"><%= district.chapters.sum(:manpower) %></dd>
         </dl>
     </div>
 </div>
