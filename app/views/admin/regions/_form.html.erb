@@ -13,6 +13,10 @@
     <%= label_tag :position %>
     <%= form.number_field :position, class: 'form-control' %>
   </div>
+  <div class="form-check mb-3">
+    <%= form.check_box :status, class: 'form-check-input' %>
+    <%= form.label :status, 'Active Region?', class: 'form-check-label' %>
+  </div>
   <hr />
   <div class="mb-3">
     <%= label_tag :staff_name %>

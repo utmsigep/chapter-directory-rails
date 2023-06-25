@@ -152,6 +152,7 @@ namespace :chapter do
 
     # Null out all values
     Chapter.all.update_all(region_id: nil)
+    Region.all.update_all(status: false)
 
     regions.each do |record|
       region = Region.find_by(name: record['region'])
@@ -163,13 +164,24 @@ namespace :chapter do
       end
       region.staff_name = record['name']
       region.staff_url = record['linktobio']
+      region.status = true
       region.save!
 
       chapters = record['chaptersinregion'].split(', ')
+
+      # If region has no chapters, hide it
+      if chapters.empty? || chapters == ['#N/A']
+        puts "[WARNING] Region #{region.short_name} has no chapters."
+        region.status = false
+        region.save!
+        next
+      end
+
+      # Update chapter records with region
       chapters.each do |chapter_record|
         chapter = Chapter.find_by(name: chapter_record)
         if chapter.nil?
-          puts "[WARNING] Chapter #{chapter} not found!"
+          puts "[WARNING] Chapter #{chapter_record} not found!"
           next
         end
         chapter.region = region
@@ -243,10 +255,14 @@ namespace :chapter do
         chapter.name = chapter_record['chapterdesignation']
         chapter.status = true
       end
+      chapter.manpower = chapter_record['currentchaptersize'] ? chapter_record['currentchaptersize'].to_i : 0
       chapter.location = "#{chapter_record['city']}, #{chapter_record['state']}"
       chapter.institution_name = chapter_record['dyadinstitutionalid']
       chapter.website = chapter_record['website']
       chapter.save!
     end
+
+    # Unsets manpower for orphaned chapters
+    Chapter.where('status = ?', 0).update_all(manpower: 0)
   end
 end

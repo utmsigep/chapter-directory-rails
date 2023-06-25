@@ -71,10 +71,11 @@ export default class extends Controller {
           chapter['slc'] = chapter.slc ? '<div><img src="' + SLCChapterIconSVG + '" style="height:1em; padding-right:0.5em"/><strong>SigEp Learning Community</strong></div>' : ''
           chapter['website'] = chapter.website ? L.Util.template('<div><a href="{website}" target="_blank">{website}</a></div>', chapter) : ''
           chapter['status'] = chapter.status ? 'Active' : 'Dormant'
+          chapter['manpower'] = chapter.manpower ? parseInt(chapter.manpower, 10) : 0
           if (!L.Browser.mobile) {
             marker.bindTooltip(L.Util.template('<div><strong>{name}</strong></div>{slc}<div>{institution_name}</div>', chapter))
           }
-          marker.bindPopup(L.Util.template('<div class="h5">{name}</div>{slc}<div>{institution_name}</div><div>{location}</div><hr />{website}<div>{region_name} &#8226 {district_name}</div>', chapter))
+          marker.bindPopup(L.Util.template('<div class="h5">{name}</div>{slc}<div>{institution_name}</div><div>{location}</div><br /><div>Manpower: {manpower}</div><hr />{website}<div>{region_name} &#8226 {district_name}</div>', chapter))
           marker.addTo(this.chaptersLayer)
           marker.on('dragend', function(event) {
             var draggedMarker = event.target

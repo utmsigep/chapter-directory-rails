@@ -3,7 +3,7 @@
 class MapController < ApplicationController
   def index
     @districts = District.order(:position)
-    @regions = Region.order(:position)
+    @regions = Region.where('status = ?', 1).order(:position)
   end
 
   def map_data
