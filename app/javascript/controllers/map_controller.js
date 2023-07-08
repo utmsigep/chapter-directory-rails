@@ -2,6 +2,7 @@
 
 import { Controller } from "@hotwired/stimulus"
 import L from "leaflet"
+import GeometryUtil from 'leaflet-geometryutil';
 
 const ChapterIconSVG = ImagePaths.chapterIcon
 const SLCChapterIconSVG = ImagePaths.slcChapterIcon
@@ -77,15 +78,16 @@ export default class extends Controller {
             icon = new InactiveChapterIcon()
           }
           var marker = L.marker([chapter.latitude, chapter.longitude], {icon: icon, draggable: this.draggableValue })
-          chapter['region_name'] = chapter.region.name ? chapter.region.name : '(Region Unavailable)'
-          chapter['district_name'] = chapter.district.name ? chapter.district.name : '(District Unavailable)'
+          chapter['region_name'] = chapter.region && chapter.region.name ? chapter.region.name : '(Region Unavailable)'
+          chapter['district_name'] = chapter.district && chapter.district.name ? chapter.district.name : '(District Unavailable)'
           chapter['slc'] = chapter.slc ? '<div><img src="' + SLCChapterIconSVG + '" style="height:1em; padding-right:0.5em"/><strong>SigEp Learning Community</strong></div>' : ''
           chapter['website'] = chapter.website ? L.Util.template('<div><a href="{website}" target="_blank">{website}</a></div>', chapter) : ''
           chapter['status'] = chapter.status ? 'Active' : 'Dormant'
+          chapter['manpower'] = chapter.manpower ? parseInt(chapter.manpower, 10) : 0
           if (!L.Browser.mobile) {
             marker.bindTooltip(L.Util.template('<div><strong>{name}</strong></div>{slc}<div>{institution_name}</div>', chapter))
           }
-          marker.bindPopup(L.Util.template('<div class="h5">{name}</div>{slc}<div>{institution_name}</div><div>{location}</div><hr />{website}<div>{region_name} &#8226 {district_name}</div>', chapter))
+          marker.bindPopup(L.Util.template('<div class="h5">{name}</div>{slc}<div>{institution_name}</div><div>{location}</div><br /><div>Manpower: {manpower}</div><hr />{website}<div>{region_name} &#8226 {district_name}</div>', chapter))
           marker.addTo(this.chaptersLayer)
           marker.on('dragend', function(event) {
             var draggedMarker = event.target
@@ -110,8 +112,9 @@ export default class extends Controller {
             chapterList.appendChild(chapterItem)
           }
         })
+        return data;
       })
-      .then(() => {
+      .then((data) => {
         this.map.addLayer(this.chaptersLayer)
         if (mapBounds.length) {
           this.map.fitBounds(mapBounds, {padding: [40, 40]})
@@ -123,6 +126,53 @@ export default class extends Controller {
             chapterCount.innerHTML = `<div class="mt-3 text-center text-muted"> Chapters: ${mapBounds.length}</div>`
           }
           chapterList.appendChild(chapterCount)
+        }
+        return data;
+      })
+      .then((data) => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (!urlParams.has('district_borders')) {
+          return;
+        }
+        const grouping = 'district_name';
+        const chapterGrouping = {};
+        data.map((chapter) => {
+          if (
+            !chapter.latitude
+            || !chapter.longitude
+            || !chapter.region
+            || !chapter.district
+          ) {
+            return;
+          }
+          if (typeof chapterGrouping[chapter[grouping]] === 'undefined') {
+            chapterGrouping[chapter[grouping]] = []
+          }
+          chapterGrouping[chapter[grouping]].push(chapter);
+        })
+        for (const groupName in chapterGrouping) {
+          const groupPoints = [];
+          chapterGrouping[groupName].map((chapter) => {
+            groupPoints.push([chapter.latitude, chapter.longitude]);
+          })
+          const center = L.bounds(groupPoints).getCenter();
+          if (isNaN(center.x) || isNaN(center.y)) {
+            continue;
+          }
+          chapterGrouping[groupName].map((chapter, i) => {
+            if (isNaN(chapter.latitude) || isNaN(chapter.longitude)) {
+              return;
+            }
+            const angle = GeometryUtil.angle(this.map, new L.LatLng(center.x, center.y), new L.LatLng(chapter.latitude, chapter.longitude));
+            chapterGrouping[groupName][i]['angle'] = angle;
+          });
+          chapterGrouping[groupName].sort((chapterA, chapterB) => chapterA.angle > chapterB.angle);
+          const polygonPoints = [];
+          chapterGrouping[groupName].map((chapter) => {
+            polygonPoints.push(new L.LatLng(chapter.latitude, chapter.longitude));
+          });
+          const groupPolygon = (new L.Polygon(polygonPoints)).bindTooltip(groupName);
+          groupPolygon.addTo(this.map);
         }
       })
   }

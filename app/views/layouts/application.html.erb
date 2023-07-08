@@ -29,6 +29,22 @@
         inactiveChapterIcon: "<%= asset_path('chapter-inactive.svg') %>",
       }
     </script>
+    <% unless ENV['MATOMO_ANALYTICS_URL'].empty? || ENV['MATOMO_ANALYTICS_SITE_ID'].empty? %>
+    <!-- Matomo -->
+    <script>
+      var _paq = window._paq = window._paq || [];
+      /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+      _paq.push(['trackPageView']);
+      _paq.push(['enableLinkTracking']);
+      (function() {
+        var u="<%= ENV['MATOMO_ANALYTICS_URL'] %>";
+        _paq.push(['setTrackerUrl', u+'matomo.php']);
+        _paq.push(['setSiteId', '<%= ENV['MATOMO_ANALYTICS_SITE_ID'] %>']);
+        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+        g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+      })();
+    </script>
+    <% end %>
     <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
   </head>
 

@@ -1,16 +1,22 @@
+# frozen_string_literal: true
+
 class Chapter < ApplicationRecord
-    belongs_to :region, optional: true
-    belongs_to :district, optional: true
-    validates_presence_of :name
+  belongs_to :region, optional: true
+  belongs_to :district, optional: true
+  validates_presence_of :name
 
-    include GenerateCsv
+  include GenerateCsv
 
-    def self.search(query)
-        wheres = [
-            self.where("name LIKE ?", "%#{query}%"),
-            self.where("institution_name LIKE ?", "%#{query}%"),
-            self.where("location LIKE ?", "%#{query}%"),
-        ]
-        wheres.reduce(:or).where('status = ?', 1)
-    end
+  def institution_name=(val)
+    self[:institution_name] = val.gsub(' Of ', ' of ')
+  end
+
+  def self.search(query)
+    wheres = [
+      where('name LIKE ?', "%#{query}%"),
+      where('institution_name LIKE ?', "%#{query}%"),
+      where('location LIKE ?', "%#{query}%")
+    ]
+    wheres.reduce(:or).where('status = ?', 1)
+  end
 end

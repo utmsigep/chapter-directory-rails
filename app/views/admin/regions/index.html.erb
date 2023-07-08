@@ -15,14 +15,20 @@
     <thead>
       <th>Region</th>
       <th>Short Name</th>
+      <th>Active?</th>
+      <th>Regional Director</th>
       <th>Chapter Count</th>
+      <th>Total Manpower</th>
     </thead>
     <tbody>
       <% @regions.each do |region| %>
-      <tr>
+      <tr class="<%= "text-muted" unless region.status %>">
         <td data-order="<%= region.position %>"><%= link_to region.name, admin_region_path(region) %></td>
         <td><%= region.short_name %></td>
+        <td><%= region.status ? 'Yes' : 'No' %></td>
+        <td><%= region.staff_name %></td>
         <td class="text-end"><%= region.chapters.count %></td>
+        <td class="text-end"><%= region.chapters.sum(:manpower) %></td>
       </tr>
       <% end %>
     </tbody>

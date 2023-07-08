@@ -56,40 +56,70 @@ namespace :chapter do
     # Removes the "N/A" records
     json_list = json_list.delete_if { |c| c['chapterdesignation'].empty? }
 
+    # Guard against data issues
+    if json_list.length.zero?
+      puts '[Error] Chapter list is empty.'
+      puts "```\n#{response.body}\n```"
+      exit(1)
+    end
+
     all_chapters = Chapter.all
     active_chapters = Chapter.where('status = ?', 1)
     inactive_chapters = Chapter.where('status = ?', 0)
 
-    puts ''
-    puts 'Chapters not appearing in the database:'
-    puts '======================================='
+    exit_code = 0
+    output = { not_in_db: [], inactive_now_active: [], no_longer_active: [] }
+
     json_list.each do |chapter|
-      puts chapter['chapterdesignation'] unless all_chapters.any? { |db| db['name'] == chapter['chapterdesignation'] }
+      output[:not_in_db] << chapter['chapterdesignation'] unless all_chapters.any? do |db|
+                                                                   db['name'] == chapter['chapterdesignation']
+                                                                 end
     end
 
-    puts ''
-    puts 'Previously inactive chapters now active:'
-    puts '========================================'
     inactive_chapters.each do |chapter|
       next unless json_list.any? { |js| js['chapterdesignation'] == chapter['name'] }
 
-      puts chapter['name']
+      output[:inactive_now_active] << chapter['name']
       chapter.status = true
       chapter.save!
     end
 
-    puts ''
-    puts 'Chapters no longer appearing on the active list:'
-    puts '================================================'
     active_chapters.each do |chapter|
       next if json_list.any? { |js| js['chapterdesignation'] == chapter['name'] }
 
-      puts chapter['name']
+      output[:no_longer_active] << chapter['name']
       chapter.status = false
       chapter.save!
     end
 
-    puts ''
+    unless output[:not_in_db].length.zero?
+      puts ''
+      puts 'Chapters not appearing in the database:'
+      puts '======================================='
+      puts output[:not_in_db].join("\n")
+      puts ''
+      exit_code = 1
+    end
+
+    unless output[:inactive_now_active].length.zero?
+      puts ''
+      puts 'Previously inactive chapters now active:'
+      puts '========================================'
+      puts output[:inactive_now_active].join("\n")
+      puts ''
+      exit_code = 1
+    end
+
+    unless output[:no_longer_active].length.zero?
+      puts ''
+      puts 'Chapters no longer appearing on the active list:'
+      puts '================================================'
+      puts output[:no_longer_active].join("\n")
+      puts ''
+      exit_code = 1
+    end
+
+    exit(exit_code)
   end
 
   desc 'Update SLC status'
@@ -103,11 +133,13 @@ namespace :chapter do
     all_chapters = Chapter.all
 
     all_chapters.each do |chapter|
-      if slc_chapters.any? { |h| h['chapterdesignation'] == chapter['name'] && h['slcstatus'].match(/SLC/i) }
-        chapter.slc = 1
-      else
-        chapter.slc = 0
-      end
+      chapter.slc = if slc_chapters.any? do |h|
+                         h['chapterdesignation'] == chapter['name'] && h['slcstatus'].match(/SLC/i)
+                       end
+                      1
+                    else
+                      0
+                    end
       chapter.save!
     end
   end
@@ -120,6 +152,7 @@ namespace :chapter do
 
     # Null out all values
     Chapter.all.update_all(region_id: nil)
+    Region.all.update_all(status: false)
 
     regions.each do |record|
       region = Region.find_by(name: record['region'])
@@ -128,14 +161,27 @@ namespace :chapter do
         region.name = record['region']
         region.short_name = record['lookup']
         region.position = record['lookup'] if record['lookup'].match?(/^\d+$/)
-        region.save!
       end
+      region.staff_name = record['name']
+      region.staff_url = record['linktobio']
+      region.status = true
+      region.save!
 
       chapters = record['chaptersinregion'].split(', ')
+
+      # If region has no chapters, hide it
+      if chapters.empty? || chapters == ['#N/A']
+        puts "[WARNING] Region #{region.short_name} has no chapters."
+        region.status = false
+        region.save!
+        next
+      end
+
+      # Update chapter records with region
       chapters.each do |chapter_record|
         chapter = Chapter.find_by(name: chapter_record)
         if chapter.nil?
-          puts "[WARNING] Chapter #{chapter} not found!"
+          puts "[WARNING] Chapter #{chapter_record} not found!"
           next
         end
         chapter.region = region
@@ -169,8 +215,9 @@ namespace :chapter do
         district.name = record['district']
         district.short_name = record['district'].gsub('District ', '')
         district.position = record['district'].gsub('District ', '') if record['district'].match?(/^District \d+$/)
-        district.save!
       end
+      district.staff_name = record['name']
+      district.save!
 
       chapters = record['activechapters'].split(', ')
       chapters.each do |chapter_record|
@@ -208,10 +255,14 @@ namespace :chapter do
         chapter.name = chapter_record['chapterdesignation']
         chapter.status = true
       end
+      chapter.manpower = chapter_record['currentchaptersize'] ? chapter_record['currentchaptersize'].to_i : 0
       chapter.location = "#{chapter_record['city']}, #{chapter_record['state']}"
       chapter.institution_name = chapter_record['dyadinstitutionalid']
+      chapter.website = chapter_record['website']
       chapter.save!
     end
-  end
 
+    # Unsets manpower for orphaned chapters
+    Chapter.where('status = ?', 0).update_all(manpower: 0)
+  end
 end

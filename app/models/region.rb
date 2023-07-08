@@ -1,6 +1,8 @@
-class Region < ApplicationRecord
-    has_many :chapters
-    validates_presence_of :name, :short_name
+# frozen_string_literal: true
 
-    include GenerateCsv
+class Region < ApplicationRecord
+  has_many :chapters
+  validates_presence_of :name, :short_name
+
+  include GenerateCsv
 end
