@@ -2,6 +2,10 @@
 
 require 'csv'
 require 'net/http'
+require 'logger'
+
+logger = Logger.new($stdout)
+logger.level = ENV['DEBUG'] ? Logger::DEBUG : Logger::INFO
 
 namespace :chapter do
   desc 'Update chapters without latitude/longitude from Wikipedia'
@@ -11,11 +15,13 @@ namespace :chapter do
       geocoded_by = 'institution'
       begin
         url = URI.parse("https://en.wikipedia.org/w/api.php?action=query&titles=#{CGI.escape(chapter.institution_name)}&prop=coordinates&redirects&format=json")
+        logger.debug url
         response = Net::HTTP.get_response(url)
+        logger.debug response.body
         json = JSON.parse(response.body)
       rescue StandardError => e
-        puts "Failed retrieving data for #{chapter.name} (#{chapter.institution_name})"
-        puts e.message
+        logger.warn "Failed retrieving data for #{chapter.name} (#{chapter.institution_name})"
+        logger.warn e.message
         next
       end
       k, wiki = json['query']['pages'].first
@@ -24,26 +30,28 @@ namespace :chapter do
         geocoded_by = 'location'
         begin
           url = URI.parse("https://en.wikipedia.org/w/api.php?action=query&titles=#{chapter.location}&prop=coordinates&redirects&format=json")
+          logger.debug(url)
           response = Net::HTTP.get_response(url)
+          logger.debug(response.body)
           json = JSON.parse(response.body)
         rescue StandardError => e
-          puts "Failed retrieving data for #{chapter.name} (#{chapter.institution_name})"
-          puts e.message
+          logger.warn "Failed retrieving data for #{chapter.name} (#{chapter.institution_name})"
+          logger.warn e.message
           next
         end
         unless json['query']
-          puts "Unable to find coordinates for #{chapter.name} (#{chapter.institution_name})"
+          logger.warn "Unable to find coordinates for #{chapter.name} (#{chapter.institution_name})"
           next
         end
         k, wiki = json['query']['pages'].first
         if k == '-1' || wiki['coordinates'].nil?
-          puts "Unable to find coordinates for #{chapter.name} (#{chapter.institution_name})"
+          logger.warn "Unable to find coordinates for #{chapter.name} (#{chapter.institution_name})"
           next
         end
       end
       chapter.latitude = wiki['coordinates'].first['lat']
       chapter.longitude = wiki['coordinates'].first['lon']
-      puts "Updating #{chapter.name} (#{chapter.institution_name}) with #{chapter.latitude}, #{chapter.longitude} - #{geocoded_by}"
+      logger.info("Updating #{chapter.name} (#{chapter.institution_name}) with #{chapter.latitude}, #{chapter.longitude} - #{geocoded_by}")
       chapter.save!
     end
   end
@@ -51,15 +59,17 @@ namespace :chapter do
   desc 'Check active chapters'
   task check_active: :environment do
     url = URI.parse('https://sigep.org/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=18473&target_action=get-all-data&default_sorting=old_first')
+    logger.debug url
     response = Net::HTTP.get_response(url)
+    logger.debug response.body
     json_list = JSON.parse(response.body)
     # Removes the "N/A" records
     json_list = json_list.delete_if { |c| c['chapterdesignation'].empty? }
 
     # Guard against data issues
-    if json_list.length.zero?
-      puts '[Error] Chapter list is empty.'
-      puts "```\n#{response.body}\n```"
+    if json_list.empty?
+      logger.error '[Error] Chapter list is empty.'
+      logger.error "```\n#{response.body}\n```"
       exit(1)
     end
 
@@ -92,30 +102,30 @@ namespace :chapter do
       chapter.save!
     end
 
-    unless output[:not_in_db].length.zero?
-      puts ''
-      puts 'Chapters not appearing in the database:'
-      puts '======================================='
-      puts output[:not_in_db].join("\n")
-      puts ''
+    unless output[:not_in_db].empty?
+      logger.error ''
+      logger.error 'Chapters not appearing in the database:'
+      logger.error '======================================='
+      logger.error output[:not_in_db].join("\n")
+      logger.error ''
       exit_code = 1
     end
 
-    unless output[:inactive_now_active].length.zero?
-      puts ''
-      puts 'Previously inactive chapters now active:'
-      puts '========================================'
-      puts output[:inactive_now_active].join("\n")
-      puts ''
+    unless output[:inactive_now_active].empty?
+      logger.error ''
+      logger.error 'Previously inactive chapters now active:'
+      logger.error '========================================'
+      logger.error output[:inactive_now_active].join("\n")
+      logger.error ''
       exit_code = 1
     end
 
-    unless output[:no_longer_active].length.zero?
-      puts ''
-      puts 'Chapters no longer appearing on the active list:'
-      puts '================================================'
-      puts output[:no_longer_active].join("\n")
-      puts ''
+    unless output[:no_longer_active].empty?
+      logger.error ''
+      logger.error 'Chapters no longer appearing on the active list:'
+      logger.error '================================================'
+      logger.error output[:no_longer_active].join("\n")
+      logger.error ''
       exit_code = 1
     end
 
@@ -125,7 +135,9 @@ namespace :chapter do
   desc 'Update SLC status'
   task update_slc: :environment do
     url = URI.parse('https://sigep.org/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=18473&target_action=get-all-data&default_sorting=old_first')
+    logger.debug url
     response = Net::HTTP.get_response(url)
+    logger.debug response.body
     slc_chapters = JSON.parse(response.body)
     # Removes the "N/A" records
     slc_chapters = slc_chapters.delete_if { |c| c['chapterdesignation'].empty? }
@@ -147,7 +159,9 @@ namespace :chapter do
   desc 'Update Region Alignment'
   task update_regions: :environment do
     url = URI.parse('https://sigep.org/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=20940&target_action=get-all-data&default_sorting=old_first')
+    logger.debug url
     response = Net::HTTP.get_response(url)
+    logger.debug response.body
     regions = JSON.parse(response.body)
 
     # Null out all values
@@ -171,7 +185,7 @@ namespace :chapter do
 
       # If region has no chapters, hide it
       if chapters.empty? || chapters == ['#N/A']
-        puts "[WARNING] Region #{region.short_name} has no chapters."
+        logger.warn "[WARNING] Region #{region.short_name} has no chapters."
         region.status = false
         region.save!
         next
@@ -181,7 +195,7 @@ namespace :chapter do
       chapters.each do |chapter_record|
         chapter = Chapter.find_by(name: chapter_record)
         if chapter.nil?
-          puts "[WARNING] Chapter #{chapter_record} not found!"
+          logger.warn "[WARNING] Chapter #{chapter_record} not found!"
           next
         end
         chapter.region = region
@@ -191,9 +205,9 @@ namespace :chapter do
 
     orphaned_chapters = Chapter.where(region: nil, status: 1)
     unless orphaned_chapters.empty?
-      puts '[WARNING] The following chapters do not have a region assigned:'
+      logger.warn '[WARNING] The following chapters do not have a region assigned:'
       orphaned_chapters.each do |chapter|
-        puts "- #{chapter['name']} - #{chapter['institution_name']}"
+        logger.warn "- #{chapter['name']} - #{chapter['institution_name']}"
       end
     end
   end
@@ -201,7 +215,10 @@ namespace :chapter do
   desc 'Update District Alignment'
   task update_districts: :environment do
     url = URI.parse('https://sigep.org/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=19285&target_action=get-all-data&default_sorting=old_first')
+    logger.debug url
     response = Net::HTTP.get_response(url)
+    logger.debug response.code
+    logger.debug response.body
     districts = JSON.parse(response.body)
 
     # Null out all values
@@ -223,7 +240,7 @@ namespace :chapter do
       chapters.each do |chapter_record|
         chapter = Chapter.find_by(name: chapter_record)
         if chapter.nil?
-          puts "[WARNING] Chapter #{chapter} not found!"
+          logger.warn "[WARNING] Chapter #{chapter} not found!"
           next
         end
         chapter.district = district
@@ -233,9 +250,9 @@ namespace :chapter do
 
     orphaned_chapters = Chapter.where(district: nil, status: 1)
     unless orphaned_chapters.empty?
-      puts '[WARNING] The following chapters do not have a district assigned:'
+      logger.warn '[WARNING] The following chapters do not have a district assigned:'
       orphaned_chapters.each do |chapter|
-        puts "- #{chapter['name']} - #{chapter['institution_name']}"
+        logger.warn "- #{chapter['name']} - #{chapter['institution_name']}"
       end
     end
   end
@@ -243,7 +260,10 @@ namespace :chapter do
   desc 'Update chapter information'
   task update_info: :environment do
     url = URI.parse('https://sigep.org/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=18473&target_action=get-all-data&default_sorting=old_first')
+    logger.debug url
     response = Net::HTTP.get_response(url)
+    logger.debug response.code
+    logger.debug response.body
     json_list = JSON.parse(response.body)
     # Removes the "N/A" records
     json_list = json_list.delete_if { |c| c['chapterdesignation'].empty? }
