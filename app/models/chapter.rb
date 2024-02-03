@@ -5,6 +5,9 @@ class Chapter < ApplicationRecord
   belongs_to :district, optional: true
   validates_presence_of :name
 
+  scope :active, -> { where(status: 1) }
+  scope :inactive, -> { where(status: 0) }
+
   include GenerateCsv
 
   def institution_name=(val)

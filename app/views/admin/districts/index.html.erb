@@ -16,7 +16,8 @@
       <th>District</th>
       <th>Short Name</th>
       <th>District Governor</th>
-      <th>Chapter Count</th>
+      <th>Active Chapters</th>
+      <th>Dormant Chapters</th>
       <th>Total Manpower</th>
     </thead>
     <tbody>
@@ -25,7 +26,8 @@
         <td data-order="<%= district.position %>"><%= link_to district.name, admin_district_path(district) %></td>
         <td><%= district.short_name %></td>
         <td><%= district.staff_name %></td>
-        <td class="text-end"><%= district.chapters.length %></td>
+        <td class="text-end"><%= district.chapters.active.length %></td>
+        <td class="text-end"><%= district.chapters.inactive.length %></td>
         <td class="text-end"><%= district.chapters.sum(:manpower) %></td>
       </tr>
       <% end %>
