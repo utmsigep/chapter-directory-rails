@@ -1,7 +1,7 @@
 import { Controller } from '@hotwired/stimulus';
-import 'chartkick/chart.js';
 import Chartkick from 'chartkick';
 
+require('chartkick/chart.js');
 require('datatables.net');
 require('datatables.net-bs5');
 
