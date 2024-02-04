@@ -17,6 +17,10 @@ module Admin
     # GET /chapters/1 or /chapters/1.json
     def show
       render json: [@chapter] if params[:wrap] == 'true'
+      @manpower_survey = {}
+      @chapter.manpower_surveys.each do |s|
+        @manpower_survey[s.survey_date.strftime('%Y-%m-%d')] = s.manpower
+      end
     end
 
     # GET /chapters/new

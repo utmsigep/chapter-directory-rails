@@ -3,6 +3,7 @@
 class Chapter < ApplicationRecord
   belongs_to :region, optional: true
   belongs_to :district, optional: true
+  has_many :manpower_surveys
   validates_presence_of :name
 
   scope :active, -> { where(status: 1) }

@@ -280,6 +280,14 @@ namespace :chapter do
       chapter.institution_name = chapter_record['dyadinstitutionalid']
       chapter.website = chapter_record['website']
       chapter.save!
+
+      # Daily survey of manpower
+      manpower_survey = ManpowerSurvey.find_or_initialize_by(chapter: chapter, survey_date: Date.today)
+      manpower_survey.chapter = chapter
+      manpower_survey.survey_date = Date.today
+      manpower_survey.manpower = chapter.manpower
+      manpower_survey.save!
+
     end
 
     # Unsets manpower for orphaned chapters
