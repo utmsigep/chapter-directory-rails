@@ -13,7 +13,16 @@ module Admin
     end
 
     # GET /regions/1 or /regions/1.json
-    def show; end
+    def show
+      @manpower_survey = []
+      @region.chapters.each do |c|
+        record = { name: c.name, data: {} }
+        c.manpower_surveys.each do |s|
+          record[:data][s.survey_date] = s.manpower
+        end
+        @manpower_survey << record
+      end
+    end
 
     # GET /regions/new
     def new

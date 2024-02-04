@@ -36,11 +36,12 @@
 </div>
 
 <hr />
+
+<% unless current_page?(admin_chapters_url) %>
 <div id="manpower_chart">
   <%= line_chart @manpower_survey, title: 'Daily Reported Manpower' %>
 </div>
 
-<% unless current_page?(admin_chapters_url) %>
 <hr />
 <div id="map" class="map-box-form" data-controller="map" data-map-url-value="<%= admin_chapter_path(chapter, format: :json) %>"></div>
 <% end %>

@@ -21,6 +21,11 @@
 
 <% unless current_page?(admin_regions_url) %>
 <hr />
+<div id="manpower_chart">
+  <%= line_chart @manpower_survey, title: 'Daily Reported Manpower' %>
+</div>
+
+<hr />
 <div data-controller="map" data-map-url-value="<%= map_data_path(format: :json, region_id: region.id) %>">
     <div class="row">
         <div class="col-lg-9">
