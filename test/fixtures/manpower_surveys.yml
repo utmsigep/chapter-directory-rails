@@ -4,8 +4,12 @@
 # model remove the "{}" from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-one: {}
-# column: value
-#
-two: {}
-# column: value
+manpower_survey_1:
+  chapter: tnkappa
+  survey_date: '2026-01-01'
+  manpower: 100
+
+manpower_survey_2:
+  chapter: tnkappa
+  survey_date: '2026-01-02'
+  manpower: 102
