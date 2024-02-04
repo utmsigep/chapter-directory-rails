@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_04_004844) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_04_202748) do
   create_table "chapters", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name"
     t.string "institution_name"
@@ -38,7 +38,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_04_004844) do
     t.string "staff_name"
   end
 
-  create_table "manpower_surveys", primary_key: ["chapter_id", "survey_date"], charset: "utf8mb3", collation: "utf8mb3_general_ci", force: :cascade do |t|
+  create_table "manpower_surveys", primary_key: ["chapter_id", "survey_date"], charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.integer "chapter_id", null: false
     t.date "survey_date", null: false
     t.integer "manpower"
