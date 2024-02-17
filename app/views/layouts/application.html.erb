@@ -21,7 +21,7 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <script src="https://kit.fontawesome.com/09b66f5b11.js" crossorigin="anonymous"></script>
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "application" %>
     <script>
       var ImagePaths = {
         chapterIcon: "<%= asset_path('chapter.svg') %>",
@@ -44,7 +44,7 @@
       })();
     </script>
     <% end %>
-    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    <%= javascript_include_tag "application", defer: true %>
   </head>
 
   <body>
