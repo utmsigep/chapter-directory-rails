@@ -72,5 +72,11 @@ group :test do
   gem "webdrivers"
 end
 
+# Load environment variables .env
 gem 'dotenv-rails', groups: [:development, :test]
+
+# Use devise for logins
 gem "devise", "~> 4.8"
+
+# Use rack
+gem 'rack', '~> 2.2'
