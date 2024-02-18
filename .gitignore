@@ -48,3 +48,12 @@ package-lock.json
 # Environment Loading
 /.env.local
 /.env.*.local
+
+# Yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
