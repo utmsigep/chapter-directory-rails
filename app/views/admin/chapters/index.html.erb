@@ -11,31 +11,6 @@
   </div>
 </div>
 
-<% if @missing_region.length > 0 %>
-<div class="card border-danger mb-3">
-  <div class="card-header text-white bg-danger">Missing Region</div>
-  <div class="card-body">
-    <table class="table table-sm">
-      <thead>
-        <tr>
-          <th>Chapter</th>
-          <th>Institution</th>
-          <th>Location</th>
-          <th>Manpower</th>
-          <th>Region</th>
-          <th>District</th>
-        </tr>
-      </thead>
-      <tbody>
-      <% @missing_region.each do |chapter| %>
-        <%= render 'chapter_row', chapter: chapter %>
-      <% end %>
-      <tbody>
-    </table>
-  </div>
-</div>
-<% end %>
-
 <div id="chapters" data-controller="admin">
   <table class="table table-admin">
     <thead>
@@ -44,7 +19,6 @@
         <th>Institution</th>
         <th>Location</th>
         <th>Manpower</th>
-        <th>Region</th>
         <th>District</th>
       </tr>
     </thead>

@@ -71,7 +71,6 @@ export default class extends Controller {
             [chapter.latitude, chapter.longitude],
             { icon, draggable: this.draggableValue },
           );
-          chapter.region_name = chapter.region && chapter.region.name ? chapter.region.name : '(Region Unavailable)';
           chapter.district_name = chapter.district && chapter.district.name ? chapter.district.name : '(District Unavailable)';
           chapter.slc = chapter.slc ? `<div><img src="${SLCChapterIconSVG}" style="height:1em; padding-right:0.5em"/><strong>SigEp Learning Community</strong></div>` : '';
           chapter.website = chapter.website ? L.Util.template('<div><a href="{website}" target="_blank">{website}</a></div>', chapter) : '';
@@ -80,7 +79,7 @@ export default class extends Controller {
           if (!L.Browser.mobile) {
             marker.bindTooltip(L.Util.template('<div><strong>{name}</strong></div>{slc}<div>{institution_name}</div>', chapter));
           }
-          marker.bindPopup(L.Util.template('<div class="h5">{name}</div>{slc}<div>{institution_name}</div><div>{location}</div><br /><div>Manpower: {manpower}</div><hr />{website}<div>{region_name} &#8226 {district_name}</div>', chapter));
+          marker.bindPopup(L.Util.template('<div class="h5">{name}</div>{slc}<div>{institution_name}</div><div>{location}</div><br /><div>Manpower: {manpower}</div><hr />{website}<div>{district_name}</div>', chapter));
           marker.addTo(this.chaptersLayer);
           marker.on('dragend', (event) => {
             const draggedMarker = event.target;
@@ -133,7 +132,6 @@ export default class extends Controller {
           if (
             !chapter.latitude
             || !chapter.longitude
-            || !chapter.region
             || !chapter.district
           ) {
             return;
@@ -175,22 +173,14 @@ export default class extends Controller {
   }
 
   filterDistrict(event) {
-    document.getElementById('region').value = '';
     document.getElementById('search').value = '';
     this.urlValue = `/map/data.json?district_id=${event.target.value}`;
-  }
-
-  filterRegion(event) {
-    document.getElementById('district').value = '';
-    document.getElementById('search').value = '';
-    this.urlValue = `/map/data.json?region_id=${event.target.value}`;
   }
 
   filterSearch(event) {
     const that = this;
 
     function doneTyping() {
-      document.getElementById('region').value = '';
       document.getElementById('district').value = '';
       that.urlValue = `/map/data.json?q=${event.target.value}`;
     }
@@ -206,7 +196,6 @@ export default class extends Controller {
   }
 
   resetForm() {
-    document.getElementById('region').value = '';
     document.getElementById('district').value = '';
     document.getElementById('search').value = '';
     this.urlValue = `/map/data.json?nonce=${Math.random()}`;

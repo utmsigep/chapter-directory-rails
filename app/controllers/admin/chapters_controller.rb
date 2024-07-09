@@ -7,7 +7,6 @@ module Admin
     # GET /chapters or /chapters.json
     def index
       @chapters = Chapter.order(:name)
-      @missing_region = Chapter.where(region: nil, status: true)
       @missing_district = Chapter.where(district: nil, status: true)
       return unless params[:format] == 'csv'
 
@@ -77,16 +76,8 @@ module Admin
 
       csv = CSV.parse(uploaded_file.read, headers: true)
 
-      # Create Regions and Districts if Missing
+      # Create Districts if Missing
       csv.each do |row|
-        if row['region']
-          region = Region.find_or_create_by(short_name: row['region'])
-          region.name = "Region #{row['region']}" if region.name.nil?
-          region.short_name = (row['region']).to_s if region.short_name.nil?
-          region.position = row['region'].to_i if region.position.zero?
-          region.save!
-        end
-
         next unless row['district']
 
         district = District.find_or_create_by(short_name: row['district'])
@@ -109,8 +100,6 @@ module Admin
         chapter.status = row['status'] unless row['status'].nil?
         chapter.district = District.find_by(short_name: row['district']) unless row['district'].nil?
         chapter.district = District.find(row['district_id']) unless row['district_id'].nil?
-        chapter.region = Region.find_by(short_name: row['region']) unless row['region'].nil?
-        chapter.region = Region.find(row['region_id']) unless row['region_id'].nil?
         chapter.save!
       end
 
@@ -133,7 +122,7 @@ module Admin
 
     # Only allow a list of trusted parameters through.
     def chapter_params
-      params.fetch(:chapter, {}).permit(:name, :institution_name, :location, :website, :slc, :status, :region_id,
+      params.fetch(:chapter, {}).permit(:name, :institution_name, :location, :website, :slc, :status,
                                         :district_id, :longitude, :latitude)
     end
   end

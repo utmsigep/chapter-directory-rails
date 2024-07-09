@@ -5,7 +5,6 @@ class ChaptersControllerTest < ActionDispatch::IntegrationTest
 
   setup do
     @chapter = chapters(:tnkappa)
-    @region = regions(:region_4)
     @district = districts(:district_17)
     sign_in users(:admin)
   end
@@ -22,7 +21,7 @@ class ChaptersControllerTest < ActionDispatch::IntegrationTest
 
   test "should create chapter" do
     assert_difference("Chapter.count") do
-      post admin_chapters_url, params: { chapter: { name: 'Test Long Name', district_id: @district.id, region_id: @region.id } }
+      post admin_chapters_url, params: { chapter: { name: 'Test Long Name', district_id: @district.id } }
     end
 
     assert_redirected_to admin_chapter_url(Chapter.last)
@@ -39,7 +38,7 @@ class ChaptersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should update chapter" do
-    patch admin_chapter_url(@chapter), params: { chapter: { name: 'Test Long Name', district_id: @district.id, region_id: @region.id } }
+    patch admin_chapter_url(@chapter), params: { chapter: { name: 'Test Long Name', district_id: @district.id } }
     assert_redirected_to admin_chapter_url(@chapter)
   end
 

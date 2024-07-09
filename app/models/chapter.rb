@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 class Chapter < ApplicationRecord
-  belongs_to :region, optional: true
   belongs_to :district, optional: true
   has_many :manpower_surveys
   validates_presence_of :name

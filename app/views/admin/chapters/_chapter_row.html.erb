@@ -8,11 +8,6 @@
     <%= chapter.location %>
   </td>
   <td><%= chapter.manpower %></td>
-  <% if chapter.region %>
-  <td data-order="<%= chapter.region.position %>"><%= link_to chapter.region.name, admin_region_path(chapter.region) %></td>
-  <% else %>
-  <td class="text-muted">Region Unavailable</td>
-  <% end %>
   <% if chapter.district %>
   <td data-order="<%= chapter.district.position %>"><%= link_to chapter.district.name, admin_district_path(chapter.district) %></td>
   <% else %>

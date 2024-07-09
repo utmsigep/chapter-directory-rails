@@ -1,9 +1,6 @@
 <div data-controller="map" data-map-url-value="<%= map_data_path(format: :json) %>">
     <div class="d-flex flex-row mb-2">
         <div class="p-1">
-            <%= select_tag :region, options_from_collection_for_select(@regions, :id, :name), include_blank: 'Regions', class: 'form-select', autocomplete: 'off', data: { action: "change->map#filterRegion" } %>
-        </div>
-        <div class="p-1">
             <%= select_tag :district, options_from_collection_for_select(@districts, :id, :name), include_blank: 'Districts', class: 'form-select', autocomplete: 'off', data: { action: "change->map#filterDistrict" } %>
         </div>
         <div class="p-1">

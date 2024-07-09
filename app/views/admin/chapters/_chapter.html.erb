@@ -15,12 +15,6 @@
             <dd class="col-8"><%= chapter.location %></dd>
             <dt class="col-4">Website</dt>
             <dd class="col-8"><%= link_to chapter.website, chapter.website unless chapter.website.nil? %></dd>
-            <dt class="col-4">Region</dt>
-            <% if chapter.region %>
-            <dd class="col-8"><%= link_to(chapter.region.name, admin_region_path(chapter.region)) %></dd>
-            <% else %>
-            <dd class="col-8 text-muted">Not Available</dd>
-            <% end %>
             <dt class="col-4">District</dt>
             <% if chapter.district %>
             <dd class="col-8"><%= link_to(chapter.district.name, admin_district_path(chapter.district)) %></dd>

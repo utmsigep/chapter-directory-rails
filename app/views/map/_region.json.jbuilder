@@ -1,1 +1,1 @@
-json.extract! region, :name, :short_name
+json.extract! :name, :short_name
