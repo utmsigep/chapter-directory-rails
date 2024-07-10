@@ -15,7 +15,7 @@ module Admin
     # GET /districts/1 or /districts/1.json
     def show
       @manpower_survey = []
-      @district.chapters.each do |c|
+      @district.chapters.active.each do |c|
         record = { name: c.name, data: {} }
         c.manpower_surveys.each do |s|
           record[:data][s.survey_date] = s.manpower
