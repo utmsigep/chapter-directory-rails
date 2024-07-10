@@ -1,7 +1,0 @@
----
-<% 1.upto(10) do |i| %>
-region_<%= i %>:
-  name: Region <%= i %>
-  short_name: R<%= i %>
-  position: <%= i %>
-<% end %>

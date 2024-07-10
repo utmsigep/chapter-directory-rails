@@ -156,62 +156,6 @@ namespace :chapter do
     end
   end
 
-  desc 'Update Region Alignment'
-  task update_regions: :environment do
-    url = URI.parse('https://sigep.org/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=20940&target_action=get-all-data&default_sorting=old_first')
-    logger.debug url
-    response = Net::HTTP.get_response(url)
-    logger.debug response.body
-    regions = JSON.parse(response.body)
-
-    # Null out all values
-    Chapter.all.update_all(region_id: nil)
-    Region.all.update_all(status: false)
-
-    regions.each do |record|
-      region = Region.find_by(name: record['region'])
-      if region.nil?
-        region = Region.new
-        region.name = record['region']
-        region.short_name = record['lookup']
-        region.position = record['lookup'] if record['lookup'].match?(/^\d+$/)
-      end
-      region.staff_name = record['name']
-      region.staff_url = record['linktobio']
-      region.status = true
-      region.save!
-
-      chapters = record['chaptersinregion'].split(', ')
-
-      # If region has no chapters, hide it
-      if chapters.empty? || chapters == ['#N/A']
-        logger.warn "[WARNING] Region #{region.short_name} has no chapters."
-        region.status = false
-        region.save!
-        next
-      end
-
-      # Update chapter records with region
-      chapters.each do |chapter_record|
-        chapter = Chapter.find_by(name: chapter_record)
-        if chapter.nil?
-          logger.warn "[WARNING] Chapter #{chapter_record} not found!"
-          next
-        end
-        chapter.region = region
-        chapter.save!
-      end
-    end
-
-    orphaned_chapters = Chapter.where(region: nil, status: 1)
-    unless orphaned_chapters.empty?
-      logger.warn '[WARNING] The following chapters do not have a region assigned:'
-      orphaned_chapters.each do |chapter|
-        logger.warn "- #{chapter['name']} - #{chapter['institution_name']}"
-      end
-    end
-  end
-
   desc 'Update District Alignment'
   task update_districts: :environment do
     url = URI.parse('https://sigep.org/wp-admin/admin-ajax.php?action=wp_ajax_ninja_tables_public_action&table_id=19285&target_action=get-all-data&default_sorting=old_first')

@@ -13,10 +13,8 @@ Rails.application.routes.draw do
       post 'chapters/import', to: 'chapters#do_import'
 
       # Filtered Map Data Feeds
-      get 'regions/:id/chapters', to: 'regions#chapters', as: 'region_chapters'
       get 'districts/:id/chapters', to: 'districts#chapters', as: 'district_chapters'
 
-      resources :regions
       resources :districts
       resources :chapters
     end

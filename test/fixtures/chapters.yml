@@ -7,7 +7,6 @@ tnkappa:
   slc: false
   longitude: -88.86424541473389
   latitude: 36.34157434451597
-  region: region_4
   district: district_17
 
 kyepsilon:
@@ -17,7 +16,6 @@ kyepsilon:
   slc: true
   longitude: -88.32213878631592
   latitude: 36.61311635595831
-  region: region_4
   district: district_17
 
 inepsilon:
@@ -27,7 +25,6 @@ inepsilon:
   slc: false
   longitude: -87.53168106079102
   latitude: 37.97187624347616
-  region: region_4
   district: district_17
 
 kygamma:
@@ -37,7 +34,6 @@ kygamma:
   slc: false
   longitude: -87.12025165557861
   latitude: 37.74367299436812
-  region: region_4
   district: district_17
 
 tneta:
@@ -47,7 +43,6 @@ tneta:
   slc: false
   longitude: -87.35444068908691
   latitude: 36.53467438716704
-  region: region_4
   district: district_17
 
 kydelta:
@@ -57,5 +52,4 @@ kydelta:
   slc: false
   longitude: -86.45519256591797
   latitude: 36.98538017716605
-  region: region_4
   district: district_17

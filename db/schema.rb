@@ -10,13 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_04_202748) do
+ActiveRecord::Schema[7.1].define(version: 2024_07_09_041138) do
   create_table "chapters", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name"
     t.string "institution_name"
     t.decimal "latitude", precision: 10, scale: 6
     t.decimal "longitude", precision: 10, scale: 6
-    t.integer "region_id"
     t.integer "district_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -26,7 +25,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_04_202748) do
     t.boolean "status", default: false
     t.integer "manpower", default: 0
     t.index ["district_id"], name: "index_chapters_on_district_id"
-    t.index ["region_id"], name: "index_chapters_on_region_id"
   end
 
   create_table "districts", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -42,17 +40,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_04_202748) do
     t.integer "chapter_id", null: false
     t.date "survey_date", null: false
     t.integer "manpower"
-  end
-
-  create_table "regions", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.string "name"
-    t.string "short_name"
-    t.integer "position", default: 0
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "staff_name"
-    t.string "staff_url"
-    t.boolean "status", default: true
   end
 
   create_table "users", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
