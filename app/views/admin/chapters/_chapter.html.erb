@@ -33,7 +33,7 @@
 
 <% unless current_page?(admin_chapters_url) %>
 <div id="manpower_chart">
-  <%= line_chart @manpower_survey, title: 'Daily Reported Manpower' %>
+  <%= line_chart @manpower_survey, title: 'Daily Reported Manpower', points: false %>
 </div>
 
 <hr />

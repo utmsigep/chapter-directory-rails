@@ -1,0 +1,38 @@
+<%= render 'admin/admin_menu' %>
+
+<div id="manpower_chart">
+  <%= line_chart @manpower_survey, title: 'Daily Reported Manpower', thousands: ',' %>
+</div>
+
+<div class="row mt-5">
+  <div class="col-md-4 text-center">
+    <div class="display-1">
+      <%= @active_chapters %>
+    </div>
+    Active Chapters
+
+    <br>
+
+    <div class="display-1">
+      <%= number_with_delimiter(@current_manpower) %>
+    </div>
+    Current Manpower
+
+  </div>
+  <div class="col-md-4">
+    <h2>Largest Chapters</h2>
+    <ol>
+    <% @largest_chapters.each do |chapter| %>
+      <li><%= link_to chapter.name, admin_chapter_path(chapter) %> - <%= chapter.manpower %>
+    <% end %>
+    </ol>
+  </div>
+  <div class="col-md-4">
+    <h2>Smallest Chapters</h2>
+    <ol>
+    <% @smallest_chapters.each do |chapter| %>
+      <li><%= link_to chapter.name, admin_chapter_path(chapter) %> - <%= chapter.manpower %>
+    <% end %>
+    </ol>
+  </div>
+</div>
