@@ -1,0 +1,39 @@
+<%= render 'admin/admin_menu' %>
+
+<div class="row my-3">
+  <div class="col-md-6">
+    <div id="manpower_chart" class="my-3">
+      <%= line_chart @manpower_survey, title: 'Daily Reported Manpower', thousands: ',' %>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div id="manpower_distribution" class="my-3">
+      <%= column_chart @manpower_distribution, title: 'Manpower Distribution', library: { scales: { x: { display: false } } } %>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-5">
+  <div class="col-md-4 my-3 text-center">
+
+    <div class="mb-4">
+      <div class="display-1">
+        <%= @active_chapters %>
+      </div>
+      Active Chapters
+    </div>
+
+    <div class="mb-4">
+      <div class="display-1">
+        <%= number_with_delimiter(@current_manpower) %>
+      </div>
+      Current Manpower
+    </div>
+  </div>
+    <div class="col-md-4 my-3">
+      <%= render partial: 'admin/dashboard/ranking_table', locals: { title: 'Largest Chapters', chapters: @largest_chapters } %>
+    </div>
+    <div class="col-md-4 my-3">
+      <%= render partial: 'admin/dashboard/ranking_table', locals: { title: 'Smallest Chapters', chapters: @smallest_chapters } %>
+    </div>
+</div>

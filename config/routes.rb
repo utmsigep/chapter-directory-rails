@@ -6,7 +6,7 @@ Rails.application.routes.draw do
 
   authenticate :user do
     namespace :admin do
-      get '/', to: redirect('/admin/chapters')
+      get '/', to: 'dashboard#index'
 
       # Import Chapters
       get 'chapters/import', to: 'chapters#import'

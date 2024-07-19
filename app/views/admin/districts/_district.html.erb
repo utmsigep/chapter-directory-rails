@@ -18,7 +18,7 @@
 <% unless current_page?(admin_districts_url) %>
 <hr />
 <div id="manpower_chart">
-  <%= line_chart @manpower_survey, title: 'Daily Reported Manpower' %>
+  <%= line_chart @manpower_survey, title: 'Daily Reported Manpower', points: false %>
 </div>
 
 <hr />
