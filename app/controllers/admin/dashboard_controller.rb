@@ -24,26 +24,18 @@ module Admin
 
       @current_manpower = Chapter.where(status: true).sum(:manpower)
 
-      @largest_chapters = Chapter.joins(:manpower_surveys)
-                                 .select('
-                                   chapters.*, MAX(manpower_surveys.survey_date) as latest_survey_date,
-                                   MAX(manpower_surveys.manpower) as latest_manpower
-                                 ')
-                                 .where('chapters.status = 1')
-                                 .group('chapters.id')
-                                 .order('latest_manpower DESC')
+      @largest_chapters = Chapter.where(status: true)
+                                 .order('manpower DESC')
                                  .limit(10)
 
-      @smallest_chapters = Chapter.joins(:manpower_surveys)
-                                  .select('
-                                    chapters.*, MAX(manpower_surveys.survey_date) as latest_survey_date,
-                                    MAX(manpower_surveys.manpower) as latest_manpower
-                                  ')
-                                  .where('chapters.status = 1')
+      @smallest_chapters = Chapter.where(status: true)
                                   .where('chapters.manpower > 0')
-                                  .group('chapters.id')
-                                  .order('latest_manpower ASC')
+                                  .order('manpower ASC')
                                   .limit(10)
+
+      @manpower_distribution = Chapter.where(status: true)
+                                      .order('manpower DESC')
+                                      .pluck(:name, :manpower)
     end
   end
 end

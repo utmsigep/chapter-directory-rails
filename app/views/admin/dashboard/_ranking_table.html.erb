@@ -1,0 +1,37 @@
+<h4 class="mb-2"><%= title %></h4>
+<table class="table table-striped table-sm">
+  <tr>
+    <th>Rank</th>
+    <th>Chapter</th>
+    <th>Manpower</th>
+  </tr>
+  <% rank = 1 %>
+  <% chapters.each_with_index do |chapter, index| %>
+    <%
+      # Check if the next row has the same manpower
+      if index + 1 < chapters.length && chapters[index + 1].manpower === chapter.manpower
+        tie = 'T'
+        if index > 0 && chapters[index - 1].manpower != chapter.manpower
+          rank = index + 1
+        end
+      # Check if the previous row has the same manpower
+      elsif index > 0 && chapters[index - 1].manpower === chapter.manpower
+        tie = 'T'
+      # Default to index + 1
+      else
+        rank = index + 1
+        tie = ''
+      end
+    %>
+    <tr>
+      <td class="text-center">
+        <%= tie %><%= rank %>
+      </td>
+      <td>
+        <%= link_to chapter.name, admin_chapter_path(chapter) %>
+        <div><small><%= chapter.institution_name %></small></div>
+      </td>
+      <td class="text-end"><%= chapter.manpower %></td>
+    </tr>
+  <% end %>
+</table>
