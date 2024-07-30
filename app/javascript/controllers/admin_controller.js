@@ -1,16 +1,20 @@
+/* eslint-disable no-unused-vars */
 import { Controller } from '@hotwired/stimulus';
-
-require('datatables.net');
-require('datatables.net-bs5');
+import $ from 'jquery';
+import DataTable from 'datatables.net-bs5';
 
 export default class extends Controller {
   connect() {
-    this.table = document.getElementsByClassName('table-admin').DataTable();
+    this.initializeDataTable();
   }
 
-  disconnect() {
-    if (this.table) {
-      this.table.destroy();
-    }
+  initializeDataTable() {
+    $(this.element).find('.table-admin').DataTable({
+      pageLength: 50,
+    });
+  }
+
+  destroy() {
+    $(this.element).find('.table-admin').DataTable().destroy();
   }
 }
