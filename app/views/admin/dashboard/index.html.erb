@@ -3,7 +3,24 @@
 <div class="row my-3">
   <div class="col-md-6">
     <div id="manpower_chart" class="my-3">
-      <%= line_chart @manpower_survey, title: 'Daily Reported Manpower', thousands: ',' %>
+      <%= line_chart @manpower_survey, title: 'Daily Reported Manpower', thousands: ',', library: {
+          scales: {
+            y: {
+              type: 'linear',
+              display: true,
+              position: 'left'
+            },
+            y1: {
+              type: 'linear',
+              display: true,
+              position: 'right',
+              yTitle: 'Chapters',
+              suggestedMax: 300,
+              suggestedMin: 0
+            },
+          }
+      }
+      %>
     </div>
   </div>
   <div class="col-md-6">
@@ -29,6 +46,21 @@
       </div>
       Current Manpower
     </div>
+
+    <div class="mb-4">
+      <div class="display-1">
+        <%= @average_chapter_size.round %>
+      </div>
+      Average Chapter Size
+    </div>
+
+    <div class="mb-4">
+      <div class="display-1">
+        <%= @median_chapter_size %>
+      </div>
+      Median Chapter Size
+    </div>
+
   </div>
     <div class="col-md-4 my-3">
       <%= render partial: 'admin/dashboard/ranking_table', locals: { title: 'Largest Chapters', chapters: @largest_chapters } %>
