@@ -19,13 +19,18 @@
               suggestedMin: 0
             },
           }
-      }
-      %>
+      } %>
     </div>
   </div>
   <div class="col-md-6">
     <div id="manpower_distribution" class="my-3">
-      <%= column_chart @manpower_distribution, title: 'Manpower Distribution', library: { scales: { x: { display: false } } } %>
+      <%= column_chart @manpower_distribution, title: 'Manpower Distribution', library: {
+        scales: {
+          x: {
+            display: false
+          }
+        }
+      } %>
     </div>
   </div>
 </div>
