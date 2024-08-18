@@ -30,18 +30,18 @@ module Admin
         end
       end
 
-      @current_manpower = Chapter.where(status: true).sum(:manpower)
+      @current_manpower = Chapter.active.sum(:manpower)
 
-      @largest_chapters = Chapter.where(status: true)
+      @largest_chapters = Chapter.active
                                  .order('manpower DESC')
                                  .limit(10)
 
-      @smallest_chapters = Chapter.where(status: true)
+      @smallest_chapters = Chapter.active
                                   .where('chapters.manpower > 0')
                                   .order('manpower ASC')
                                   .limit(10)
 
-      @manpower_distribution = Chapter.where(status: true)
+      @manpower_distribution = Chapter.active
                                       .order('manpower DESC')
                                       .pluck(:name, :manpower)
 

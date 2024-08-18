@@ -74,8 +74,8 @@ namespace :chapter do
     end
 
     all_chapters = Chapter.all
-    active_chapters = Chapter.where('status = ?', 1)
-    inactive_chapters = Chapter.where('status = ?', 0)
+    active_chapters = Chapter.active
+    inactive_chapters = Chapter.inactive
 
     exit_code = 0
     output = { not_in_db: [], inactive_now_active: [], no_longer_active: [] }
@@ -178,6 +178,7 @@ namespace :chapter do
         district.position = record['district'].gsub('District ', '') if record['district'].match?(/^District \d+$/)
       end
       district.staff_name = record['name']
+      district.staff_name = 'Vacant' if record['name'].match? 'vacant|vacancy'
       district.save!
 
       chapters = record['activechapters'].split(', ')
@@ -192,7 +193,7 @@ namespace :chapter do
       end
     end
 
-    orphaned_chapters = Chapter.where(district: nil, status: 1)
+    orphaned_chapters = Chapter.active.where(district: nil)
     unless orphaned_chapters.empty?
       logger.warn '[WARNING] The following chapters do not have a district assigned:'
       orphaned_chapters.each do |chapter|
@@ -220,7 +221,11 @@ namespace :chapter do
         chapter.status = true
       end
       chapter.manpower = chapter_record['currentchaptersize'] ? chapter_record['currentchaptersize'].to_i : 0
-      chapter.location = "#{chapter_record['city']}, #{chapter_record['state']}"
+      if chapter_record['city'].empty? || chapter_record['state'].empty?
+        puts "[WARNING] #{chapter_record['chapterdesignation']} is missing its location."
+      else
+        chapter.location = "#{chapter_record['city']}, #{chapter_record['state']}"
+      end
       chapter.institution_name = chapter_record['dyadinstitutionalid']
       chapter.website = chapter_record['website']
       chapter.save!
@@ -231,10 +236,9 @@ namespace :chapter do
       manpower_survey.survey_date = Date.today
       manpower_survey.manpower = chapter.manpower
       manpower_survey.save!
-
     end
 
     # Unsets manpower for orphaned chapters
-    Chapter.where('status = ?', 0).update_all(manpower: 0)
+    Chapter.inactive.update_all(manpower: 0)
   end
 end
