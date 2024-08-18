@@ -11,6 +11,32 @@
   </div>
 </div>
 
+<% if !@chapters_missing_district.count.zero? %>
+<div class="card mb-4 border-danger">
+  <div class="card-header text-bg-danger">
+    Active Chapters Missing District
+  </div>
+  <div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Chapter</th>
+          <th>Institution</th>
+          <th>Location</th>
+          <th>Manpower</th>
+          <th>District</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @chapters_missing_district.each do |chapter| %>
+          <%= render 'chapter_row', chapter: chapter %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<% end %>
+
 <div id="chapters" data-controller="admin">
   <table class="table table-admin">
     <thead>

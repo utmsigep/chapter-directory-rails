@@ -5,4 +5,5 @@ class District < ApplicationRecord
   validates_presence_of :name, :short_name
 
   include GenerateCsv
+  has_many :chapters
 end

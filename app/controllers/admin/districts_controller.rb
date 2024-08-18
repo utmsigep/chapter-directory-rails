@@ -72,10 +72,6 @@ module Admin
 
     # GET /districts/1/chapters or /districts/1/chapters.json
     def chapters
-      respond_to do |format|
-        format.html { render template: 'chapters/index', locals: { '@chapters': @district.chapters } }
-        format.json { render template: 'chapters/index', locals: { '@chapters': @district.chapters } }
-      end
     end
 
     private

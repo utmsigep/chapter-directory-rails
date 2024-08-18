@@ -7,8 +7,10 @@
             <dd class="col-10"><%= district.short_name %></dd>
             <dt class="col-2">District Governor</dt>
             <dd class="col-10"><%= district.staff_name %></dd>
-            <dt class="col-2">Chapter Count</dt>
+            <dt class="col-2">Active Chapter Count</dt>
             <dd class="col-10"><%= district.chapters.active.length %></dd>
+            <dt class="col-2">Dormant Chapter Count</dt>
+            <dd class="col-10"><%= district.chapters.inactive.length %></dd>
             <dt class="col-2">Total Manpower</dt>
             <dd class="col-10"><%= district.chapters.sum(:manpower) %></dd>
         </dl>
@@ -22,7 +24,7 @@
 </div>
 
 <hr />
-<div data-controller="map" data-map-url-value="<%= map_data_path(format: :json, district_id: district.id) %>">
+<div data-controller="map" data-map-url-value="<%= admin_district_chapters_path(format: :json, district_id: district.id) %>">
     <div class="row">
         <div class="col-lg-9">
             <div id="map" class="map-box"></div>

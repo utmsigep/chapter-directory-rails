@@ -6,6 +6,7 @@ import GeometryUtil from 'leaflet-geometryutil';
 
 const ChapterIconSVG = ImagePaths.chapterIcon;
 const SLCChapterIconSVG = ImagePaths.slcChapterIcon;
+const DormantChapterIconSVG = ImagePaths.dormantChapterIcon;
 const MAX_ZOOM_LEVEL = 12;
 const logger = console;
 
@@ -40,6 +41,14 @@ export default class extends Controller {
       },
     });
 
+    const DormantChapterIcon = L.Icon.extend({
+      options: {
+        iconUrl: DormantChapterIconSVG,
+        iconSize: [16, 16],
+        shadowUrl: null,
+      },
+    });
+
     const chapterList = document.getElementById('chapter_list');
     if (chapterList) {
       chapterList.innerHTML = '';
@@ -61,12 +70,17 @@ export default class extends Controller {
         }
         data.forEach((record) => {
           const chapter = record;
-
           if (!chapter.latitude || !chapter.longitude) {
             logger.error(`Cannot plot ${chapter.name} (${chapter.institution_name})`, chapter);
             return;
           }
-          const icon = chapter.slc ? new SLCChapterIcon() : new ChapterIcon();
+          let icon = new ChapterIcon();
+          if (chapter.slc) {
+            icon = new SLCChapterIcon();
+          }
+          if (!chapter.status) {
+            icon = new DormantChapterIcon();
+          }
           const marker = L.marker(
             [chapter.latitude, chapter.longitude],
             { icon, draggable: this.draggableValue },
@@ -74,12 +88,12 @@ export default class extends Controller {
           chapter.district_name = chapter.district && chapter.district.name ? chapter.district.name : '(District Unavailable)';
           chapter.slc = chapter.slc ? `<div><img src="${SLCChapterIconSVG}" style="height:1em; padding-right:0.5em"/><strong>SigEp Learning Community</strong></div>` : '';
           chapter.website = chapter.website ? L.Util.template('<div><a href="{website}" target="_blank">{website}</a></div>', chapter) : '';
-          chapter.status = chapter.status ? 'Active' : 'Dormant';
-          chapter.manpower = chapter.manpower ? parseInt(chapter.manpower, 10) : 0;
+          chapter.status = chapter.status ? '' : '<span class="badge text-bg-secondary">Dormant</span>';
+          chapter.manpower = chapter.manpower ? `<div>Manpower: ${parseInt(chapter.manpower, 10)}</div>` : '';
           if (!L.Browser.mobile) {
-            marker.bindTooltip(L.Util.template('<div><strong>{name}</strong></div>{slc}<div>{institution_name}</div>', chapter));
+            marker.bindTooltip(L.Util.template('<div><strong>{name}</strong></div>{slc}{status}<div>{institution_name}</div>', chapter));
           }
-          marker.bindPopup(L.Util.template('<div class="h5">{name}</div>{slc}<div>{institution_name}</div><div>{location}</div><br /><div>Manpower: {manpower}</div><hr />{website}<div>{district_name}</div>', chapter));
+          marker.bindPopup(L.Util.template('<div class="h5">{name}</div>{slc}{status}<div>{institution_name}</div><div>{location}</div><br />{manpower}<hr />{website}<div>{district_name}</div>', chapter));
           marker.addTo(this.chaptersLayer);
           marker.on('dragend', (event) => {
             const draggedMarker = event.target;
@@ -94,7 +108,7 @@ export default class extends Controller {
           // Add to sidebar
           if (chapterList) {
             const chapterItem = document.createElement('div');
-            chapterItem.innerHTML = L.Util.template('<div class="mb-3"><div class="h5">{name}</div>{slc}<div><small>{institution_name}</small></div><div><small>{location}</small></div></div><hr />', chapter);
+            chapterItem.innerHTML = L.Util.template('<div class="mb-3"><div class="h5">{name}</div>{slc}{status}<div><small>{institution_name}</small></div><div><small>{location}</small></div></div><hr />', chapter);
             chapterItem.onclick = () => {
               document.getElementById('map').scrollIntoView(true);
               that.map.flyTo(marker.getLatLng(), MAX_ZOOM_LEVEL);

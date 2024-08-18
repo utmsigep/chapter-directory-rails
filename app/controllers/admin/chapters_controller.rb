@@ -7,7 +7,7 @@ module Admin
     # GET /chapters or /chapters.json
     def index
       @chapters = Chapter.order(:name)
-      @missing_district = Chapter.where(district: nil, status: true)
+      @chapters_missing_district = Chapter.active.where(district: nil)
       return unless params[:format] == 'csv'
 
       send_data Chapter.generate_csv, filename: 'chapters.csv'
