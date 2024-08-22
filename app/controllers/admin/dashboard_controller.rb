@@ -30,7 +30,9 @@ module Admin
         end
       end
 
-      @current_manpower = Chapter.active.sum(:manpower)
+      @current_manpower = ManpowerSurvey.where(survey_date: Date.today).sum(:manpower)
+      @previous_month_manpower = ManpowerSurvey.where(survey_date: Date.today.last_month).sum(:manpower)
+      @previous_quarter_manpower = ManpowerSurvey.where(survey_date: Date.today.last_quarter).sum(:manpower)
 
       @largest_chapters = Chapter.active
                                  .order('manpower DESC')
@@ -43,7 +45,13 @@ module Admin
 
       @manpower_distribution = Chapter.active
                                       .order('manpower DESC')
-                                      .pluck(:name, :manpower)
+                                      .pluck(:name, :manpower, :id)
+
+      # Add click action to each @manpower_distribution to navigate to the chapter :id
+      @manpower_distribution.each do |chapter|
+        # generate a link to the admin/chapters/:id route
+        chapter[2] = admin_chapter_path(chapter[2])
+      end
 
       values = @manpower_distribution.map { |_, manpower| manpower }
       @average_chapter_size = values.sum / values.size.to_f

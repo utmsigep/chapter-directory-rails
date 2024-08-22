@@ -50,6 +50,23 @@
         <%= number_with_delimiter(@current_manpower) %>
       </div>
       Current Manpower
+      <div>
+        <% if @previous_month_manpower %>
+        <% if @current_manpower > @previous_month_manpower %>
+          <span class="text-success" title="<%= number_with_delimiter(@previous_month_manpower) %>">▲ <%= @previous_month_manpower - @current_manpower %></span> (<%= Date.today.last_month.strftime('%-m/%-d') %>)
+        <% elsif @current_manpower < @previous_month_manpower %>
+          <span class="text-danger" title="<%= number_with_delimiter(@previous_month_manpower) %>">▼ <%= @current_manpower - @previous_month_manpower %></span> (<%= Date.today.last_month.strftime('%-m/%-d') %>)
+        <% end%>
+        <% end %>
+
+        <% if @previous_quarter_manpower %>
+        <% if @current_manpower > @previous_quarter_manpower %>
+          <span class="text-success" title="<%= number_with_delimiter(@previous_quarter_manpower) %>">▲ <%= @previous_quarter_manpower - @current_manpower %></span> (<%= Date.today.last_quarter.strftime('%-m/%-d') %>)
+        <% elsif @current_manpower < @previous_quarter_manpower %>
+          <span class="text-danger" title="<%= number_with_delimiter(@previous_quarter_manpower) %>">▼ <%= @current_manpower - @previous_quarter_manpower %></span> (<%= Date.today.last_quarter.strftime('%-m/%-d') %>)
+        <% end%>
+        <% end %>
+      </div>
     </div>
 
     <div class="mb-4">
