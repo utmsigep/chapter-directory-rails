@@ -1,10 +1,15 @@
 <%= render 'admin/admin_menu' %>
 
-<div class="my-2">
-  <div class="col-12 text-end">
+<div class="row mb-3">
+  <div class="col-sm-12 col-md-9 text-center text-md-start">
+    <h1>Dashboard</h1>
+  </div>
+  <div class="col-sm-12 col-md-3 text-center text-md-end">
     <form>
-      <input name="date" value="<%= @report_date %>" type="date" />
-      <input type="submit" value="Go" />
+      <div class="input-group">
+        <input name="date" value="<%= @report_date %>" type="date" class="form-control" />
+        <input type="submit" value="Go" class="btn btn-primary" />
+      </div>
     </form>
   </div>
 </div>
