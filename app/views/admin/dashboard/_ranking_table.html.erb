@@ -28,7 +28,7 @@
         <%= tie %><%= rank %>
       </td>
       <td>
-        <%= link_to chapter.name, admin_chapter_path(chapter) %>
+        <%= link_to chapter.name, admin_chapter_path(id: chapter[:id]) %>
         <div><small><%= chapter.institution_name %></small></div>
       </td>
       <td class="text-end"><%= chapter.manpower %></td>

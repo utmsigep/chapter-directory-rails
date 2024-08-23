@@ -39,7 +39,11 @@ module Admin
         @manpower_survey[2][:data][survey_date] = average
       end
 
-      @current_manpower = ManpowerSurvey.where(survey_date: @report_date.yesterday).sum(:manpower)
+      if ManpowerSurvey.where(survey_date: @report_date).size === 0
+        flash.alert = "No survey data available for #{@report_date.strftime('%-m/%-d/%-Y')}"
+      end
+
+      @current_manpower = ManpowerSurvey.where(survey_date: @report_date).sum(:manpower)
       @previous_month_manpower = ManpowerSurvey.where(survey_date: @report_date - 30).sum(:manpower)
       @previous_quarter_manpower = ManpowerSurvey.where(survey_date: @report_date - 90).sum(:manpower)
 

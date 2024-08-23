@@ -67,17 +67,17 @@
       <div>
         <% if @previous_month_manpower > 0 %>
         <% if @current_manpower > @previous_month_manpower %>
-          <span class="text-success" title="<%= number_with_delimiter(@previous_month_manpower) %>">▲ <%= @previous_month_manpower - @current_manpower %></span> (<%= @report_date.last_month.strftime('%-m/%-d') %>)
+          <span class="text-success" title="<%= number_with_delimiter(@previous_month_manpower) %>">▲ +<%= (@previous_month_manpower - @current_manpower).abs %></span> (<%= @report_date.last_month.strftime('%-m/%-d') %>)
         <% elsif @current_manpower < @previous_month_manpower %>
-          <span class="text-danger" title="<%= number_with_delimiter(@previous_month_manpower) %>">▼ <%= @current_manpower - @previous_month_manpower %></span> (<%= @report_date.last_month.strftime('%-m/%-d') %>)
+          <span class="text-danger" title="<%= number_with_delimiter(@previous_month_manpower) %>">▼ -<%= (@current_manpower - @previous_month_manpower).abs %></span> (<%= @report_date.last_month.strftime('%-m/%-d') %>)
         <% end%>
         <% end %>
 
         <% if @previous_quarter_manpower > 0 %>
         <% if @current_manpower > @previous_quarter_manpower %>
-          <span class="text-success" title="<%= number_with_delimiter(@previous_quarter_manpower) %>">▲ <%= @previous_quarter_manpower - @current_manpower %></span> (<%= @report_date.last_quarter.strftime('%-m/%-d') %>)
+          <span class="text-success" title="<%= number_with_delimiter(@previous_quarter_manpower) %>">▲ +<%= (@previous_quarter_manpower - @current_manpower).abs %></span> (<%= @report_date.last_quarter.strftime('%-m/%-d') %>)
         <% elsif @current_manpower < @previous_quarter_manpower %>
-          <span class="text-danger" title="<%= number_with_delimiter(@previous_quarter_manpower) %>">▼ <%= @current_manpower - @previous_quarter_manpower %></span> (<%= @report_date.last_quarter.strftime('%-m/%-d') %>)
+          <span class="text-danger" title="<%= number_with_delimiter(@previous_quarter_manpower) %>">▼ -<%= (@current_manpower - @previous_quarter_manpower).abs %></span> (<%= @report_date.last_quarter.strftime('%-m/%-d') %>)
         <% end%>
         <% end %>
       </div>
