@@ -1,5 +1,14 @@
 <%= render 'admin/admin_menu' %>
 
+<div class="my-2">
+  <div class="col-12 text-end">
+    <form>
+      <input name="date" value="<%= @report_date %>" type="date" />
+      <input type="submit" value="Go" />
+    </form>
+  </div>
+</div>
+
 <div class="row my-3">
   <div class="col-md-6">
     <div id="manpower_chart" class="my-3">
@@ -49,21 +58,21 @@
       <div class="display-1">
         <%= number_with_delimiter(@current_manpower) %>
       </div>
-      Current Manpower
+      Current Manpower (<%= Date.today.strftime('%-m/%-d') %>)
       <div>
-        <% if @previous_month_manpower %>
+        <% if @previous_month_manpower > 0 %>
         <% if @current_manpower > @previous_month_manpower %>
-          <span class="text-success" title="<%= number_with_delimiter(@previous_month_manpower) %>">▲ <%= @previous_month_manpower - @current_manpower %></span> (<%= Date.today.last_month.strftime('%-m/%-d') %>)
+          <span class="text-success" title="<%= number_with_delimiter(@previous_month_manpower) %>">▲ <%= @previous_month_manpower - @current_manpower %></span> (<%= @report_date.last_month.strftime('%-m/%-d') %>)
         <% elsif @current_manpower < @previous_month_manpower %>
-          <span class="text-danger" title="<%= number_with_delimiter(@previous_month_manpower) %>">▼ <%= @current_manpower - @previous_month_manpower %></span> (<%= Date.today.last_month.strftime('%-m/%-d') %>)
+          <span class="text-danger" title="<%= number_with_delimiter(@previous_month_manpower) %>">▼ <%= @current_manpower - @previous_month_manpower %></span> (<%= @report_date.last_month.strftime('%-m/%-d') %>)
         <% end%>
         <% end %>
 
-        <% if @previous_quarter_manpower %>
+        <% if @previous_quarter_manpower > 0 %>
         <% if @current_manpower > @previous_quarter_manpower %>
-          <span class="text-success" title="<%= number_with_delimiter(@previous_quarter_manpower) %>">▲ <%= @previous_quarter_manpower - @current_manpower %></span> (<%= Date.today.last_quarter.strftime('%-m/%-d') %>)
+          <span class="text-success" title="<%= number_with_delimiter(@previous_quarter_manpower) %>">▲ <%= @previous_quarter_manpower - @current_manpower %></span> (<%= @report_date.last_quarter.strftime('%-m/%-d') %>)
         <% elsif @current_manpower < @previous_quarter_manpower %>
-          <span class="text-danger" title="<%= number_with_delimiter(@previous_quarter_manpower) %>">▼ <%= @current_manpower - @previous_quarter_manpower %></span> (<%= Date.today.last_quarter.strftime('%-m/%-d') %>)
+          <span class="text-danger" title="<%= number_with_delimiter(@previous_quarter_manpower) %>">▼ <%= @current_manpower - @previous_quarter_manpower %></span> (<%= @report_date.last_quarter.strftime('%-m/%-d') %>)
         <% end%>
         <% end %>
       </div>
@@ -71,7 +80,7 @@
 
     <div class="mb-4">
       <div class="display-1">
-        <%= @average_chapter_size.round %>
+        <%= @average_chapter_size.round if @average_chapter_size > 0 %>
       </div>
       Average Chapter Size
     </div>
