@@ -1,23 +1,47 @@
 <%= render 'admin/admin_menu' %>
 
-<div class="row mb-3">
-  <div class="col-sm-12 col-md-9 text-center text-md-start">
+<div class="d-flex mb-3">
+  <div class="me-auto text-center text-md-start">
     <h1>Dashboard</h1>
   </div>
-  <div class="col-sm-12 col-md-3 text-center text-md-end">
-    <form>
-      <div class="input-group">
-        <input name="date" value="<%= @report_date %>" type="date" class="form-control" />
-        <input type="submit" value="Go" class="btn btn-primary" />
+  <div class="text-end">
+    <div class="dropdown">
+      <button class="btn btn-light border-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <strong>Report Date:</strong> <%= @report_date.strftime('%-m/%-d/%Y') %>
+      </button>
+      <div class="dropdown-menu">
+        <%= form_with(url: admin_path(), method: :get, local: true, id: 'dashboard_date_form') do |form| %>
+          <div class="p-3">
+            <div class="d-flex">
+              <div class="p-1 ms-auto">
+                <%= form.label :date, 'Report', class: 'col-form-label' %>
+              </div>
+              <div class="p-1">
+                <%= form.date_field :date, value: @report_date, class: 'form-control' %>
+              </div>
+            </div>
+            <div class="d-flex">
+              <div class="p-1 ms-auto">
+                <%= form.label :compare, 'Compare', class: 'col-form-label' %>
+              </div>
+              <div class="p-1">
+                <%= form.date_field :compare, value: @compare_date, class: 'form-control' %>
+              </div>
+            </div>
+          </div>
+          <div class="px-4">
+            <%= form.button 'Go', name: nil, type: :submit, class: 'btn btn-primary w-100' %>
+          </div>
+        <% end %>
       </div>
-    </form>
+    </div>
   </div>
 </div>
 
 <div class="row my-3">
   <div class="col-md-6">
     <div id="manpower_chart" class="my-3">
-      <%= line_chart @manpower_survey, title: 'Daily Reported Manpower', thousands: ',', library: {
+      <%= line_chart @manpower_survey, title: 'Daily Reported Manpower', thousands: ',', download: { filename: "daily-reported-manpower-#{@report_date}.png", background: "#ffffff" }, library: {
           scales: {
             y: {
               type: 'linear',
@@ -38,7 +62,7 @@
   </div>
   <div class="col-md-6">
     <div id="manpower_distribution" class="my-3">
-      <%= column_chart @manpower_distribution, title: 'Manpower Distribution', library: {
+      <%= column_chart @manpower_distribution, title: 'Manpower Distribution', download: { filename: "manpower-distribution-#{@report_date}.png", background: "#ffffff" }, library: {
         scales: {
           x: {
             display: false
@@ -65,19 +89,11 @@
       </div>
       Current Manpower (<%= Date.today.strftime('%-m/%-d') %>)
       <div>
-        <% if @previous_month_manpower > 0 %>
-        <% if @current_manpower > @previous_month_manpower %>
-          <span class="text-success" title="<%= number_with_delimiter(@previous_month_manpower) %>">▲ +<%= (@previous_month_manpower - @current_manpower).abs %></span> (<%= @report_date.last_month.strftime('%-m/%-d') %>)
-        <% elsif @current_manpower < @previous_month_manpower %>
-          <span class="text-danger" title="<%= number_with_delimiter(@previous_month_manpower) %>">▼ -<%= (@current_manpower - @previous_month_manpower).abs %></span> (<%= @report_date.last_month.strftime('%-m/%-d') %>)
-        <% end%>
-        <% end %>
-
-        <% if @previous_quarter_manpower > 0 %>
-        <% if @current_manpower > @previous_quarter_manpower %>
-          <span class="text-success" title="<%= number_with_delimiter(@previous_quarter_manpower) %>">▲ +<%= (@previous_quarter_manpower - @current_manpower).abs %></span> (<%= @report_date.last_quarter.strftime('%-m/%-d') %>)
-        <% elsif @current_manpower < @previous_quarter_manpower %>
-          <span class="text-danger" title="<%= number_with_delimiter(@previous_quarter_manpower) %>">▼ -<%= (@current_manpower - @previous_quarter_manpower).abs %></span> (<%= @report_date.last_quarter.strftime('%-m/%-d') %>)
+        <% if @compare_manpower > 0 %>
+        <% if @current_manpower > @compare_manpower %>
+          <span class="text-success" title="<%= number_with_delimiter(@compare_manpower) %>">▲ +<%= (@compare_manpower - @current_manpower).abs %></span> (<%= @compare_date.strftime('%-m/%-d') %>)
+        <% elsif @current_manpower < @compare_manpower %>
+          <span class="text-danger" title="<%= number_with_delimiter(@compare_manpower) %>">▼ -<%= (@current_manpower - @compare_manpower).abs %></span> (<%= @compare_date.strftime('%-m/%-d') %>)
         <% end%>
         <% end %>
       </div>

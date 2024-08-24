@@ -13,6 +13,17 @@ module Admin
         @report_date = Date.today
       end
 
+      begin
+        @compare_date = Date.today - 30
+        @compare_date = Date.parse(params[:compare]) unless params[:compare].nil? || params[:compare].empty?
+        raise 'Cannot be later than the report date' if @compare_date > @report_date
+        raise 'Cannot be later than today' if @compare_date > Date.today
+      rescue StandardError => e
+        # Add a flash message that an invalid date was provided
+        flash.alert = "Error: #{e.message}"
+        @compare_date = Date.today - 30
+      end
+
       @manpower_survey = [
         { name: 'Chapter Manpower', data: {}, points: false, library: { yAxisID: 'y' } },
         { name: 'Chapter Count', data: {}, points: false, library: { yAxisID: 'y1' } },
@@ -44,8 +55,7 @@ module Admin
       end
 
       @current_manpower = ManpowerSurvey.where(survey_date: @report_date).sum(:manpower)
-      @previous_month_manpower = ManpowerSurvey.where(survey_date: @report_date - 30).sum(:manpower)
-      @previous_quarter_manpower = ManpowerSurvey.where(survey_date: @report_date - 90).sum(:manpower)
+      @compare_manpower = ManpowerSurvey.where(survey_date: @compare_date).sum(:manpower)
 
       @largest_chapters = ManpowerSurvey.where(survey_date: @report_date)
                                         .joins(:chapter)
@@ -65,12 +75,6 @@ module Admin
                                              .select('chapters.name, manpower_surveys.manpower, chapters.id')
                                              .order('manpower_surveys.manpower DESC')
                                              .pluck(:name, :manpower, :id)
-
-      # Add click action to each @manpower_distribution to navigate to the chapter :id
-      @manpower_distribution.each do |chapter|
-        # generate a link to the admin/chapters/:id route
-        chapter[2] = admin_chapter_path(chapter[2])
-      end
 
       values = @manpower_distribution.map { |_, manpower| manpower }
       @average_chapter_size = values.sum / values.size.to_f
