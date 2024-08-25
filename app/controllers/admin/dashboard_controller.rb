@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
+require 'rake'
+
 module Admin
+  # Dashboard Controller
   class DashboardController < ApplicationController
     def index
       begin
@@ -22,6 +25,15 @@ module Admin
         # Add a flash message that an invalid date was provided
         flash.alert = "Error: #{e.message}"
         @compare_date = Date.today - 30
+      end
+
+      # If @report_date is Date.today and there are no entries for ManpowerSurvey,
+      # kick off the `chapter:update_info` rake task.
+      if @report_date == Date.today && ManpowerSurvey.where(survey_date: @report_date).empty?
+        Rake::Task.clear
+        ChapterDirectory::Application.load_tasks
+        Rake::Task['chapter:update_info'].reenable
+        Rake::Task['chapter:update_info'].invoke
       end
 
       @manpower_survey = [
@@ -82,9 +94,9 @@ module Admin
       sorted_values = values.sort
       size = sorted_values.size
       @median_chapter_size = if size.odd?
-                               sorted_values[size / 2] if sorted_values.size > 0
-                             else
-                               (sorted_values[(size / 2) - 1] + sorted_values[size / 2]) / 2.0 if sorted_values.size > 0
+                               sorted_values[size / 2] if sorted_values.size.positive?
+                             elsif sorted_values.size.positive?
+                               (sorted_values[(size / 2) - 1] + sorted_values[size / 2]) / 2.0
                              end
 
       @active_chapters = values.size
