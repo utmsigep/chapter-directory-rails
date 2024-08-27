@@ -1,10 +1,13 @@
 <h4 class="mb-2"><%= title %></h4>
 <table class="table table-striped table-sm">
-  <tr>
-    <th>Rank</th>
-    <th>Chapter</th>
-    <th>Manpower</th>
-  </tr>
+  <thead>
+    <tr>
+      <th>Rank</th>
+      <th>Chapter</th>
+      <th>Manpower</th>
+    </tr>
+  </thead>
+  <tbody>
   <% rank = 1 %>
   <% chapters.each_with_index do |chapter, index| %>
     <%
@@ -34,4 +37,5 @@
       <td class="text-end"><%= chapter.manpower %></td>
     </tr>
   <% end %>
+  </tbody>
 </table>

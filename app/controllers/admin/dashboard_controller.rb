@@ -100,6 +100,29 @@ module Admin
                              end
 
       @active_chapters = values.size
+
+      # Fetch manpower surveys for both dates
+      surveys_at_report_date = ManpowerSurvey.where(survey_date: @report_date)
+      surveys_at_compare_date = ManpowerSurvey.where(survey_date: @compare_date)
+
+      # Create hashes for quick lookup
+      report_date_hash = surveys_at_report_date.index_by(&:chapter_id)
+      compare_date_hash = surveys_at_compare_date.index_by(&:chapter_id)
+
+      # Calculate the manpower change for each chapter
+      chapter_changes = Chapter.all.map do |chapter|
+        report_manpower = report_date_hash[chapter.id]&.manpower.to_i
+        compare_manpower = compare_date_hash[chapter.id]&.manpower.to_i
+        change = report_manpower - compare_manpower
+        {
+          chapter: chapter,
+          manpower_at_report_date: report_manpower,
+          manpower_at_compare_date: compare_manpower,
+          manpower_change: change
+        }
+      end
+      @chapter_increases = chapter_changes.sort_by { |change| change[:manpower_change] }.reverse!
+      @chapter_decreases = chapter_changes.sort_by { |change| change[:manpower_change] }
     end
   end
 end

@@ -38,7 +38,7 @@
   </div>
 </div>
 
-<div class="row my-3">
+<div class="row mb-3">
   <div class="col-md-6">
     <div id="manpower_chart" class="my-3">
       <%= line_chart @manpower_survey, title: 'Daily Reported Manpower', thousands: ',', download: { filename: "daily-reported-manpower-#{@report_date}.png", background: "#ffffff" }, library: {
@@ -73,9 +73,8 @@
   </div>
 </div>
 
-<div class="row mt-5">
+<div class="row mb-3">
   <div class="col-md-4 my-3 text-center">
-
     <div class="mb-4">
       <div class="display-1">
         <%= @active_chapters %>
@@ -112,12 +111,21 @@
       </div>
       Median Chapter Size
     </div>
-
   </div>
-    <div class="col-md-4 my-3">
-      <%= render partial: 'admin/dashboard/ranking_table', locals: { title: 'Largest Chapters', chapters: @largest_chapters } %>
-    </div>
-    <div class="col-md-4 my-3">
-      <%= render partial: 'admin/dashboard/ranking_table', locals: { title: 'Smallest Chapters', chapters: @smallest_chapters } %>
-    </div>
+  <div class="col-md-4 my-3">
+    <%= render partial: 'admin/dashboard/manpower_change_ranking_table', locals: { title: 'Largest Manpower Increases', chapters: @chapter_increases } %>
+  </div>
+  <div class="col-md-4 my-3">
+    <%= render partial: 'admin/dashboard/manpower_change_ranking_table', locals: { title: 'Largest Manpower Decreases', chapters: @chapter_decreases } %>
+  </div>
+</div>
+
+<div class="row mb-3">
+  <div class="col-md-4">&nbsp;</div>
+  <div class="col-md-4 my-3">
+    <%= render partial: 'admin/dashboard/manpower_ranking_table', locals: { title: 'Largest Chapters', chapters: @largest_chapters } %>
+  </div>
+  <div class="col-md-4 my-3">
+    <%= render partial: 'admin/dashboard/manpower_ranking_table', locals: { title: 'Smallest Chapters', chapters: @smallest_chapters } %>
+  </div>
 </div>
