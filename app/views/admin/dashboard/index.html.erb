@@ -6,8 +6,12 @@
   </div>
   <div class="text-end">
     <div class="dropdown">
-      <button class="btn btn-light border-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <strong>Report Date:</strong> <%= @report_date.strftime('%-m/%-d/%Y') %>
+      <button class="btn border-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-calendar fa-fw ms-1"></i>
+          Report for <strong><%= @report_date.strftime('%-m/%-d/%Y') %></strong>
+          <% if @report_date != @compare_date %>
+          <small><br />(Compared to <strong><%= @compare_date.strftime('%-m/%-d/%Y') %></strong>)</small>
+          <% end %>
       </button>
       <div class="dropdown-menu">
         <%= form_with(url: admin_path(), method: :get, local: true, id: 'dashboard_date_form') do |form| %>
@@ -90,9 +94,9 @@
       <div>
         <% if @compare_manpower > 0 %>
         <% if @current_manpower > @compare_manpower %>
-          <span class="text-success" title="<%= number_with_delimiter(@compare_manpower) %>">▲ +<%= (@compare_manpower - @current_manpower).abs %></span> (<%= @compare_date.strftime('%-m/%-d') %>)
+          <span class="text-success" title="<%= number_with_delimiter(@compare_manpower) %>"><i class="fas fa-square-caret-up fa-fw ms-1"></i> +<%= (@compare_manpower - @current_manpower).abs %></span> (<%= @compare_date.strftime('%-m/%-d') %>)
         <% elsif @current_manpower < @compare_manpower %>
-          <span class="text-danger" title="<%= number_with_delimiter(@compare_manpower) %>">▼ -<%= (@current_manpower - @compare_manpower).abs %></span> (<%= @compare_date.strftime('%-m/%-d') %>)
+          <span class="text-danger" title="<%= number_with_delimiter(@compare_manpower) %>"><i class="fas fa-square-caret-down fa-fw ms-1"></i> -<%= (@current_manpower - @compare_manpower).abs %></span> (<%= @compare_date.strftime('%-m/%-d') %>)
         <% end%>
         <% end %>
       </div>
@@ -113,19 +117,15 @@
     </div>
   </div>
   <div class="col-md-4 my-3">
+    <% if @report_date != @compare_date %>
     <%= render partial: 'admin/dashboard/manpower_change_ranking_table', locals: { title: 'Largest Manpower Increases', chapters: @chapter_increases } %>
-  </div>
-  <div class="col-md-4 my-3">
-    <%= render partial: 'admin/dashboard/manpower_change_ranking_table', locals: { title: 'Largest Manpower Decreases', chapters: @chapter_decreases } %>
-  </div>
-</div>
-
-<div class="row mb-3">
-  <div class="col-md-4">&nbsp;</div>
-  <div class="col-md-4 my-3">
+    <% end %>
     <%= render partial: 'admin/dashboard/manpower_ranking_table', locals: { title: 'Largest Chapters', chapters: @largest_chapters } %>
   </div>
   <div class="col-md-4 my-3">
+    <% if @report_date != @compare_date %>
+    <%= render partial: 'admin/dashboard/manpower_change_ranking_table', locals: { title: 'Largest Manpower Decreases', chapters: @chapter_decreases } %>
+    <% end %>
     <%= render partial: 'admin/dashboard/manpower_ranking_table', locals: { title: 'Smallest Chapters', chapters: @smallest_chapters } %>
   </div>
 </div>

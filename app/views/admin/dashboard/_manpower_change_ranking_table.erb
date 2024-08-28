@@ -1,51 +1,53 @@
 <h4 class="mb-2"><%= title %></h4>
-<table class="table table-striped table-sm">
-  <thead>
-    <tr>
-      <th>Rank</th>
-      <th>Chapter</th>
-      <th>Manpower</th>
-      <th>Change</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% rank = 1 %>
-    <% chapters.first(10).each_with_index do |row, index| %>
-    <%
-      # Check if the next row has the same manpower
-      if index + 1 < chapters.length && chapters[index + 1][:manpower_change] === row[:manpower_change]
-        tie = 'T'
-        if index > 0 && chapters[index - 1][:manpower_change] != row[:manpower_change]
+<div class="table-responsive mb-5">
+  <table class="table table-striped table-sm">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Chapter</th>
+        <th>Manpower</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% rank = 1 %>
+      <% chapters.first(10).each_with_index do |row, index| %>
+      <%
+        # Check if the next row has the same manpower
+        if index + 1 < chapters.length && chapters[index + 1][:manpower_change] === row[:manpower_change]
+          tie = 'T'
+          if index > 0 && chapters[index - 1][:manpower_change] != row[:manpower_change]
+            rank = index + 1
+          end
+        # Check if the previous row has the same manpower
+        elsif index > 0 && chapters[index - 1][:manpower_change] === row[:manpower_change]
+          tie = 'T'
+        # Default to index + 1
+        else
           rank = index + 1
+          tie = ''
         end
-      # Check if the previous row has the same manpower
-      elsif index > 0 && chapters[index - 1][:manpower_change] === row[:manpower_change]
-        tie = 'T'
-      # Default to index + 1
-      else
-        rank = index + 1
-        tie = ''
-      end
-    %>
-    <tr>
-      <td class="text-center">
-        <%= tie %><%= rank %>
-      </td>
-      <td>
-        <%= link_to row[:chapter][:name], admin_chapter_path(id: row[:chapter][:id]) %>
-        <div><small><%= row[:chapter][:institution_name] %></small></div>
-      </td>
-      <td class="text-end"><%= row[:manpower_at_report_date] %></td>
-      <td class="text-end">
-        <% if row[:manpower_change] > 0 %>
-        <span class="text-success" title="<%= number_with_delimiter(@compare_manpower) %>">▲ +<%= row[:manpower_change] %></span>
-        <% elsif row[:manpower_change] < 0 %>
-        <span class="text-danger" title="<%= number_with_delimiter(@compare_manpower) %>">▼ <%= row[:manpower_change] %></span>
-        <% else %>
-        --
-        <% end %>
-      </td>
-    </tr>
-    <% end %>
-  </tbody>
-</table>
+      %>
+      <tr>
+        <td class="text-center">
+          <%= tie %><%= rank %>
+        </td>
+        <td>
+          <%= link_to row[:chapter][:name], admin_chapter_path(id: row[:chapter][:id]) %>
+          <small class="d-block"><%= row[:chapter][:institution_name] %></small>
+        </td>
+        <td class="text-end">
+          <%= row[:manpower_at_report_date] %>
+          <br />
+          <% if row[:manpower_change] > 0 %>
+          <span class="text-success"><i class="fas fa-square-caret-up fa-fw"></i> +<%= row[:manpower_change] %></span>
+          <% elsif row[:manpower_change] < 0 %>
+          <span class="text-danger"><i class="fas fa-square-caret-down fa-fw"></i>  <%= row[:manpower_change] %></span>
+          <% else %>
+          --
+          <% end %>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
