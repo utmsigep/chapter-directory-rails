@@ -1,6 +1,6 @@
 <h4 class="mb-2"><%= title %></h4>
 <div class="table-responsive mb-5">
-  <table class="table table-striped table-sm">
+  <table class="table table-striped table-sm" id="table-<%= title.parameterize %>">
     <thead>
       <tr>
         <th>Rank</th>
@@ -27,7 +27,7 @@
           tie = ''
         end
       %>
-      <tr>
+      <tr class="<% if index + 1 > 10 %>collapse<% end %>">
         <td class="text-center">
           <%= tie %><%= rank %>
         </td>
@@ -40,4 +40,5 @@
     <% end %>
     </tbody>
   </table>
+  <small><a href="#" data-toggle="toggle-table-rows" data-table-id="table-<%= title.parameterize %>">Show All</a></small>
 </div>

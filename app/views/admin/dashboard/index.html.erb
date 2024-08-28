@@ -96,9 +96,9 @@
       <div>
         <% if @compare_manpower > 0 %>
         <% if @current_manpower > @compare_manpower %>
-          <span class="text-success" title="<%= number_with_delimiter(@compare_manpower) %>"><i class="fas fa-square-caret-up fa-fw ms-1"></i> +<%= (@compare_manpower - @current_manpower).abs %></span> (<%= @compare_date.strftime('%-m/%-d') %>)
+          <span class="text-success" title="<%= number_with_delimiter(@compare_manpower) %>"><i class="fas fa-square-caret-up fa-fw ms-1"></i> +<%= number_with_delimiter((@compare_manpower - @current_manpower).abs) %></span> (<%= @compare_date.strftime('%-m/%-d') %>)
         <% elsif @current_manpower < @compare_manpower %>
-          <span class="text-danger" title="<%= number_with_delimiter(@compare_manpower) %>"><i class="fas fa-square-caret-down fa-fw ms-1"></i> -<%= (@current_manpower - @compare_manpower).abs %></span> (<%= @compare_date.strftime('%-m/%-d') %>)
+          <span class="text-danger" title="<%= number_with_delimiter(@compare_manpower) %>"><i class="fas fa-square-caret-down fa-fw ms-1"></i> -<%= number_with_delimiter((@current_manpower - @compare_manpower).abs) %></span> (<%= @compare_date.strftime('%-m/%-d') %>)
         <% end%>
         <% end %>
       </div>
@@ -131,3 +131,48 @@
     <%= render partial: 'admin/dashboard/manpower_ranking_table', locals: { title: 'Smallest Chapters', chapters: @smallest_chapters } %>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // Function to handle the toggle action
+  function toggleTableRows(event) {
+    event.preventDefault(); // Prevent default link behavior
+
+    // Get the data-table-id from the clicked link
+    const tableId = event.currentTarget.getAttribute('data-table-id');
+    // Find the associated table using the data-table-id
+    const table = document.getElementById(tableId);
+
+    if (!table) {
+      console.warn(`Table with id "${tableId}" not found.`);
+      return;
+    }
+
+    // Find all rows within the table that have the `collapse` class
+    const rows = table.querySelectorAll('tr.collapse');
+
+    // Toggle the `show` class on each row
+    rows.forEach(row => {
+      if (row.classList.contains('show')) {
+        row.classList.remove('show');
+      } else {
+        row.classList.add('show');
+      }
+    });
+
+    // Toggle the link text between "Show All" and "Show Only Top 10"
+    const link = event.currentTarget;
+    if (link.textContent.trim() === 'Show All') {
+      link.textContent = 'Show Only Top 10';
+    } else {
+      link.textContent = 'Show All';
+    }
+  }
+
+  // Attach the toggleTableRows function to all relevant links
+  document.querySelectorAll('a[data-toggle="toggle-table-rows"]').forEach(link => {
+    link.addEventListener('click', toggleTableRows);
+  });
+});
+
+</script>

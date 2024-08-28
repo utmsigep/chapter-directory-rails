@@ -12,8 +12,7 @@ module Admin
         raise 'Cannot be later than today' if @report_date > Date.today
       rescue StandardError => e
         # Add a flash message that an invalid date was provided
-        flash.alert = "Error: #{e.message}"
-        @report_date = Date.today
+        return redirect_to admin_path, flash: { error: "[Error] #{e.message}" }
       end
 
       begin
@@ -23,8 +22,7 @@ module Admin
         raise 'Cannot be later than today' if @compare_date > Date.today
       rescue StandardError => e
         # Add a flash message that an invalid date was provided
-        flash.alert = "Error: #{e.message}"
-        @compare_date = Date.today - 30
+        return redirect_to admin_path, flash: { error: "[Error] #{e.message}" }
       end
 
       # If @report_date is Date.today and there are no entries for ManpowerSurvey,
@@ -73,14 +71,12 @@ module Admin
                                         .joins(:chapter)
                                         .select('chapters.name, chapters.id, chapters.institution_name, manpower_surveys.manpower')
                                         .order('manpower DESC')
-                                        .limit(10)
 
       @smallest_chapters = ManpowerSurvey.where(survey_date: @report_date)
                                          .where('manpower_surveys.manpower > 0')
                                          .joins(:chapter)
                                          .select('chapters.name, chapters.id, chapters.institution_name, manpower_surveys.manpower')
                                          .order('manpower ASC')
-                                         .limit(10)
 
       @manpower_distribution = ManpowerSurvey.where(survey_date: @report_date)
                                              .joins(:chapter)

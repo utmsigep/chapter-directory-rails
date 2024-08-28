@@ -1,6 +1,6 @@
 <h4 class="mb-2"><%= title %></h4>
 <div class="table-responsive mb-5">
-  <table class="table table-striped table-sm">
+  <table class="table table-striped table-sm" id="table-<%= title.parameterize %>">
     <thead>
       <tr>
         <th>Rank</th>
@@ -10,7 +10,7 @@
     </thead>
     <tbody>
       <% rank = 1 %>
-      <% chapters.first(10).each_with_index do |row, index| %>
+      <% chapters.each_with_index do |row, index| %>
       <%
         # Check if the next row has the same manpower
         if index + 1 < chapters.length && chapters[index + 1][:manpower_change] === row[:manpower_change]
@@ -27,7 +27,7 @@
           tie = ''
         end
       %>
-      <tr>
+      <tr class="<% if index > 10 %>collapse<% end %>">
         <td class="text-center">
           <%= tie %><%= rank %>
         </td>
@@ -50,4 +50,5 @@
       <% end %>
     </tbody>
   </table>
+  <small><a href="#" data-toggle="toggle-table-rows" data-table-id="table-<%= title.parameterize %>">Show All</a></small>
 </div>
