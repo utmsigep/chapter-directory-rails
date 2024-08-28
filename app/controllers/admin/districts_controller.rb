@@ -3,6 +3,8 @@
 module Admin
   class DistrictsController < ApplicationController
     before_action :set_district, only: %i[show edit update destroy chapters]
+    before_action -> { require_role(:editor) }, only: %i[new edit create update destroy]
+
 
     # GET /districts or /districts.json
     def index

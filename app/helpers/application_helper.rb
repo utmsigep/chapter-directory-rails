@@ -20,4 +20,8 @@ module ApplicationHelper
       "#{page_title} | #{base_title}"
     end
   end
+
+  def role_check(role)
+    current_user&.send("#{role}?")
+  end
 end

@@ -3,6 +3,7 @@
 module Admin
   class ChaptersController < ApplicationController
     before_action :set_chapter, only: %i[show edit update destroy]
+    before_action -> { require_role(:editor) }, only: %i[new edit create update destroy import do_import]
 
     # GET /chapters or /chapters.json
     def index

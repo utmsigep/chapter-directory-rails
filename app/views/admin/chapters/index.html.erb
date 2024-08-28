@@ -7,9 +7,11 @@
     <h1>Chapters</h1>
   </div>
   <div class="col-md text-center text-md-end">
-    <%= link_to raw('<i class="fas fa-upload"></i> Import'), admin_chapters_import_path, class: 'btn btn-secondary' %>
     <%= link_to raw('<i class="fas fa-download"></i> Export'), admin_chapters_path(format: :csv), class: 'btn btn-secondary' %>
+    <% if role_check(:editor) %>
+    <%= link_to raw('<i class="fas fa-upload"></i> Import'), admin_chapters_import_path, class: 'btn btn-secondary' %>
     <%= link_to raw('<i class="fas fa-plus"></i> New'), new_admin_chapter_path, class: 'btn btn-primary' %>
+    <% end %>
   </div>
 </div>
 

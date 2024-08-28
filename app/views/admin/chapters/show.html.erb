@@ -7,12 +7,16 @@
     <h1><%= @chapter.name %></h1>
   </div>
   <div class="col-md text-center text-md-end">
+    <% if role_check(:editor) %>
     <%= link_to raw('<i class="fas fa-pencil"></i> Edit'), edit_admin_chapter_path(@chapter), class: 'btn btn-secondary' %>
+    <% end %>
   </div>
 </div>
 
 <%= render @chapter %>
 
+<% if role_check(:editor) %>
 <div class="my-5">
   <%= button_to "Delete Chapter", admin_chapter_path(@chapter), method: :delete, class: 'btn btn-danger' %>
 </div>
+<% end %>
