@@ -8,3 +8,14 @@ admin:
   email: admin@example.org
   role: 'admin'
 
+editor:
+  email: editor@example.org
+  role: 'editor'
+
+user:
+  email: user@example.org
+  role: 'user'
+
+deleteme:
+  email: deleteme@example.org
+  role: 'user'

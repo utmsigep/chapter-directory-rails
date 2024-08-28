@@ -54,12 +54,15 @@
         <a class="navbar-brand me-auto" href="<%= root_path() %>">Chapter Directory</a>
         <% if user_signed_in? %>
         <div class="text-light p-2">
-          <%= link_to 'Site Admin', admin_path, class: 'text-light' %>
+          <%= link_to admin_path, class: 'text-light ms-3' do %><i class="fas fa-gauge fa-fw me-1"></i>Dashboard<% end %>
+          <% if role_check(:admin) %>
+          <%= link_to admin_users_path, class: 'text-light ms-3' do %><i class="fas fa-users fa-fw me-1"></i>User Admin<% end %>
+          <% end %>
         </div>
-        <div class="text-light p-2">
+        <div class="text-light ms-3">
            <%= current_user.email %>
         </div>
-        <%= button_to('Sign Out',  destroy_user_session_path, :method => 'delete', class: 'btn btn-light btn-sm') %>
+        <%= button_to('Sign Out',  destroy_user_session_path, :method => 'delete', class: 'btn btn-light btn-sm ms-3') %>
         <% end %>
       </div>
     </nav>

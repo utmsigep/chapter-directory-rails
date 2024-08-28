@@ -1,0 +1,23 @@
+<%= form_with(model: [:admin, user]) do |form| %>
+  <%= render'admin/save_error_details', record: user if user.errors.any? %>
+
+  <div class="mb-3">
+    <%= label_tag :email %>
+    <%= form.text_field :email, class: 'form-control' %>
+  </div>
+    <div class="mb-3">
+    <%= label_tag :role %>
+    <%= form.select :role, options_for_select([['Admin', 'admin'], ['Editor', 'editor'], ['User', 'user']]), {}, class: 'form-control', disabled: current_user == @user %>
+  </div>
+  <div class="mb-3">
+    <%= label_tag :password %>
+    <%= form.password_field :password, class: 'form-control' %>
+  </div>
+  <div class="mb-3">
+    <%= label_tag :password_confirmation %>
+    <%= form.password_field :password_confirmation, class: 'form-control' %>
+  </div>
+  <div>
+    <%= form.submit nil, class: 'btn btn-primary' %>
+  </div>
+<% end %>

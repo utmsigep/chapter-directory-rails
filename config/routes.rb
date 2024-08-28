@@ -17,6 +17,7 @@ Rails.application.routes.draw do
 
       resources :districts
       resources :chapters
+      resources :users
     end
   end
 

@@ -1,0 +1,12 @@
+<div class="card mb-3" id="<%= dom_id user %>">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-md-4">Email</dt>
+            <dd class="col-md-8"><%= link_to user.email, admin_user_path(user) %></dd>
+            <dt class="col-md-4">Role</dt>
+            <dd class="col-md-8"><%= user.role %></dd>
+        </dl>
+    </div>
+</div>
+
+
