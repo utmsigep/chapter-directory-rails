@@ -1,8 +1,11 @@
+<% content_for :title, "Import Chapters" %>
+
 <%= render 'admin/admin_menu' %>
 
 <h1>Import Chapters</h1>
 
-<div id="chapters_import">
+<div class="card" id="chapters_import">
+  <div class="card-body">
     <%= form_with multipart: true do |form| %>
     <div class="mb-3">
         <%= label_tag :file %>
@@ -10,5 +13,6 @@
     </div>
     <%= form.submit nil, class: 'btn btn-primary' %>
     <% end %>
+  </div>
 </div>
 
