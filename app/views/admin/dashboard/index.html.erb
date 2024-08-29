@@ -81,12 +81,25 @@
 
 <div class="row mb-3">
   <div class="col-md-4 my-3 text-center">
-    <div class="mb-4">
+    <div class="mb-2">
       <div class="display-1">
         <%= @active_chapters %>
       </div>
       Active Chapters
     </div>
+
+    <% if @report_date == Date.today %>
+    <ul class="list-unstyled mb-4">
+      <li class="">
+        <img src="<%= asset_path('chapter-slc.svg') %>" alt="SLC Icon" width="16">
+        <strong><%= Chapter.where(status: 1, slc: 1).size %></strong> SLC
+      </li>
+      <li class="">
+        <img src="<%= asset_path('chapter.svg') %>" alt="SLC Icon" width="16">
+        <strong><%= Chapter.where(status: 1, slc: 0).size %></strong> Non-SLC
+      </li>
+    </ul>
+    <% end %>
 
     <div class="mb-4">
       <div class="display-1">

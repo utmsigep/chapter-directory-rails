@@ -1,3 +1,4 @@
+<% if chapters.size > 0 %>
 <h4 class="mb-2"><%= title %></h4>
 <div class="table-responsive mb-5">
   <table class="table table-striped table-sm" id="table-<%= title.parameterize %>">
@@ -27,17 +28,16 @@
           tie = ''
         end
       %>
-      <tr class="<% if index + 1 > 10 %>collapse<% end %>">
+      <tr class="<% if index + 1 > 10 %>collapse<% end %> <% unless row[:chapter].status %>opacity-50<% end %>">
         <td class="text-center">
           <%= tie %><%= rank %>
         </td>
         <td>
           <%= link_to row[:chapter][:name], admin_chapter_path(id: row[:chapter][:id]) %>
+          <% unless row[:chapter].status %><span class="badge text-bg-secondary">Dormant</span><% end %>
           <small class="d-block"><%= row[:chapter][:institution_name] %></small>
         </td>
         <td class="text-end">
-          <%= row[:manpower_at_report_date] %>
-          <br />
           <% if row[:manpower_change] > 0 %>
           <span class="text-success"><i class="fas fa-square-caret-up fa-fw"></i> +<%= row[:manpower_change] %></span>
           <% elsif row[:manpower_change] < 0 %>
@@ -45,10 +45,15 @@
           <% else %>
           --
           <% end %>
+          <br />
+          <%= row[:manpower_at_report_date] %>
         </td>
       </tr>
       <% end %>
     </tbody>
   </table>
+  <% if chapters.size > 10 %>
   <small><a href="#" data-toggle="toggle-table-rows" data-table-id="table-<%= title.parameterize %>">Show All</a></small>
+  <% end %>
 </div>
+<% end %>

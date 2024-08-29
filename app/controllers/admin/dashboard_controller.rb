@@ -60,7 +60,7 @@ module Admin
         @manpower_survey[2][:data][survey_date] = average
       end
 
-      if ManpowerSurvey.where(survey_date: @report_date).size === 0
+      if ManpowerSurvey.where(survey_date: @report_date).empty?
         flash.alert = "No survey data available for #{@report_date.strftime('%-m/%-d/%-Y')}"
       end
 
@@ -117,8 +117,14 @@ module Admin
           manpower_change: change
         }
       end
-      @chapter_increases = chapter_changes.sort_by { |change| change[:manpower_change] }.reverse!
-      @chapter_decreases = chapter_changes.sort_by { |change| change[:manpower_change] }
+      # Filter out changes with :manpower_change <= 0 and sort in descending order
+      @chapter_increases = chapter_changes.select { |change| change[:manpower_change].positive? }
+                                          .sort_by { |change| change[:manpower_change] }
+                                          .reverse
+
+      # Filter out changes with :manpower_change >= 0 and sort in ascending order
+      @chapter_decreases = chapter_changes.select { |change| change[:manpower_change].negative? }
+                                          .sort_by { |change| change[:manpower_change] }
     end
   end
 end

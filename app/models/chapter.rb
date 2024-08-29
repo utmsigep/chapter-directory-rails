@@ -12,6 +12,7 @@ class Chapter < ApplicationRecord
 
   def institution_name=(val)
     self[:institution_name] = val.gsub(' Of ', ' of ')
+    self[:institution_name] = val.gsub(' At ', ' at ')
   end
 
   def self.search(query)
