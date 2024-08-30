@@ -133,13 +133,13 @@
   </div>
   <div class="col-md-4 my-3">
     <% if @report_date != @compare_date %>
-    <%= render partial: 'admin/dashboard/manpower_change_ranking_table', locals: { title: 'Largest Manpower Increases', chapters: @chapter_increases } %>
+    <%= render partial: 'admin/dashboard/manpower_change_ranking_table', locals: { title: 'Increased Manpower', chapters: @chapter_increases } %>
     <% end %>
     <%= render partial: 'admin/dashboard/manpower_ranking_table', locals: { title: 'Largest Chapters', chapters: @largest_chapters } %>
   </div>
   <div class="col-md-4 my-3">
     <% if @report_date != @compare_date %>
-    <%= render partial: 'admin/dashboard/manpower_change_ranking_table', locals: { title: 'Largest Manpower Decreases', chapters: @chapter_decreases } %>
+    <%= render partial: 'admin/dashboard/manpower_change_ranking_table', locals: { title: 'Decreased Manpower', chapters: @chapter_decreases } %>
     <% end %>
     <%= render partial: 'admin/dashboard/manpower_ranking_table', locals: { title: 'Smallest Chapters', chapters: @smallest_chapters } %>
   </div>
@@ -173,12 +173,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Toggle the link text between "Show All" and "Show Only Top 10"
+    // Toggle the link text
     const link = event.currentTarget;
-    if (link.textContent.trim() === 'Show All') {
-      link.textContent = 'Show Only Top 10';
+    if (link.textContent.trim() === 'Expand') {
+      link.innerHTML = '<i class="fa fa-caret-up fa-fw me-1"></i>Collapse';
     } else {
-      link.textContent = 'Show All';
+      link.innerHTML = '<i class="fa fa-caret-down fa-fw me-1"></i>Expand';
     }
   }
 

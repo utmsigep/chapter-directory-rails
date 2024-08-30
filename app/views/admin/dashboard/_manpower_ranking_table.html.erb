@@ -39,6 +39,12 @@
       </tr>
     <% end %>
     </tbody>
+    <% if chapters.size > 10 %>
+    <tfoot>
+      <tr>
+        <td colspan="3" class="text-center p-0"><a href="#" data-toggle="toggle-table-rows" data-table-id="table-<%= title.parameterize %>" class="d-block btn btn-sm text-muted"><i class="fas fa-caret-down fa-fq me-1"></i>Expand</a></td>
+      </tr>
+    </tfoot>
+    <% end %>
   </table>
-  <small><a href="#" data-toggle="toggle-table-rows" data-table-id="table-<%= title.parameterize %>">Show All</a></small>
 </div>
