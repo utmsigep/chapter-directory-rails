@@ -27,6 +27,10 @@
     <%= form.check_box :status, class: 'form-check-input' %>
     <%= form.label :status, 'Active Chapter?', class: 'form-check-label' %>
   </div>
+    <div class="form-check mb-3">
+    <%= form.check_box :expansion, class: 'form-check-input' %>
+    <%= form.label :expansion, 'Expansion Chapter?', class: 'form-check-label' %>
+  </div>
   <div class="mb-3">
     <%= form.label :district %>
     <%= form.collection_select :district_id, District.order(:position), :id, :name, {include_blank: 'Select a District'}, class: 'form-select' %>

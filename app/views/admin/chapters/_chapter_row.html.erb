@@ -1,5 +1,9 @@
 <tr class="<%= "text-muted" unless chapter.status %>">
-  <td><%= link_to chapter.name, admin_chapter_path(chapter) %> <%= "(Inactive)" unless chapter.status %></td>
+  <td>
+    <%= link_to chapter.name, admin_chapter_path(chapter) %>
+    <% unless chapter.status %><span class="badge badge-sm text-bg-secondary">Inactive<% end %>
+    <% if chapter.expansion %><span class="badge badge-sm text-bg-success">Expansion<% end %>
+  </td>
   <td><%= chapter.institution_name %></td>
   <td>
     <% if !chapter.latitude || !chapter.longitude %>

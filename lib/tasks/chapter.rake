@@ -239,6 +239,6 @@ namespace :chapter do
     end
 
     # Unsets manpower for orphaned chapters
-    Chapter.inactive.update_all(manpower: 0)
+    Chapter.inactive.update_all(manpower: 0, expansion: 0)
   end
 end

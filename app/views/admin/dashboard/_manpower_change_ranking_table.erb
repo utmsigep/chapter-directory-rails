@@ -39,7 +39,8 @@
         </td>
         <td>
           <%= link_to row[:chapter][:name], admin_chapter_path(id: row[:chapter][:id]) %>
-          <% unless row[:chapter].status %><span class="badge text-bg-secondary">Dormant</span><% end %>
+          <% unless row[:chapter].status %><span class="badge badge-sm text-bg-secondary">Dormant</span><% end %>
+          <% if row[:chapter].expansion == 1 %><span class="badge badge-sm text-bg-success">Expansion</span><% end %>
           <small class="d-block"><%= row[:chapter][:institution_name] %></small>
         </td>
         <td class="text-end">

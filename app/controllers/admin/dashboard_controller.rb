@@ -69,20 +69,20 @@ module Admin
 
       @largest_chapters = ManpowerSurvey.where(survey_date: @report_date)
                                         .joins(:chapter)
-                                        .select('chapters.name, chapters.id, chapters.institution_name, manpower_surveys.manpower')
+                                        .select('chapters.name, chapters.id, chapters.institution_name, chapters.expansion, manpower_surveys.manpower')
                                         .order('manpower DESC')
 
       @smallest_chapters = ManpowerSurvey.where(survey_date: @report_date)
                                          .where('manpower_surveys.manpower > 0')
                                          .joins(:chapter)
-                                         .select('chapters.name, chapters.id, chapters.institution_name, manpower_surveys.manpower')
+                                         .select('chapters.name, chapters.id, chapters.institution_name, chapters.expansion, manpower_surveys.manpower')
                                          .order('manpower ASC')
 
       @manpower_distribution = ManpowerSurvey.where(survey_date: @report_date)
                                              .joins(:chapter)
                                              .select('chapters.name, manpower_surveys.manpower, chapters.id')
                                              .order('manpower_surveys.manpower DESC')
-                                             .pluck(:name, :manpower, :id)
+                                             .pluck(:name, :manpower, :id, :expansion)
 
       values = @manpower_distribution.map { |_, manpower| manpower }
       @average_chapter_size = values.sum / values.size.to_f

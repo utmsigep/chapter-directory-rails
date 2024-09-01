@@ -124,7 +124,7 @@ module Admin
     # Only allow a list of trusted parameters through.
     def chapter_params
       params.fetch(:chapter, {}).permit(:name, :institution_name, :location, :website, :slc, :status,
-                                        :district_id, :longitude, :latitude)
+                                        :expansion, :district_id, :longitude, :latitude)
     end
   end
 end
