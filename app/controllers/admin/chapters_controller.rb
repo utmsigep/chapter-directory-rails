@@ -102,7 +102,7 @@ module Admin
         chapter.district = District.find_by(short_name: row['district']) unless row['district'].nil?
         chapter.district = District.find(row['district_id']) unless row['district_id'].nil?
         chapter.expansion = row['expansion'] unless row['expansion'].nil?
-        chapter.charter_date = Date.strptime(row['charter_date'], '%m/%d/%Y').strftime('%Y-%m-%d') unless row['charter_date'].nil?
+        chapter.charter_date = Date.strptime(row['charter_date'], '%Y-%m-%d').strftime('%Y-%m-%d') unless row['charter_date'].nil?
         chapter.chapter_roll = row['chapter_roll'] unless row['chapter_roll'].nil?
         chapter.save!
       end
@@ -115,6 +115,13 @@ module Admin
     rescue StandardError => e
       flash[:error] = e.to_s
       redirect_to(admin_chapters_import_url)
+    end
+
+    def map
+      @districts = District.all
+      @chapters = Chapter.all.order(:name)
+      @chapters = Chapter.all.search(params[:q], true) unless params[:q].blank?
+      @chapters = District.find(params[:district_id]).chapters.all unless params[:district_id].blank?
     end
 
     private

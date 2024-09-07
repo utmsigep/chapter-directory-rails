@@ -2,8 +2,11 @@
   <td><%= chapter.chapter_roll %></td>
   <td>
     <%= link_to chapter.name, admin_chapter_path(chapter) %>
-    <% unless chapter.status %><span class="badge badge-sm text-bg-secondary">Inactive<% end %>
-    <% if chapter.expansion %><span class="badge badge-sm text-bg-success">Expansion<% end %>
+  </td>
+  <td data-order="<%= chapter.status %>">
+    <% if chapter.status %><span class="badge badge-sm text-bg-primary">Active</span><% end %>
+    <% unless chapter.status %><span class="badge badge-sm text-bg-secondary">Dormant</span><% end %>
+    <% if chapter.expansion %><span class="badge badge-sm text-bg-success">Expansion</span><% end %>
   </td>
   <td><%= chapter.institution_name %></td>
   <td>
@@ -13,7 +16,7 @@
     <%= chapter.location %>
   </td>
   <td data-order="<%= chapter.charter_date %>"><%= chapter.charter_date ? chapter.charter_date.strftime('%-m/%-d/%Y') : 'Unknown' %></td>
-  <td><%= chapter.manpower %></td>
+  <td class="text-end"><%= chapter.manpower %></td>
   <% if chapter.district %>
   <td data-order="<%= chapter.district.position %>"><%= link_to chapter.district.name, admin_district_path(chapter.district) %></td>
   <% else %>

@@ -15,12 +15,15 @@ class Chapter < ApplicationRecord
     self[:institution_name] = val.gsub(' At ', ' at ')
   end
 
-  def self.search(query)
+  def self.search(query, include_inactive = false)
     wheres = [
       where('name LIKE ?', "%#{query}%"),
       where('institution_name LIKE ?', "%#{query}%"),
       where('location LIKE ?', "%#{query}%")
     ]
+
+    return wheres.reduce(:or) if include_inactive
+
     wheres.reduce(:or).where('status = ?', 1)
   end
 end

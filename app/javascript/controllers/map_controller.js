@@ -188,7 +188,10 @@ export default class extends Controller {
 
   filterDistrict(event) {
     document.getElementById('search').value = '';
-    this.urlValue = `/map/data.json?district_id=${event.target.value}`;
+    if (this.urlValue.includes('?')) {
+      [this.urlValue] = this.urlValue.split('?');
+    }
+    this.urlValue = `${this.urlValue}?district_id=${event.target.value}`;
   }
 
   filterSearch(event) {
@@ -196,7 +199,10 @@ export default class extends Controller {
 
     function doneTyping() {
       document.getElementById('district').value = '';
-      that.urlValue = `/map/data.json?q=${event.target.value}`;
+      if (that.urlValue.includes('?')) {
+        [that.urlValue] = that.urlValue.split('?');
+      }
+      that.urlValue = `${that.urlValue}?q=${event.target.value}`;
     }
 
     let typingTimer;
@@ -212,7 +218,10 @@ export default class extends Controller {
   resetForm() {
     document.getElementById('district').value = '';
     document.getElementById('search').value = '';
-    this.urlValue = `/map/data.json?nonce=${Math.random()}`;
+    if (this.urlValue.includes('?')) {
+      [this.urlValue] = this.urlValue.split('?');
+    }
+    this.urlValue = `${this.urlValue}?nonce=${Math.random()}`;
     this.map.closePopup();
   }
 

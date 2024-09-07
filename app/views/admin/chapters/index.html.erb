@@ -7,6 +7,7 @@
     <h1>Chapters</h1>
   </div>
   <div class="col-md text-center text-md-end">
+    <%= link_to raw('<i class="fas fa-map"></i> Map'), admin_chapters_map_path, class: 'btn btn-secondary' %>
     <%= link_to raw('<i class="fas fa-download"></i> Export'), admin_chapters_path(format: :csv), class: 'btn btn-secondary' %>
     <% if role_check(:editor) %>
     <%= link_to raw('<i class="fas fa-upload"></i> Import'), admin_chapters_import_path, class: 'btn btn-secondary' %>
@@ -26,6 +27,7 @@
         <tr>
           <th>Roll #</th>
           <th>Chapter</th>
+          <th>Status</th>
           <th>Institution</th>
           <th>Location</th>
           <th>Charter Date</th>
@@ -49,6 +51,7 @@
       <tr>
           <th>Roll #</th>
           <th>Chapter</th>
+          <th>Status</th>
           <th>Institution</th>
           <th>Location</th>
           <th>Charter Date</th>
