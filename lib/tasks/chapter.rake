@@ -11,6 +11,7 @@ namespace :chapter do
   desc 'Update chapters without latitude/longitude from Wikipedia'
   task geocode: :environment do
     chapters = Chapter.where(latitude: nil, longitude: nil)
+    logger.info 'Updating chapters that are missing coordinates ...'
     chapters.each do |chapter|
       geocoded_by = 'institution'
       begin
@@ -53,6 +54,34 @@ namespace :chapter do
       chapter.longitude = wiki['coordinates'].first['lon']
       logger.info("Updating #{chapter.name} (#{chapter.institution_name}) with #{chapter.latitude}, #{chapter.longitude} - #{geocoded_by}")
       chapter.save!
+    end
+
+    # All chapters where the :location is empty/nil but has a :latitude and :longitude
+    chapters = Chapter.where(location: nil).where.not(latitude: nil, longitude: nil)
+    logger.info 'Updating chapters without locations, but have coordinates ...'
+    chapters.each do |chapter|
+      begin
+        url = URI.parse("https://nominatim.openstreetmap.org/reverse.php?lat=#{chapter.latitude}&lon=#{chapter.longitude}&zoom=10&format=jsonv2")
+        logger.debug url
+        request = Net::HTTP::Get.new(url)
+        request['User-Agent'] = '@utmsigep/chapter-directory-rails'
+        response = Net::HTTP.start(url.hostname, url.port, use_ssl: true) { |http| http.request(request) }
+        logger.debug response.body
+        json = JSON.parse(response.body)
+        sleep(2)
+      rescue StandardError => e
+        logger.warn "Failed retrieving data for #{chapter.name} (#{chapter.institution_name})"
+        logger.warn e.message
+        sleep(2)
+        next
+      end
+      if (json['address']['city'] || json['address']['town'] || json['address']['municipality']) && json['address']['state']
+        chapter.location = "#{json['address']['city'] || json['address']['town'] || json['address']['municipality']}, #{json['address']['state']}"
+        logger.info("Updating #{chapter.name} (#{chapter.institution_name}) with #{chapter.location}")
+        chapter.save!
+      else
+        logger.warn "Unable to find location for #{chapter.name} (#{chapter.institution_name})"
+      end
     end
   end
 

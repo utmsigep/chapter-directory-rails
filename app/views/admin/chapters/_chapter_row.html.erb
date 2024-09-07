@@ -1,4 +1,5 @@
 <tr class="<%= "text-muted" unless chapter.status %>">
+  <td><%= chapter.chapter_roll %></td>
   <td>
     <%= link_to chapter.name, admin_chapter_path(chapter) %>
     <% unless chapter.status %><span class="badge badge-sm text-bg-secondary">Inactive<% end %>
@@ -11,6 +12,7 @@
     <% end %>
     <%= chapter.location %>
   </td>
+  <td data-order="<%= chapter.charter_date %>"><%= chapter.charter_date ? chapter.charter_date.strftime('%-m/%-d/%Y') : 'Unknown' %></td>
   <td><%= chapter.manpower %></td>
   <% if chapter.district %>
   <td data-order="<%= chapter.district.position %>"><%= link_to chapter.district.name, admin_district_path(chapter.district) %></td>

@@ -101,6 +101,9 @@ module Admin
         chapter.status = row['status'] unless row['status'].nil?
         chapter.district = District.find_by(short_name: row['district']) unless row['district'].nil?
         chapter.district = District.find(row['district_id']) unless row['district_id'].nil?
+        chapter.expansion = row['expansion'] unless row['expansion'].nil?
+        chapter.charter_date = Date.strptime(row['charter_date'], '%m/%d/%Y').strftime('%Y-%m-%d') unless row['charter_date'].nil?
+        chapter.chapter_roll = row['chapter_roll'] unless row['chapter_roll'].nil?
         chapter.save!
       end
 
@@ -124,7 +127,8 @@ module Admin
     # Only allow a list of trusted parameters through.
     def chapter_params
       params.fetch(:chapter, {}).permit(:name, :institution_name, :location, :website, :slc, :status,
-                                        :expansion, :district_id, :longitude, :latitude)
+                                        :expansion, :district_id, :longitude, :latitude, :charter_date,
+                                        :chapter_roll)
     end
   end
 end

@@ -18,7 +18,15 @@
     <%= form.label :location %>
     <%= form.text_field :location, class: 'form-control' %>
   </div>
-    <div class="mb-3">
+  <div class="mb-3">
+    <%= form.label :chapter_roll, 'Chapter Roll #' %>
+    <%= form.number_field :chapter_roll, class: 'form-control' %>
+  </div>
+  <div class="mb-3">
+    <%= form.label :charter_date %>
+    <%= form.date_field :charter_date, class: 'form-control' %>
+  </div>
+  <div class="mb-3">
     <%= form.label :website %>
     <%= form.url_field :website, class: 'form-control' %>
   </div>

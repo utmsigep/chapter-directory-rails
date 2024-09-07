@@ -5,6 +5,10 @@
             <dd class="col-md-8"><%= link_to chapter.name, admin_chapter_path(chapter) %></dd>
             <dt class="col-md-4">Institution Name</dt>
             <dd class="col-md-8"><%= chapter.institution_name %></dd>
+            <dt class="col-md-4">Chapter Roll</dt>
+            <dd class="col-md-8"><%= chapter.chapter_roll %></dd>
+            <dt class="col-md-4">Charter Date</dt>
+            <dd class="col-md-8"><%= chapter.charter_date ? chapter.charter_date.strftime('%-m/%-d/%Y') : 'Not Set' %></dd>
             <dt class="col-md-4">SigEp Learning Community</dt>
             <dd class="col-md-8"><%= chapter.slc ? 'Yes' : 'No' %></dd>
             <dt class="col-md-4">Active?</dt>
