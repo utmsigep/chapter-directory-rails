@@ -94,7 +94,8 @@ module Admin
         chapter.name = row['name']
         chapter.slc = row['slc'] unless row['slc'].nil?
         chapter.institution_name = row['institution_name'] unless row['institution_name'].nil?
-        chapter.location = row['location'] unless row['location'].nil?
+        chapter.city = row['city'] unless row['city'].nil?
+        chapter.state = row['state'] unless row['state'].nil?
         chapter.latitude = row['latitude'] unless row['latitude'].nil?
         chapter.longitude = row['longitude'] unless row['longitude'].nil?
         chapter.website = row['website'] unless row['website'].nil?
@@ -133,7 +134,7 @@ module Admin
 
     # Only allow a list of trusted parameters through.
     def chapter_params
-      params.fetch(:chapter, {}).permit(:name, :institution_name, :location, :website, :slc, :status,
+      params.fetch(:chapter, {}).permit(:name, :institution_name, :city, :state, :website, :slc, :status,
                                         :expansion, :district_id, :longitude, :latitude, :charter_date,
                                         :chapter_roll)
     end

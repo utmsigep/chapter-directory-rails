@@ -9,11 +9,12 @@
     <% if chapter.expansion %><span class="badge badge-sm text-bg-success">Expansion</span><% end %>
   </td>
   <td><%= chapter.institution_name %></td>
+  <td><%= chapter.city %></td>
   <td>
     <% if !chapter.latitude || !chapter.longitude %>
-    <span title="Geolocation missing"><i class="fas fa-circle-question"></i></span>
+    <span title="Geolocation missing!"><i class="fas fa-circle-question fa-fw ms-1"></i></span>
     <% end %>
-    <%= chapter.location %>
+    <%= chapter.state =%>
   </td>
   <td data-order="<%= chapter.charter_date %>"><%= chapter.charter_date ? chapter.charter_date.strftime('%-m/%-d/%Y') : 'Unknown' %></td>
   <td class="text-end"><%= chapter.manpower %></td>

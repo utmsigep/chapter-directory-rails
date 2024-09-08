@@ -20,6 +20,10 @@ class Chapter < ApplicationRecord
     institution_name.gsub!(' And ', ' and ')
   end
 
+  def location
+    [city, state].compact.join(', ')
+  end
+
   def self.search(query, include_inactive = false)
     wheres = [
       where('name LIKE ?', "%#{query}%"),

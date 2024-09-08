@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_09_06_230423) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_08_155743) do
   create_table "chapters", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name"
     t.string "institution_name"
@@ -19,7 +19,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_06_230423) do
     t.integer "district_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "location"
     t.boolean "slc", default: false
     t.string "website"
     t.boolean "status", default: false
@@ -27,6 +26,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_09_06_230423) do
     t.boolean "expansion", default: false
     t.date "charter_date"
     t.integer "chapter_roll"
+    t.string "city"
+    t.string "state"
     t.index ["district_id"], name: "index_chapters_on_district_id"
   end
 

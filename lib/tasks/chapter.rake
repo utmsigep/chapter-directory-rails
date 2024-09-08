@@ -56,8 +56,8 @@ namespace :chapter do
       chapter.save!
     end
 
-    # All chapters where the :location is empty/nil but has a :latitude and :longitude
-    chapters = Chapter.where(location: nil).where.not(latitude: nil, longitude: nil)
+    # All chapters where the :city and :state is empty/nil but has a :latitude and :longitude
+    chapters = Chapter.where(city: nil, state: nil).where.not(latitude: nil, longitude: nil)
     logger.info 'Updating chapters without locations, but have coordinates ...'
     chapters.each do |chapter|
       begin
@@ -76,7 +76,8 @@ namespace :chapter do
         next
       end
       if (json['address']['city'] || json['address']['town'] || json['address']['municipality']) && json['address']['state']
-        chapter.location = "#{json['address']['city'] || json['address']['town'] || json['address']['municipality']}, #{json['address']['state']}"
+        chapter.city = json['address']['city'] || json['address']['town'] || json['address']['municipality']
+        chapter.state = json['address']['state']
         logger.info("Updating #{chapter.name} (#{chapter.institution_name}) with #{chapter.location}")
         chapter.save!
       else
@@ -253,7 +254,8 @@ namespace :chapter do
       if chapter_record['city'].empty? || chapter_record['state'].empty?
         puts "[WARNING] #{chapter_record['chapterdesignation']} is missing its location."
       else
-        chapter.location = "#{chapter_record['city']}, #{chapter_record['state']}"
+        chapter.city = chapter_record['city']
+        chapter.state = chapter_record['state']
       end
       chapter.institution_name = chapter_record['dyadinstitutionalid']
       chapter.website = chapter_record['website']
