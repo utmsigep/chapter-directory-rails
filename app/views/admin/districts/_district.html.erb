@@ -7,9 +7,9 @@
             <dd class="col-md-8"><%= district.short_name %></dd>
             <dt class="col-md-4">District Governor</dt>
             <dd class="col-md-8"><%= district.staff_name %></dd>
-            <dt class="col-md-4">Active Chapter Count</dt>
+            <dt class="col-md-4">Active Chapters</dt>
             <dd class="col-md-8"><%= district.chapters.active.length %></dd>
-            <dt class="col-md-4">Dormant Chapter Count</dt>
+            <dt class="col-md-4">Dormant Chapters</dt>
             <dd class="col-md-8"><%= district.chapters.inactive.length %></dd>
             <dt class="col-md-4">Total Manpower</dt>
             <dd class="col-md-8"><%= district.chapters.sum(:manpower) %></dd>

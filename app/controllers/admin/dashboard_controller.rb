@@ -36,7 +36,7 @@ module Admin
 
       @manpower_survey = [
         { name: 'Chapter Manpower', data: {}, points: false, library: { yAxisID: 'y' } },
-        { name: 'Chapter Count', data: {}, points: false, library: { yAxisID: 'y1' } },
+        { name: 'Chapters', data: {}, points: false, library: { yAxisID: 'y1' } },
         { name: 'Average Chapter Size', data: {}, points: false, library: { yAxisID: 'y1' } }
       ]
 
@@ -53,7 +53,7 @@ module Admin
         # Chapter Manpower
         @manpower_survey[0][:data][survey_date] = sum
 
-        # Chapter Count
+        # Chapters
         @manpower_survey[1][:data][survey_date] = count
 
         # Average Chapter Size
