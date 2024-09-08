@@ -17,6 +17,6 @@
 
 <% if role_check(:editor) %>
 <div class="my-3">
-  <%= button_to "Delete District", admin_district_path(@district), method: :delete, class: 'btn btn-danger' %>
+  <%= button_to "Delete District", admin_district_path(@district), method: :delete, class: 'btn btn-danger d-none' %>
 </div>
 <% end %>

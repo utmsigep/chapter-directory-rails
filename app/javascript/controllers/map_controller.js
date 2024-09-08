@@ -93,7 +93,11 @@ export default class extends Controller {
           if (!L.Browser.mobile) {
             marker.bindTooltip(L.Util.template('<div><strong>{name}</strong></div>{slc}{status}<div>{institution_name}</div>', chapter));
           }
-          marker.bindPopup(L.Util.template('<div class="h5">{name}</div>{slc}{status}<div>{institution_name}</div><div>{location}</div><br />{manpower}<hr />{website}<div>{district_name}</div>', chapter));
+          if (chapter.url) {
+            marker.bindPopup(L.Util.template('<div class="h5"><a href="{url}">{name}</a></div>{slc}{status}<div>{institution_name}</div><div>{location}</div><br />{manpower}<hr />{website}<div>{district_name}</div>', chapter));
+          } else {
+            marker.bindPopup(L.Util.template('<div class="h5">{name}</div>{slc}{status}<div>{institution_name}</div><div>{location}</div><br />{manpower}<hr />{website}<div>{district_name}</div>', chapter));
+          }
           marker.addTo(this.chaptersLayer);
           marker.on('dragend', (event) => {
             const draggedMarker = event.target;
@@ -108,7 +112,11 @@ export default class extends Controller {
           // Add to sidebar
           if (chapterList) {
             const chapterItem = document.createElement('div');
-            chapterItem.innerHTML = L.Util.template('<div class="mb-3"><div class="h5">{name}</div>{slc}{status}<div><small>{institution_name}</small></div><div><small>{location}</small></div></div><hr />', chapter);
+            if (chapter.url) {
+              chapterItem.innerHTML = L.Util.template('<div class="mb-3"><div class="h5"><a href="{url}">{name}</a></div>{slc}{status}<div><small>{institution_name}</small></div><div><small>{location}</small></div></div><hr />', chapter);
+            } else {
+              chapterItem.innerHTML = L.Util.template('<div class="mb-3"><div class="h5">{name}</div>{slc}{status}<div><small>{institution_name}</small></div><div><small>{location}</small></div></div><hr />', chapter);
+            }
             chapterItem.onclick = () => {
               document.getElementById('map').scrollIntoView(true);
               that.map.flyTo(marker.getLatLng(), MAX_ZOOM_LEVEL);

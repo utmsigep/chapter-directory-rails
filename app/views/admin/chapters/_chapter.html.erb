@@ -1,47 +1,59 @@
-<div class="card mb-3" id="<%= dom_id chapter %>">
-    <div class="card-body">
+<div id="<%= dom_id chapter %>" class="card mb-3">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-7">
         <dl class="row">
-            <dt class="col-md-4">Name</dt>
-            <dd class="col-md-8"><%= link_to chapter.name, admin_chapter_path(chapter) %></dd>
-            <dt class="col-md-4">Institution Name</dt>
-            <dd class="col-md-8"><%= chapter.institution_name %></dd>
-            <dt class="col-md-4">Chapter Roll</dt>
-            <dd class="col-md-8"><%= chapter.chapter_roll %></dd>
-            <dt class="col-md-4">Charter Date</dt>
-            <dd class="col-md-8"><%= chapter.charter_date ? chapter.charter_date.strftime('%-m/%-d/%Y') : 'Not Set' %></dd>
-            <dt class="col-md-4">SigEp Learning Community</dt>
-            <dd class="col-md-8"><%= chapter.slc ? 'Yes' : 'No' %></dd>
-            <dt class="col-md-4">Active?</dt>
-            <dd class="col-md-8"><%= chapter.status ? 'Yes' : 'No' %></dd>
-            <dt class="col-md-4">Expansion?</dt>
-            <dd class="col-md-8"><%= chapter.expansion ? 'Yes' : 'No' %></dd>
-            <dt class="col-md-4">Manpower</dt>
-            <dd class="col-md-8"><%= chapter.manpower %></dd>
-            <dt class="col-md-4">Location</dt>
-            <dd class="col-md-8"><%= chapter.location %></dd>
-            <dt class="col-md-4">Website</dt>
-            <dd class="col-md-8"><%= link_to chapter.website, chapter.website unless chapter.website.nil? %></dd>
-            <dt class="col-md-4">District</dt>
-            <% if chapter.district %>
-            <dd class="col-md-8"><%= link_to(chapter.district.name, admin_district_path(chapter.district)) %></dd>
+          <dt class="col-md-4">Name</dt>
+          <dd class="col-md-8"><%= link_to chapter.name, admin_chapter_path(chapter) %></dd>
+          <dt class="col-md-4">Institution Name</dt>
+          <dd class="col-md-8"><%= chapter.institution_name %></dd>
+          <dt class="col-md-4">Chapter Roll</dt>
+          <dd class="col-md-8"><%= chapter.chapter_roll %></dd>
+          <dt class="col-md-4">Charter Date</dt>
+          <dd class="col-md-8"><%= chapter.charter_date ? chapter.charter_date.strftime('%-m/%-d/%Y') : 'Not Set' %></dd>
+          <dt class="col-md-4">SigEp Learning Community</dt>
+          <dd class="col-md-8"><%= chapter.slc ? 'Yes' : 'No' %></dd>
+          <dt class="col-md-4">Active?</dt>
+          <dd class="col-md-8"><%= chapter.status ? 'Yes' : 'No' %></dd>
+          <dt class="col-md-4">Expansion?</dt>
+          <dd class="col-md-8"><%= chapter.expansion ? 'Yes' : 'No' %></dd>
+          <dt class="col-md-4">Manpower</dt>
+          <dd class="col-md-8"><%= chapter.manpower %></dd>
+          <dt class="col-md-4">Location</dt>
+          <dd class="col-md-8"><%= chapter.location %></dd>
+          <dt class="col-md-4">Website</dt>
+          <dd class="col-md-8">
+            <% unless chapter.website.empty? %>
+            <%= link_to chapter.website, chapter.website %>
             <% else %>
-            <dd class="col-md-8 text-muted">Not Available</dd>
+            <span class="text-muted">Not Set</span>
             <% end %>
-            <dt class="col-md-4">Latitude</dt>
-            <dd class="col-md-8"><tt><%= chapter.latitude %></tt></dd>
-            <dt class="col-md-4">Longitude</dt>
-            <dd class="col-md-8"><tt><%= chapter.longitude %></tt></dd>
+          </dd>
+          <dt class="col-md-4">District</dt>
+          <% if chapter.district %>
+          <dd class="col-md-8"><%= link_to(chapter.district.name, admin_district_path(chapter.district)) %></dd>
+          <% else %>
+          <dd class="col-md-8 text-muted">Not Set</dd>
+          <% end %>
+          <dt class="col-md-4">Latitude</dt>
+          <dd class="col-md-8"><tt><%= chapter.latitude %></tt></dd>
+          <dt class="col-md-4">Longitude</dt>
+          <dd class="col-md-8"><tt><%= chapter.longitude %></tt></dd>
         </dl>
+      </div>
+      <div class="col-md-5">
+        <div id="map" class="map-box-form" data-controller="map" data-map-url-value="<%= admin_chapter_path(chapter, format: :json) %>"></div>
+      </div>
     </div>
+  </div>
 </div>
-
-<hr />
-
 <% unless current_page?(admin_chapters_url) %>
-<div id="manpower_chart">
-  <%= line_chart @manpower_survey, title: 'Daily Reported Manpower', points: false %>
+<div class="card mb-3">
+  <div class="card-body">
+    <div id="manpower_chart">
+      <%= line_chart @manpower_survey, title: 'Daily Reported Manpower', points: false %>
+    </div>
+  </div>
 </div>
-
-<hr />
-<div id="map" class="map-box-form" data-controller="map" data-map-url-value="<%= admin_chapter_path(chapter, format: :json) %>"></div>
 <% end %>
+
