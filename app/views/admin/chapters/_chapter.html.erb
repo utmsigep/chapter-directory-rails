@@ -23,7 +23,7 @@
           <dd class="col-md-8"><%= chapter.location %></dd>
           <dt class="col-md-4">Website</dt>
           <dd class="col-md-8">
-            <% unless chapter.website.empty? %>
+            <% unless chapter.website.blank? %>
             <%= link_to chapter.website, chapter.website %>
             <% else %>
             <span class="text-muted">Not Set</span>
