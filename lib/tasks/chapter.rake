@@ -195,10 +195,6 @@ namespace :chapter do
     logger.debug response.body
     districts = JSON.parse(response.body)
 
-    # Null out all values
-    # Skip this step for now. Usually not needed.
-    # Chapter.all.update_all(district_id: nil)
-
     districts.each do |record|
       district = District.find_by(name: record['district'])
       if district.nil?
@@ -271,5 +267,20 @@ namespace :chapter do
 
     # Unsets manpower for orphaned chapters
     Chapter.inactive.update_all(manpower: 0, expansion: 0)
+  end
+
+  desc 'Output to Wikipedia table'
+  task wiki: :environment do
+    chapters = Chapter.order('chapter_roll ASC')
+    puts Chapter.to_wikimedia_table(chapters)
+
+    # Update date in full date format
+    update_date = Date.today.strftime('%B %d, %Y')
+    puts ''
+    puts "<i>Data current as of #{update_date}.</i>"
+    puts '
+* <span style="background-color: #9EFF9E;">Active</span>: Chapters that hold a Charter or are a Sigma Epsilon Colony (SEC)
+* <span style="background-color: #FFC7C7;">Dormant</span>: Chapters that are currently inactive with no undergraduate members
+    '
   end
 end

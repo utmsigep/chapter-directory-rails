@@ -7,11 +7,11 @@ module Admin
 
     # GET /chapters or /chapters.json
     def index
-      @chapters = Chapter.order(:name)
+      @chapters = Chapter.order(params[:order_by] || :name)
       @chapters_missing_district = Chapter.active.where(district: nil)
       return unless params[:format] == 'csv'
 
-      send_data Chapter.generate_csv, filename: 'chapters.csv'
+      send_data Chapter.as_csv(@chapters), filename: 'chapters.csv'
     end
 
     # GET /chapters/1 or /chapters/1.json
@@ -77,34 +77,30 @@ module Admin
 
       csv = CSV.parse(uploaded_file.read, headers: true)
 
-      # Create Districts if Missing
-      csv.each do |row|
-        next unless row['district']
-
-        district = District.find_or_create_by(short_name: row['district'])
-        district.name = "District #{row['district']}" if district.name.nil?
-        district.short_name = (row['district']).to_s if district.short_name.nil?
-        district.position = row['district'].to_i if district.position.zero?
-        district.save!
-      end
-
       # Process Chapter Updates
       csv.each do |row|
-        chapter = Chapter.find_or_create_by(name: row['name'])
-        chapter.name = row['name']
-        chapter.slc = row['slc'] unless row['slc'].nil?
-        chapter.institution_name = row['institution_name'] unless row['institution_name'].nil?
-        chapter.city = row['city'] unless row['city'].nil?
-        chapter.state = row['state'] unless row['state'].nil?
-        chapter.latitude = row['latitude'] unless row['latitude'].nil?
-        chapter.longitude = row['longitude'] unless row['longitude'].nil?
-        chapter.website = row['website'] unless row['website'].nil?
-        chapter.status = row['status'] unless row['status'].nil?
-        chapter.district = District.find_by(short_name: row['district']) unless row['district'].nil?
-        chapter.district = District.find(row['district_id']) unless row['district_id'].nil?
-        chapter.expansion = row['expansion'] unless row['expansion'].nil?
-        chapter.charter_date = Date.strptime(row['charter_date'], '%Y-%m-%d').strftime('%Y-%m-%d') unless row['charter_date'].nil?
-        chapter.chapter_roll = row['chapter_roll'] unless row['chapter_roll'].nil?
+        district = District.find_or_create_by(short_name: row['district']) unless row['District'].nil?
+        if district && district.new_record?
+          district.name = "District #{row['District']}" if district.name.nil?
+          district.short_name = (row['District']).to_s if district.short_name.nil?
+          district.position = row['District'].to_i if district.position.zero?
+          district.save!
+        end
+
+        chapter = Chapter.find_or_create_by(name: row['Chapter'])
+        chapter.chapter_roll = row['Roll #'] unless row['Roll #'].nil?
+        chapter.name = row['Chapter']
+        chapter.institution_name = row['Institution Name'] unless row['Institution Name'].nil?
+        chapter.status = row['Status'] == 'Active' unless row['Status'].nil?
+        chapter.slc = row['SLC?'] == 'Yes' unless row['SLC?'].nil?
+        chapter.expansion = row['Expansion?'] == 'Yes' unless row['Expansion'].nil?
+        chapter.city = row['City'] unless row['City'].nil?
+        chapter.state = row['State'] unless row['State'].nil?
+        chapter.latitude = row['Latitude'] unless row['Latitude'].nil?
+        chapter.longitude = row['Longitude'] unless row['Longitude'].nil?
+        chapter.charter_date = Date.strptime(row['Charter Date'], '%Y-%m-%d').strftime('%Y-%m-%d') unless row['Charter Date'].nil?
+        chapter.district = district unless district.nil?
+        chapter.website = row['Website'] unless row['Website'].nil?
         chapter.save!
       end
 
@@ -136,7 +132,7 @@ module Admin
     def chapter_params
       params.fetch(:chapter, {}).permit(:name, :institution_name, :city, :state, :website, :slc, :status,
                                         :expansion, :district_id, :longitude, :latitude, :charter_date,
-                                        :chapter_roll)
+                                        :chapter_roll, :order_by)
     end
   end
 end

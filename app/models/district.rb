@@ -3,7 +3,7 @@
 class District < ApplicationRecord
   has_many :chapters
   validates_presence_of :name, :short_name
+  has_many :chapters
 
   include GenerateCsv
-  has_many :chapters
 end
