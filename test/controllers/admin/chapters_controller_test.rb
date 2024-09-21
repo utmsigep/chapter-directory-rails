@@ -24,7 +24,7 @@ class ChaptersControllerTest < ActionDispatch::IntegrationTest
       post admin_chapters_url, params: { chapter: { name: 'Test Long Name', district_id: @district.id } }
     end
 
-    assert_redirected_to admin_chapter_url(Chapter.last)
+    assert_redirected_to admin_chapter_url(Chapter.order('created_at ASC').last)
   end
 
   test "should show chapter" do
