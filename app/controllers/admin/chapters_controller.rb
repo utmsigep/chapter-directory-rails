@@ -7,7 +7,7 @@ module Admin
 
     # GET /chapters or /chapters.json
     def index
-      @chapters = Chapter.order(params[:order_by] || :name)
+      @chapters = Chapter.all
       @chapters_missing_district = Chapter.active.where(district: nil)
       return unless params[:format] == 'csv'
 
@@ -132,7 +132,7 @@ module Admin
     def chapter_params
       params.fetch(:chapter, {}).permit(:name, :institution_name, :city, :state, :website, :slc, :status,
                                         :expansion, :district_id, :longitude, :latitude, :charter_date,
-                                        :chapter_roll, :order_by)
+                                        :chapter_roll)
     end
   end
 end
