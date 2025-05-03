@@ -5,7 +5,7 @@ class Chapter < ApplicationRecord
   has_many :manpower_surveys
   validates_presence_of :name
 
-  before_save :normalize_field
+  before_save :normalize_fields
 
   default_scope { order(chapter_roll: :asc) }
   scope :active, -> { where(status: 1) }
@@ -94,8 +94,11 @@ class Chapter < ApplicationRecord
     'Omega' => '&#937;'
   }.freeze
 
-  def normalize_field
+  def normalize_fields
     return unless institution_name.present?
+
+    # Decode HTML entities
+    institution_name.replace(CGI.unescapeHTML(institution_name))
 
     institution_name.gsub!(' Of ', ' of ')
     institution_name.gsub!(' At ', ' at ')
