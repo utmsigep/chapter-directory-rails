@@ -94,7 +94,7 @@ namespace :chapter do
     logger.debug response.body
     json_list = JSON.parse(response.body)
     # Removes the "N/A" records
-    json_list = json_list.delete_if { |c| c['chapterdesignation'].empty? }
+    json_list.delete_if { |c| c['chapterdesignation'].empty? }
 
     # Guard against data issues
     if json_list.empty?
@@ -169,8 +169,20 @@ namespace :chapter do
     response = Net::HTTP.get_response(url)
     logger.debug response.body
     slc_chapters = JSON.parse(response.body)
+
+    if slc_chapters.empty?
+      logger.error '[Error] SLC list is empty.'
+      logger.error "```\n#{response.body}\n```"
+      exit(1)
+    end
+
     # Removes the "N/A" records
-    slc_chapters = slc_chapters.delete_if { |c| c['chapterdesignation'].empty? }
+    slc_chapters.delete_if { |c| c['chapterdesignation'].empty? }
+
+    if slc_chapters.empty?
+      puts 'No SLC chapters found!'
+      exit 1
+    end
 
     all_chapters = Chapter.all
 
@@ -237,7 +249,7 @@ namespace :chapter do
     logger.debug response.body
     json_list = JSON.parse(response.body)
     # Removes the "N/A" records
-    json_list = json_list.delete_if { |c| c['chapterdesignation'].empty? }
+    json_list.delete_if { |c| c['chapterdesignation'].empty? }
 
     json_list.each do |chapter_record|
       chapter = Chapter.find_by(name: chapter_record['chapterdesignation'])
@@ -265,7 +277,7 @@ namespace :chapter do
       manpower_survey.save!
     end
 
-    # Unsets manpower for orphaned chapters
+    # Un-sets manpower for orphaned chapters
     Chapter.inactive.update_all(manpower: 0, expansion: 0)
   end
 

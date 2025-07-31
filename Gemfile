@@ -80,3 +80,5 @@ gem "devise", "~> 4.8"
 
 # Use rack
 gem 'rack', '~> 2.2'
+
+gem "csv", "~> 3.3"
