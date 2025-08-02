@@ -248,6 +248,14 @@ namespace :chapter do
     logger.debug response.code
     logger.debug response.body
     json_list = JSON.parse(response.body)
+
+    # Guard against data issues
+    if json_list.empty?
+      logger.error '[Error] Chapter list is empty.'
+      logger.error "```\n#{response.body}\n```"
+      exit(1)
+    end
+
     # Removes the "N/A" records
     json_list.delete_if { |c| c['chapterdesignation'].empty? }
 
@@ -279,6 +287,76 @@ namespace :chapter do
 
     # Un-sets manpower for orphaned chapters
     Chapter.inactive.update_all(manpower: 0, expansion: 0)
+  end
+
+  desc 'Fill gaps in manpower survey data for all chapters'
+  task fill_manpower_gaps: :environment do
+    logger.info 'Starting manpower gaps fill process for all chapters...'
+
+    # Statistics tracking
+    chapters_processed = 0
+    chapters_skipped = 0
+    total_gaps_filled = 0
+    chapters_with_gaps = 0
+
+    Chapter.all.each do |chapter|
+      # Get all existing survey dates for this chapter, ordered by date
+      existing_surveys = chapter.manpower_surveys.order(:survey_date)
+
+      if existing_surveys.empty?
+        logger.debug "Skipping #{chapter.name} (#{chapter.institution_name}): No survey data"
+        chapters_skipped += 1
+        next
+      end
+
+      chapters_processed += 1
+      earliest_date = existing_surveys.first.survey_date
+      latest_date = existing_surveys.last.survey_date
+
+      logger.info "Processing #{chapter.name} (#{chapter.institution_name})..."
+      logger.info "  Date range: #{earliest_date} to #{latest_date}"
+
+      # Create a hash of existing surveys for quick lookup
+      existing_dates = existing_surveys.index_by(&:survey_date)
+
+      gaps_filled_for_chapter = 0
+      last_known_manpower = existing_surveys.first.manpower
+
+      # Iterate through each date in the range
+      (earliest_date..latest_date).each do |date|
+        if existing_dates[date]
+          # Survey exists, update our last known manpower value
+          last_known_manpower = existing_dates[date].manpower
+        else
+          # Gap found, create missing survey entry
+          ManpowerSurvey.create!(
+            chapter: chapter,
+            survey_date: date,
+            manpower: last_known_manpower
+          )
+          logger.debug "  Filled gap on #{date} with manpower: #{last_known_manpower}"
+          gaps_filled_for_chapter += 1
+          total_gaps_filled += 1
+        end
+      end
+
+      if gaps_filled_for_chapter.positive?
+        chapters_with_gaps += 1
+        logger.info "  Filled #{gaps_filled_for_chapter} gaps for #{chapter.name}"
+      else
+        logger.info "  No gaps found for #{chapter.name}"
+      end
+    end
+
+    # Summary report
+    logger.info ''
+    logger.info 'Manpower gaps fill process completed!'
+    logger.info '===================================='
+    logger.info "Chapters processed: #{chapters_processed}"
+    logger.info "Chapters skipped (no data): #{chapters_skipped}"
+    logger.info "Total gaps filled: #{total_gaps_filled}"
+    logger.info "Chapters with gaps: #{chapters_with_gaps}"
+    logger.info ''
   end
 
   desc 'Output to Wikipedia table'
