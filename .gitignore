@@ -9,6 +9,7 @@
 
 # Ignore local gems
 /vendor/bundle/*
+/vendor/ruby/*
 
 # Ignore the default SQLite database.
 /db/*.sqlite3

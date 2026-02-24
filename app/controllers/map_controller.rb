@@ -6,7 +6,7 @@ class MapController < ApplicationController
   end
 
   def map_data
-    @chapters = Chapter.active.order(:name)
+    @chapters = Chapter.active
     @chapters = Chapter.search(params[:q]) unless params[:q].blank?
     @chapters = District.find(params[:district_id]).chapters.active unless params[:district_id].blank?
   end

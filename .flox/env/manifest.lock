@@ -1,0 +1,266 @@
+{
+  "lockfile-version": 1,
+  "manifest": {
+    "version": 1,
+    "install": {
+      "libyaml": {
+        "pkg-path": "libyaml"
+      },
+      "ruby_3_2": {
+        "pkg-path": "ruby_3_2"
+      }
+    },
+    "hook": {
+      "on-activate": "  # Set variables, create files and directories\n\n  # Ruby setup\n  unset CPATH\n  bundle config set --local path 'vendor'\n  export PATH=\"$FLOX_ENV_PROJECT/vendor/ruby/3.2.9/bin:$PATH\"\n  export RAILS_ENV=development\n  bundle install\n"
+    },
+    "profile": {},
+    "options": {},
+    "services": {
+      "web": {
+        "command": "bundle exec rails server"
+      }
+    }
+  },
+  "packages": [
+    {
+      "attr_path": "libyaml",
+      "broken": false,
+      "derivation": "/nix/store/3nyv0nym6q7rwlfzvcw5nya9j4144fa2-libyaml-0.2.5.drv",
+      "description": "YAML 1.1 parser and emitter written in C",
+      "install_id": "libyaml",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=cf3f5c4def3c7b5f1fc012b3d839575dbe552d43",
+      "name": "libyaml-0.2.5",
+      "pname": "libyaml",
+      "rev": "cf3f5c4def3c7b5f1fc012b3d839575dbe552d43",
+      "rev_count": 876718,
+      "rev_date": "2025-10-12T16:01:26Z",
+      "scrape_date": "2025-10-14T03:18:01.190888Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "0.2.5",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dev": "/nix/store/cq1zz8m7qz8g0ncxbcvf08jzvsrcalsj-libyaml-0.2.5-dev",
+        "out": "/nix/store/cdlb4hidwn1slsrmb481x5gk7vcbn1k6-libyaml-0.2.5"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "libyaml",
+      "broken": false,
+      "derivation": "/nix/store/nmgm93qk6iyy50wnf2kdinqv6d42ikgi-libyaml-0.2.5.drv",
+      "description": "YAML 1.1 parser and emitter written in C",
+      "install_id": "libyaml",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=cf3f5c4def3c7b5f1fc012b3d839575dbe552d43",
+      "name": "libyaml-0.2.5",
+      "pname": "libyaml",
+      "rev": "cf3f5c4def3c7b5f1fc012b3d839575dbe552d43",
+      "rev_count": 876718,
+      "rev_date": "2025-10-12T16:01:26Z",
+      "scrape_date": "2025-10-14T03:47:45.547626Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "0.2.5",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dev": "/nix/store/i618dnidkdy2ajnfw1bff6788jja7ig8-libyaml-0.2.5-dev",
+        "out": "/nix/store/1qqfa7fdjm9fvmw64yrxzcipmlngi2mz-libyaml-0.2.5"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "libyaml",
+      "broken": false,
+      "derivation": "/nix/store/68yzgqndiq5k5v7aizsyd79nvlg6naz1-libyaml-0.2.5.drv",
+      "description": "YAML 1.1 parser and emitter written in C",
+      "install_id": "libyaml",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=cf3f5c4def3c7b5f1fc012b3d839575dbe552d43",
+      "name": "libyaml-0.2.5",
+      "pname": "libyaml",
+      "rev": "cf3f5c4def3c7b5f1fc012b3d839575dbe552d43",
+      "rev_count": 876718,
+      "rev_date": "2025-10-12T16:01:26Z",
+      "scrape_date": "2025-10-14T04:15:35.235516Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "0.2.5",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dev": "/nix/store/ch5jg6wmb1f0222w7qw3xjkp3pi4i2z2-libyaml-0.2.5-dev",
+        "out": "/nix/store/byi5716d7s51cwjqwfvk5m1f4i8g98s9-libyaml-0.2.5"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "libyaml",
+      "broken": false,
+      "derivation": "/nix/store/cv9hg90fngz6wx1w9q5iyvn4m19hq70y-libyaml-0.2.5.drv",
+      "description": "YAML 1.1 parser and emitter written in C",
+      "install_id": "libyaml",
+      "license": "MIT",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=cf3f5c4def3c7b5f1fc012b3d839575dbe552d43",
+      "name": "libyaml-0.2.5",
+      "pname": "libyaml",
+      "rev": "cf3f5c4def3c7b5f1fc012b3d839575dbe552d43",
+      "rev_count": 876718,
+      "rev_date": "2025-10-12T16:01:26Z",
+      "scrape_date": "2025-10-14T04:46:49.734210Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "0.2.5",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "dev": "/nix/store/fxxs0rs23mcmy5y5spy20p0i1k72caf4-libyaml-0.2.5-dev",
+        "out": "/nix/store/yryf2g6hnzhj0lbfjf906w1wgv2g9dpg-libyaml-0.2.5"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "ruby_3_2",
+      "broken": false,
+      "derivation": "/nix/store/8456f97c3xrsb6zf03vx393s5cswxjyy-ruby-3.2.9.drv",
+      "description": "Object-oriented language for quick and easy programming",
+      "install_id": "ruby_3_2",
+      "license": "Ruby",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=cf3f5c4def3c7b5f1fc012b3d839575dbe552d43",
+      "name": "ruby-3.2.9",
+      "pname": "ruby_3_2",
+      "rev": "cf3f5c4def3c7b5f1fc012b3d839575dbe552d43",
+      "rev_count": 876718,
+      "rev_date": "2025-10-12T16:01:26Z",
+      "scrape_date": "2025-10-14T03:19:19.064815Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.2.9",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "devdoc": "/nix/store/3276n55qw6j99lk69njr8s9vznk21gkm-ruby-3.2.9-devdoc",
+        "out": "/nix/store/906v7hspcl7qwrl6295d6m20qx09hcrw-ruby-3.2.9"
+      },
+      "system": "aarch64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "ruby_3_2",
+      "broken": false,
+      "derivation": "/nix/store/g5ga26cvbw0vpzv0d0ki9sx3cnn1npgl-ruby-3.2.9.drv",
+      "description": "Object-oriented language for quick and easy programming",
+      "install_id": "ruby_3_2",
+      "license": "Ruby",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=cf3f5c4def3c7b5f1fc012b3d839575dbe552d43",
+      "name": "ruby-3.2.9",
+      "pname": "ruby_3_2",
+      "rev": "cf3f5c4def3c7b5f1fc012b3d839575dbe552d43",
+      "rev_count": 876718,
+      "rev_date": "2025-10-12T16:01:26Z",
+      "scrape_date": "2025-10-14T03:49:30.540369Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.2.9",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "devdoc": "/nix/store/0mcr9a6lqx4gmb4sli5awv3d0f6j0gx1-ruby-3.2.9-devdoc",
+        "out": "/nix/store/js63klsnqk1l6vxn0acdrfcfvsfp23mz-ruby-3.2.9"
+      },
+      "system": "aarch64-linux",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "ruby_3_2",
+      "broken": false,
+      "derivation": "/nix/store/33fw1xzb0zgsa2mfy8l3z04g4d42mm0j-ruby-3.2.9.drv",
+      "description": "Object-oriented language for quick and easy programming",
+      "install_id": "ruby_3_2",
+      "license": "Ruby",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=cf3f5c4def3c7b5f1fc012b3d839575dbe552d43",
+      "name": "ruby-3.2.9",
+      "pname": "ruby_3_2",
+      "rev": "cf3f5c4def3c7b5f1fc012b3d839575dbe552d43",
+      "rev_count": 876718,
+      "rev_date": "2025-10-12T16:01:26Z",
+      "scrape_date": "2025-10-14T04:16:45.580032Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.2.9",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "devdoc": "/nix/store/c82kc3krw54s03rh5yfq8wrc3yjybyd3-ruby-3.2.9-devdoc",
+        "out": "/nix/store/y949f4l8841r6alnlckpn68jr7h6x5lr-ruby-3.2.9"
+      },
+      "system": "x86_64-darwin",
+      "group": "toplevel",
+      "priority": 5
+    },
+    {
+      "attr_path": "ruby_3_2",
+      "broken": false,
+      "derivation": "/nix/store/icydirlrxp98cr1ivj8wc3kkp95c7w2k-ruby-3.2.9.drv",
+      "description": "Object-oriented language for quick and easy programming",
+      "install_id": "ruby_3_2",
+      "license": "Ruby",
+      "locked_url": "https://github.com/flox/nixpkgs?rev=cf3f5c4def3c7b5f1fc012b3d839575dbe552d43",
+      "name": "ruby-3.2.9",
+      "pname": "ruby_3_2",
+      "rev": "cf3f5c4def3c7b5f1fc012b3d839575dbe552d43",
+      "rev_count": 876718,
+      "rev_date": "2025-10-12T16:01:26Z",
+      "scrape_date": "2025-10-14T04:48:39.330327Z",
+      "stabilities": [
+        "unstable"
+      ],
+      "unfree": false,
+      "version": "3.2.9",
+      "outputs_to_install": [
+        "out"
+      ],
+      "outputs": {
+        "devdoc": "/nix/store/fbslmcvf1q6mpj8w2w6iiwzfqm7kkmaf-ruby-3.2.9-devdoc",
+        "out": "/nix/store/26k4sp4lp7j0m389saxw1hdvi8k4i584-ruby-3.2.9"
+      },
+      "system": "x86_64-linux",
+      "group": "toplevel",
+      "priority": 5
+    }
+  ]
+}
