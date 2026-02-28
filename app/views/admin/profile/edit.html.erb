@@ -1,0 +1,28 @@
+<% content_for :title, 'My Profile' %>
+
+<%= render 'admin/admin_menu' %>
+
+<h1>My Profile</h1>
+
+<%= form_with model: @user, url: admin_profile_path, method: :patch do |form| %>
+  <%= render 'admin/save_error_details', record: @user if @user.errors.any? %>
+
+  <div class="mb-3">
+    <%= form.label :email %>
+    <%= form.email_field :email, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :password %>
+    <%= form.password_field :password, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :password_confirmation %>
+    <%= form.password_field :password_confirmation, class: 'form-control' %>
+  </div>
+
+  <div>
+    <%= form.submit 'Update Profile', class: 'btn btn-primary' %>
+  </div>
+<% end %>

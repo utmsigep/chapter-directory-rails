@@ -59,8 +59,8 @@
           <%= link_to admin_users_path, class: 'text-light ms-3' do %><i class="fas fa-users fa-fw me-1"></i>User Admin<% end %>
           <% end %>
         </div>
-        <div class="text-light ms-3">
-           <%= current_user.email %>
+        <div class="ms-3">
+          <%= link_to current_user.email, admin_profile_path, class: 'text-light' %>
         </div>
         <%= button_to('Sign Out',  destroy_user_session_path, :method => 'delete', class: 'btn btn-light btn-sm ms-3') %>
         <% end %>

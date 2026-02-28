@@ -7,6 +7,8 @@ Rails.application.routes.draw do
   authenticate :user do
     namespace :admin do
       get '/', to: 'dashboard#index'
+      get 'profile', to: 'profile#edit', as: 'profile'
+      patch 'profile', to: 'profile#update'
 
       # Import Chapters
       get 'chapters/import', to: 'chapters#import'
