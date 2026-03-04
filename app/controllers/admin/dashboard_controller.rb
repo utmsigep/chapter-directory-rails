@@ -69,17 +69,20 @@ module Admin
 
       @largest_chapters = ManpowerSurvey.where(survey_date: @report_date)
                                         .joins(:chapter)
+                                        .where('chapters.status = 1')
                                         .select('chapters.name, chapters.id, chapters.institution_name, chapters.expansion, manpower_surveys.manpower')
                                         .order('manpower DESC')
 
       @smallest_chapters = ManpowerSurvey.where(survey_date: @report_date)
                                          .where('manpower_surveys.manpower > 0')
                                          .joins(:chapter)
+                                         .where('chapters.status = 1')
                                          .select('chapters.name, chapters.id, chapters.institution_name, chapters.expansion, manpower_surveys.manpower')
                                          .order('manpower ASC')
 
       @manpower_distribution = ManpowerSurvey.where(survey_date: @report_date)
                                              .joins(:chapter)
+                                             .where('chapters.status = 1')
                                              .select('chapters.name, manpower_surveys.manpower, chapters.id')
                                              .order('manpower_surveys.manpower DESC')
                                              .pluck(:name, :manpower, :id, :expansion)

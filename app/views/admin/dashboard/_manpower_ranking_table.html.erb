@@ -33,7 +33,6 @@
         </td>
         <td>
           <%= link_to chapter.name, admin_chapter_path(id: chapter[:id]) %>
-          <% if chapter[:status] == 0 %><span class="badge badge-sm text-bg-secondary">Dormant</span><% end %>
           <% if chapter[:expansion] == 1 %><span class="badge badge-sm text-bg-success">Expansion</span><% end %>
           <div><small><%= chapter.institution_name %></small></div>
         </td>
