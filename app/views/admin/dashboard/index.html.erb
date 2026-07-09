@@ -2,77 +2,233 @@
 
 <%= render 'admin/admin_menu' %>
 
-<div class="d-flex mb-3">
-  <div class="me-auto text-center text-md-start">
+<div class="d-flex flex-column flex-lg-row align-items-lg-start justify-content-between gap-3 mb-3">
+  <div class="text-center text-md-start">
     <h1>Dashboard</h1>
+    <div class="small text-muted">
+      <% if @refresh_status == :queued %>
+        <span class="badge text-bg-warning">Refresh queued</span>
+        Latest available survey: <%= @latest_survey_date ? @latest_survey_date.strftime('%-m/%-d/%Y') : 'None yet' %>
+      <% elsif @refresh_status == :available %>
+        <span class="badge text-bg-success">Data current</span>
+        Latest available survey: <%= @latest_survey_date&.strftime('%-m/%-d/%Y') %>
+      <% elsif @refresh_status == :historical %>
+        <span class="badge text-bg-secondary">Historical view</span>
+      <% else %>
+        <span class="badge text-bg-secondary">Data pending</span>
+        Latest available survey: <%= @latest_survey_date ? @latest_survey_date.strftime('%-m/%-d/%Y') : 'None yet' %>
+      <% end %>
+      <% if @compare_preset_label.present? %>
+        <span class="ms-2">Preset: <strong><%= @compare_preset_label %></strong></span>
+      <% end %>
+    </div>
   </div>
-  <div class="text-end">
-    <div class="dropdown">
-      <button class="btn border-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <i class="fas fa-calendar fa-fw ms-1"></i>
-          Report for <strong><%= @report_date.strftime('%-m/%-d/%Y') %></strong>
-          <% if @report_date != @compare_date %>
-          <small><br />(Compared to <strong><%= @compare_date.strftime('%-m/%-d/%Y') %></strong>)</small>
-          <% end %>
-      </button>
-      <div class="dropdown-menu">
-        <%= form_with(url: admin_path(), method: :get, local: true, id: 'dashboard_date_form') do |form| %>
-          <div class="p-3" style="width: 300px;">
-            <div class="d-flex">
-              <div class="p-1 ms-auto">
-                <%= form.label :date, 'Report', class: 'col-form-label' %>
-              </div>
-              <div class="p-1">
-                <%= form.date_field :date, value: @report_date, class: 'form-control' %>
-              </div>
-            </div>
-            <div class="d-flex">
-              <div class="p-1 ms-auto">
-                <%= form.label :compare, 'Compare', class: 'col-form-label' %>
-              </div>
-              <div class="p-1">
-                <%= form.date_field :compare, value: @compare_date, class: 'form-control' %>
-              </div>
-            </div>
-          </div>
-          <div class="p-2 text-center">
-            <ul class="list-inline small">
-              <li class="list-inline-item"><%= link_to 'Prior PMR', '#', data: { target_date: 'March 1' }, class: 'set-date-link' %></li>
-              <li class="list-inline-item"><%= link_to 'Current Month', '#', data: { target_date: "#{Date.today.strftime('%B')} 1" }, class: 'set-date-link' %></li>
-              <li class="list-inline-item"><%= link_to 'Last Month', '#', data: { target_date: "#{(Date.today << 1).strftime('%B %d')}" }, class: 'set-date-link' %></li>
-            </ul>
-          </div>
-          <div class="px-4">
-            <%= form.button 'Go', name: nil, type: :submit, class: 'btn btn-primary w-100' %>
-          </div>
-        <% end %>
-        <script>
-          document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.set-date-link').forEach(link => {
-              link.addEventListener('click', function(event) {
-                event.preventDefault();
-                const targetDateStr = this.dataset.targetDate;
-                const targetDate = new Date(`${targetDateStr} ${new Date().getFullYear()}`);
-                const today = new Date();
-                let dateToSet;
-                if (today >= targetDate) {
-                  dateToSet = targetDate; // Use the current year's date
-                } else {
-                  dateToSet = new Date(targetDate.setFullYear(targetDate.getFullYear() - 1)); // Use the previous year's date
-                }
-                const formattedDate = dateToSet.toISOString().split('T')[0];
-                document.getElementById('compare').value = formattedDate;
-                const form = document.getElementById('dashboard_date_form');
-                if (form) {
-                  form.submit();
-                }
-              });
-            });
-          });
-        </script>
+  <%= form_with(url: admin_path(), method: :get, local: true, id: 'dashboard_date_form', class: 'row g-2 align-items-end') do |form| %>
+    <div class="col-auto">
+      <%= form.label :date, 'Report', class: 'form-label mb-1 small text-muted' %>
+      <%= form.date_field :date, value: @report_date, class: 'form-control' %>
+    </div>
+    <div class="col-auto">
+      <%= form.label :compare, 'Compare', class: 'form-label mb-1 small text-muted' %>
+      <%= form.date_field :compare, value: @compare_date, class: 'form-control' %>
+    </div>
+    <div class="col-auto">
+      <%= form.button 'Apply', name: nil, type: :submit, class: 'btn btn-primary' %>
+    </div>
+  <% end %>
+</div>
+
+<div class="d-flex flex-wrap gap-2 mb-3">
+  <% @preset_shortcuts.each do |shortcut| %>
+    <% active_preset = shortcut[:key] == @compare_preset %>
+    <% button_class = active_preset ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline-secondary' %>
+    <%= link_to shortcut[:label], admin_path(date: @report_date, compare: shortcut[:compare_date], preset: shortcut[:key]), class: button_class %>
+  <% end %>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted small">Net Membership Change</div>
+        <% net_change_class = @net_manpower_change.positive? ? 'text-success' : (@net_manpower_change.negative? ? 'text-danger' : 'text-muted') %>
+        <% net_change_prefix = @net_manpower_change.positive? ? '+' : '' %>
+        <div class="display-6 <%= net_change_class %>"><%= net_change_prefix %><%= number_with_delimiter(@net_manpower_change) %></div>
+        <div class="small text-muted">Compared to <%= @compare_date.strftime('%-m/%-d/%Y') %></div>
       </div>
     </div>
   </div>
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted small">Growth Rate</div>
+        <% if @net_manpower_growth_rate.nil? %>
+          <div class="display-6 text-muted">--</div>
+          <div class="small text-muted">Requires non-zero comparison baseline</div>
+        <% else %>
+          <% growth_class = @net_manpower_growth_rate.positive? ? 'text-success' : (@net_manpower_growth_rate.negative? ? 'text-danger' : 'text-muted') %>
+          <% growth_prefix = @net_manpower_growth_rate.positive? ? '+' : '' %>
+          <div class="display-6 <%= growth_class %>"><%= growth_prefix %><%= @net_manpower_growth_rate %>%</div>
+          <div class="small text-muted">Manpower growth over selected window</div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted small">Chapter Movement Mix</div>
+        <div class="mt-2">
+          <span class="badge text-bg-success me-1">Up: <%= @chapters_up_count %></span>
+          <span class="badge text-bg-secondary me-1">Flat: <%= @chapters_flat_count %></span>
+          <span class="badge text-bg-danger">Down: <%= @chapters_down_count %></span>
+        </div>
+        <div class="small text-muted mt-2">Based on <%= number_with_delimiter(@chapters_compared_count) %> chapters with report or compare data</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted small">Reporting Coverage</div>
+        <% if @reporting_coverage_rate.nil? %>
+          <div class="display-6 text-muted">--</div>
+        <% else %>
+          <div class="display-6"><%= @reporting_coverage_rate %>%</div>
+        <% end %>
+        <div class="small text-muted"><%= number_with_delimiter(@reporting_chapters_count) %> of <%= number_with_delimiter(@active_chapter_total) %> active chapters reported for <%= @report_date.strftime('%-m/%-d') %></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted small">Active Chapters</div>
+        <div class="display-6"><%= number_with_delimiter(@active_chapters) %></div>
+        <% if @report_date == Date.today %>
+        <div class="small text-muted">
+          <img src="<%= asset_path('chapter-slc.svg') %>" alt="SLC Icon" width="14"> <%= number_with_delimiter(Chapter.where(status: 1, slc: 1).size) %> SLC
+          <span class="mx-1">|</span>
+          <img src="<%= asset_path('chapter.svg') %>" alt="Chapter Icon" width="14"> <%= number_with_delimiter(Chapter.where(status: 1, slc: 0).size) %> Non-SLC
+        </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted small">Reported Manpower</div>
+        <div class="display-6"><%= number_with_delimiter(@current_manpower) %></div>
+        <div class="small text-muted"><%= @report_date.strftime('%-m/%-d/%Y') %></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted small">Average Chapter Size</div>
+        <div class="display-6"><%= @average_chapter_size.round if @average_chapter_size > 0 %></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted small">Median Chapter Size</div>
+        <div class="display-6"><%= @median_chapter_size %></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="mb-0">Expansion vs Non-Expansion</h5>
+          <span class="badge text-bg-light border">Window: <%= @comparison_window_label %></span>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Group</th>
+                <th class="text-end">Chapters</th>
+                <th class="text-end">Report</th>
+                <th class="text-end">Compare</th>
+                <th class="text-end">Net</th>
+                <th class="text-end">Growth</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @expansion_comparison.each do |row| %>
+                <% change_class = row[:net_change].positive? ? 'text-success' : (row[:net_change].negative? ? 'text-danger' : 'text-muted') %>
+                <% change_prefix = row[:net_change].positive? ? '+' : '' %>
+                <% growth_prefix = row[:growth_rate].to_f.positive? ? '+' : '' %>
+                <tr>
+                  <td><strong><%= row[:label] %></strong></td>
+                  <td class="text-end"><%= number_with_delimiter(row[:chapters]) %></td>
+                  <td class="text-end"><%= number_with_delimiter(row[:report_manpower]) %></td>
+                  <td class="text-end"><%= number_with_delimiter(row[:compare_manpower]) %></td>
+                  <td class="text-end <%= change_class %>"><%= change_prefix %><%= number_with_delimiter(row[:net_change]) %></td>
+                  <td class="text-end"><%= row[:growth_rate].nil? ? '--' : "#{growth_prefix}#{row[:growth_rate]}%" %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="mb-0">SLC vs Non-SLC</h5>
+          <span class="badge text-bg-light border">Window: <%= @comparison_window_label %></span>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-sm align-middle mb-0">
+            <thead>
+              <tr>
+                <th>Group</th>
+                <th class="text-end">Chapters</th>
+                <th class="text-end">Report</th>
+                <th class="text-end">Compare</th>
+                <th class="text-end">Net</th>
+                <th class="text-end">Growth</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @slc_comparison.each do |row| %>
+                <% change_class = row[:net_change].positive? ? 'text-success' : (row[:net_change].negative? ? 'text-danger' : 'text-muted') %>
+                <% change_prefix = row[:net_change].positive? ? '+' : '' %>
+                <% growth_prefix = row[:growth_rate].to_f.positive? ? '+' : '' %>
+                <tr>
+                  <td><strong><%= row[:label] %></strong></td>
+                  <td class="text-end"><%= number_with_delimiter(row[:chapters]) %></td>
+                  <td class="text-end"><%= number_with_delimiter(row[:report_manpower]) %></td>
+                  <td class="text-end"><%= number_with_delimiter(row[:compare_manpower]) %></td>
+                  <td class="text-end <%= change_class %>"><%= change_prefix %><%= number_with_delimiter(row[:net_change]) %></td>
+                  <td class="text-end"><%= row[:growth_rate].nil? ? '--' : "#{growth_prefix}#{row[:growth_rate]}%" %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <h5 class="mb-0">Trend Views</h5>
+  <span class="badge text-bg-light border">Window: <%= @comparison_window_label %></span>
 </div>
 
 <div class="row mb-3">
@@ -110,65 +266,66 @@
   </div>
 </div>
 
+<% if @report_date != @compare_date %>
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <h5 class="mb-0">District Change Views</h5>
+  <span class="badge text-bg-light border">Window: <%= @comparison_window_label %></span>
+</div>
 <div class="row mb-3">
-  <div class="col-md-4 my-3 text-center">
-    <div class="mb-2">
-      <div class="display-1">
-        <%= @active_chapters %>
-      </div>
-      Active Chapters
-    </div>
-
-    <% if @report_date == Date.today %>
-    <ul class="list-unstyled mb-4">
-      <li class="">
-        <img src="<%= asset_path('chapter-slc.svg') %>" alt="SLC Icon" width="16">
-        <strong><%= Chapter.where(status: 1, slc: 1).size %></strong> SLC
-      </li>
-      <li class="">
-        <img src="<%= asset_path('chapter.svg') %>" alt="SLC Icon" width="16">
-        <strong><%= Chapter.where(status: 1, slc: 0).size %></strong> Non-SLC
-      </li>
-    </ul>
-    <% end %>
-
-    <div class="mb-4">
-      <div class="display-1">
-        <%= number_with_delimiter(@current_manpower) %>
-      </div>
-      Current Manpower (<%= Date.today.strftime('%-m/%-d') %>)
-      <div>
-        <% if @compare_manpower > 0 %>
-        <% if @current_manpower > @compare_manpower %>
-          <span class="text-success" title="<%= number_with_delimiter(@compare_manpower) %>"><i class="fas fa-square-caret-up fa-fw ms-1"></i> +<%= number_with_delimiter((@compare_manpower - @current_manpower).abs) %></span> (<%= @compare_date.strftime('%-m/%-d') %>)
-        <% elsif @current_manpower < @compare_manpower %>
-          <span class="text-danger" title="<%= number_with_delimiter(@compare_manpower) %>"><i class="fas fa-square-caret-down fa-fw ms-1"></i> -<%= number_with_delimiter((@current_manpower - @compare_manpower).abs) %></span> (<%= @compare_date.strftime('%-m/%-d') %>)
-        <% end%>
-        <% end %>
-      </div>
-    </div>
-
-    <div class="mb-4">
-      <div class="display-1">
-        <%= @average_chapter_size.round if @average_chapter_size > 0 %>
-      </div>
-      Average Chapter Size
-    </div>
-
-    <div class="mb-4">
-      <div class="display-1">
-        <%= @median_chapter_size %>
-      </div>
-      Median Chapter Size
+  <div class="col-md-6">
+    <div id="district_net_gain" class="my-3">
+      <%= column_chart @district_net_gain_chart, title: 'Top District Membership Gains', thousands: ',', download: { filename: "district-net-gain-#{@report_date}-vs-#{@compare_date}.png", background: "#ffffff" } %>
     </div>
   </div>
-  <div class="col-md-4 my-3">
+  <div class="col-md-6">
+    <div id="district_net_decline" class="my-3">
+      <%= column_chart @district_net_decline_chart, title: 'Top District Membership Declines (Absolute)', thousands: ',', download: { filename: "district-net-decline-#{@report_date}-vs-#{@compare_date}.png", background: "#ffffff" } %>
+    </div>
+  </div>
+</div>
+
+<div class="row mb-3">
+  <div class="col-12">
+    <h5 class="mb-2">District Net Change Snapshot</h5>
+    <div class="table-responsive">
+      <table class="table table-sm table-striped mb-0">
+        <thead>
+          <tr>
+            <th>District</th>
+            <th class="text-end">Chapters</th>
+            <th class="text-end">Net Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @district_net_change_table.each do |district_name, stats| %>
+            <% delta_class = stats[:delta].positive? ? 'text-success' : (stats[:delta].negative? ? 'text-danger' : 'text-muted') %>
+            <% delta_prefix = stats[:delta].positive? ? '+' : '' %>
+            <tr>
+              <td><%= district_name %></td>
+              <td class="text-end"><%= number_with_delimiter(stats[:chapters]) %></td>
+              <td class="text-end <%= delta_class %>"><%= delta_prefix %><%= number_with_delimiter(stats[:delta]) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<% end %>
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+  <h5 class="mb-0">Chapter Rankings</h5>
+  <span class="badge text-bg-light border">Window: <%= @comparison_window_label %></span>
+</div>
+
+<div class="row mb-3">
+  <div class="col-md-6 my-3">
     <% if @report_date != @compare_date %>
     <%= render partial: 'admin/dashboard/manpower_change_ranking_table', locals: { title: 'Increased Manpower', chapters: @chapter_increases } %>
     <% end %>
     <%= render partial: 'admin/dashboard/manpower_ranking_table', locals: { title: 'Largest Chapters', chapters: @largest_chapters } %>
   </div>
-  <div class="col-md-4 my-3">
+  <div class="col-md-6 my-3">
     <% if @report_date != @compare_date %>
     <%= render partial: 'admin/dashboard/manpower_change_ranking_table', locals: { title: 'Decreased Manpower', chapters: @chapter_decreases } %>
     <% end %>
@@ -177,46 +334,35 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  // Function to handle the toggle action
-  function toggleTableRows(event) {
-    event.preventDefault(); // Prevent default link behavior
-
-    // Get the data-table-id from the clicked link
-    const tableId = event.currentTarget.getAttribute('data-table-id');
-    // Find the associated table using the data-table-id
-    const table = document.getElementById(tableId);
-
-    if (!table) {
-      console.warn(`Table with id "${tableId}" not found.`);
+const initializeDashboardControls = () => {
+  document.querySelectorAll('a[data-toggle="toggle-table-rows"]').forEach((link) => {
+    if (link.dataset.bound === 'true') {
       return;
     }
 
-    // Find all rows within the table that have the `collapse` class
-    const rows = table.querySelectorAll('tr.collapse');
+    link.dataset.bound = 'true';
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
 
-    // Toggle the `show` class on each row
-    rows.forEach(row => {
-      if (row.classList.contains('show')) {
-        row.classList.remove('show');
+      const tableId = link.getAttribute('data-table-id');
+      const table = document.getElementById(tableId);
+      if (!table) {
+        return;
+      }
+
+      table.querySelectorAll('tr.collapse').forEach((row) => {
+        row.classList.toggle('show');
+      });
+
+      if (link.textContent.trim() === 'Expand') {
+        link.innerHTML = '<i class="fa fa-caret-up fa-fw me-1"></i>Collapse';
       } else {
-        row.classList.add('show');
+        link.innerHTML = '<i class="fa fa-caret-down fa-fw me-1"></i>Expand';
       }
     });
-
-    // Toggle the link text
-    const link = event.currentTarget;
-    if (link.textContent.trim() === 'Expand') {
-      link.innerHTML = '<i class="fa fa-caret-up fa-fw me-1"></i>Collapse';
-    } else {
-      link.innerHTML = '<i class="fa fa-caret-down fa-fw me-1"></i>Expand';
-    }
-  }
-
-  // Attach the toggleTableRows function to all relevant links
-  document.querySelectorAll('a[data-toggle="toggle-table-rows"]').forEach(link => {
-    link.addEventListener('click', toggleTableRows);
   });
-});
+};
 
+initializeDashboardControls();
+document.addEventListener('turbo:load', initializeDashboardControls);
 </script>
