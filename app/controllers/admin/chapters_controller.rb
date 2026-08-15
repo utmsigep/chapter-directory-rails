@@ -18,8 +18,11 @@ module Admin
     def show
       render json: [@chapter] if params[:wrap] == 'true'
       @manpower_survey = {}
-      @chapter.manpower_surveys.each do |s|
-        @manpower_survey[s.survey_date.strftime('%Y-%m-%d')] = s.manpower
+      surveys_by_date = @chapter.manpower_surveys.index_by(&:survey_date)
+      if surveys_by_date.any?
+        (surveys_by_date.keys.min..surveys_by_date.keys.max).each do |date|
+          @manpower_survey[date.strftime('%Y-%m-%d')] = surveys_by_date[date]&.manpower
+        end
       end
     end
 
