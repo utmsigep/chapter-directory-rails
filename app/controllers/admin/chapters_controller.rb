@@ -2,6 +2,8 @@
 
 module Admin
   class ChaptersController < ApplicationController
+    include Admin::ComparisonPresets
+
     before_action :set_chapter, only: %i[show edit update destroy]
     before_action -> { require_role(:editor) }, only: %i[new edit create update destroy import do_import]
 
@@ -24,6 +26,8 @@ module Admin
           @manpower_survey[date.strftime('%Y-%m-%d')] = surveys_by_date[date]&.manpower
         end
       end
+
+      build_chapter_change_stats(surveys_by_date)
     end
 
     # GET /chapters/new
@@ -125,6 +129,47 @@ module Admin
     end
 
     private
+
+    # Compares the chapter's manpower report on @report_date against the report from @compare_date.
+    def build_chapter_change_stats(surveys_by_date)
+      @report_date = parse_date(params[:date]) || surveys_by_date.keys.max
+      return if @report_date.nil?
+
+      @compare_preset = params[:preset].presence || (params[:compare].blank? ? DEFAULT_PRESET : nil)
+      @compare_preset_label = PRESET_LABELS[@compare_preset]
+      @preset_shortcuts = preset_shortcuts_for(@report_date)
+      @compare_date = parse_date(params[:compare]) || compare_date_for_preset(@report_date, @compare_preset || DEFAULT_PRESET)
+
+      @report_manpower = surveys_by_date[@report_date]&.manpower
+      @compare_manpower = surveys_by_date[@compare_date]&.manpower
+
+      return if @report_manpower.nil? || @compare_manpower.nil?
+
+      @manpower_net_change = @report_manpower - @compare_manpower
+      @manpower_growth_rate = ((@manpower_net_change.to_f / @compare_manpower) * 100).round(1) if @compare_manpower.positive?
+
+      @stale_comparison = !@chapter.status && @manpower_net_change.zero?
+      @last_change_date = last_change_date(surveys_by_date) if @stale_comparison
+    end
+
+    # Finds the start of the current unbroken streak of @report_manpower, i.e. the last time it actually changed.
+    def last_change_date(surveys_by_date)
+      dates_at_or_before_report = surveys_by_date.keys.select { |d| d <= @report_date }.sort.reverse
+
+      streak_start = @report_date
+      dates_at_or_before_report.each do |date|
+        break unless surveys_by_date[date]&.manpower == @report_manpower
+
+        streak_start = date
+      end
+      streak_start
+    end
+
+    def parse_date(value)
+      Date.parse(value) if value.present?
+    rescue ArgumentError, TypeError
+      nil
+    end
 
     # Use callbacks to share common setup or constraints between actions.
     def set_chapter

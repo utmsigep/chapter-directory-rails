@@ -77,7 +77,6 @@ class Admin::DashboardControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, "Reporting Coverage"
-    assert_match(/\(\d+ ch\)/, response.body)
     assert_includes response.body, "District Net Change Snapshot"
     assert_includes response.body, "Chapters"
   end

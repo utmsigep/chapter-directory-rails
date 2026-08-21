@@ -3,12 +3,7 @@
 module Admin
   # Dashboard Controller
   class DashboardController < ApplicationController
-    PRESET_LABELS = {
-      'prior_pmr' => 'Prior PMR (3/1)',
-      'mom' => 'Month over Month',
-      'yoy' => 'Year over Year',
-      'days_30' => 'Last 30 Days'
-    }.freeze
+    include Admin::ComparisonPresets
 
     def index
       begin
@@ -30,20 +25,14 @@ module Admin
         return redirect_to admin_path, flash: { error: "[Error] #{e.message}" }
       end
 
-      @compare_preset = params[:preset].presence
+      @compare_preset = params[:preset].presence || (params[:compare].blank? ? DEFAULT_PRESET : nil)
       @compare_preset_label = PRESET_LABELS[@compare_preset]
       @comparison_window_label = if @report_date == @compare_date
                                    @report_date.strftime('%-m/%-d/%Y')
                                  else
                                    "#{@report_date.strftime('%-m/%-d/%Y')} vs #{@compare_date.strftime('%-m/%-d/%Y')}"
                                  end
-      @preset_shortcuts = PRESET_LABELS.map do |preset_key, label|
-        {
-          key: preset_key,
-          label: label,
-          compare_date: compare_date_for_preset(@report_date, preset_key)
-        }
-      end
+      @preset_shortcuts = preset_shortcuts_for(@report_date)
 
       refresh_enqueued = false
 
@@ -200,11 +189,12 @@ module Admin
         negative_label: 'Non-SLC'
       )
 
-      district_change_stats = Hash.new { |hash, key| hash[key] = { delta: 0, chapters: 0 } }
+      district_change_stats = Hash.new { |hash, key| hash[key] = { delta: 0, chapters: 0, district_id: nil } }
       chapter_changes.each do |change|
         district_label = district_label_for(change[:chapter].district)
         district_change_stats[district_label][:delta] += change[:manpower_change]
         district_change_stats[district_label][:chapters] += 1
+        district_change_stats[district_label][:district_id] ||= change[:chapter].district&.id
       end
       @district_net_change = district_change_stats.transform_values { |stats| stats[:delta] }
                                                   .sort_by { |_, delta| -delta }
@@ -220,12 +210,13 @@ module Admin
       @district_net_decline = district_declines.sort_by { |_, stats| stats[:delta] }
                                                .first(10)
                                                .to_h
-      @district_net_change_table = @district_net_change_nonzero.sort_by { |_, stats| -stats[:delta].abs }
-                                                                .first(20)
+      @district_net_change_table = @district_net_change_nonzero.sort_by { |_, stats| -stats[:delta] }
                                                                 .to_h
 
       @district_net_gain_chart = district_chart_series(@district_net_gain)
+      @district_net_gain_links = district_chart_links(@district_net_gain)
       @district_net_decline_chart = district_chart_series(@district_net_decline, absolute: true)
+      @district_net_decline_links = district_chart_links(@district_net_decline)
     end
 
     private
@@ -257,30 +248,13 @@ module Admin
 
     def district_chart_series(district_stats, absolute: false)
       district_stats.to_h do |district_name, stats|
-        label = "#{district_name} (#{stats[:chapters]} ch)"
         value = absolute ? stats[:delta].abs : stats[:delta]
-        [label, value]
+        [district_name, value]
       end
     end
 
-    def compare_date_for_preset(report_date, preset)
-      case preset
-      when 'prior_pmr'
-        prior_pmr_date(report_date)
-      when 'mom'
-        report_date << 1
-      when 'yoy'
-        report_date.prev_year
-      when 'days_30'
-        report_date - 30
-      else
-        report_date - 30
-      end
-    end
-
-    def prior_pmr_date(report_date)
-      pmr_this_year = Date.new(report_date.year, 3, 1)
-      report_date > pmr_this_year ? pmr_this_year : Date.new(report_date.year - 1, 3, 1)
+    def district_chart_links(district_stats)
+      district_stats.values.map { |stats| stats[:district_id] ? admin_district_path(stats[:district_id]) : nil }
     end
 
     def build_segment_comparison(chapter_changes, flag_key:, positive_label:, negative_label:)

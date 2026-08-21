@@ -18,3 +18,9 @@
 .map-box-form {
     height: 500px;
 }
+
+@media (max-width: 991.98px) {
+    .map-box, .chapter-list {
+        height: 50vh;
+    }
+}

@@ -38,13 +38,8 @@
   <% end %>
 </div>
 
-<div class="d-flex flex-wrap gap-2 mb-3">
-  <% @preset_shortcuts.each do |shortcut| %>
-    <% active_preset = shortcut[:key] == @compare_preset %>
-    <% button_class = active_preset ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline-secondary' %>
-    <%= link_to shortcut[:label], admin_path(date: @report_date, compare: shortcut[:compare_date], preset: shortcut[:key]), class: button_class %>
-  <% end %>
-</div>
+<%= render 'admin/preset_shortcuts', preset_shortcuts: @preset_shortcuts, compare_preset: @compare_preset,
+                                     preset_path: ->(shortcut) { admin_path(date: @report_date, compare: shortcut[:compare_date], preset: shortcut[:key]) } %>
 
 <div class="row g-3 mb-3">
   <div class="col-md-3">
@@ -131,7 +126,7 @@
     <div class="card h-100">
       <div class="card-body">
         <div class="text-muted small">Average Chapter Size</div>
-        <div class="display-6"><%= @average_chapter_size.round if @average_chapter_size > 0 %></div>
+        <div class="display-6"><%= number_with_precision(@average_chapter_size, precision: 1) if @average_chapter_size > 0 %></div>
       </div>
     </div>
   </div>
@@ -139,7 +134,7 @@
     <div class="card h-100">
       <div class="card-body">
         <div class="text-muted small">Median Chapter Size</div>
-        <div class="display-6"><%= @median_chapter_size %></div>
+        <div class="display-6"><%= @median_chapter_size.round if @median_chapter_size %></div>
       </div>
     </div>
   </div>
@@ -274,15 +269,53 @@
 <div class="row mb-3">
   <div class="col-md-6">
     <div id="district_net_gain" class="my-3">
-      <%= column_chart @district_net_gain_chart, title: 'Top District Membership Gains', thousands: ',', download: { filename: "district-net-gain-#{@report_date}-vs-#{@compare_date}.png", background: "#ffffff" } %>
+      <%= column_chart @district_net_gain_chart, id: 'district_net_gain_chart', title: 'Top District Membership Gains', thousands: ',', download: { filename: "district-net-gain-#{@report_date}-vs-#{@compare_date}.png", background: "#ffffff" } %>
     </div>
   </div>
   <div class="col-md-6">
     <div id="district_net_decline" class="my-3">
-      <%= column_chart @district_net_decline_chart, title: 'Top District Membership Declines (Absolute)', thousands: ',', download: { filename: "district-net-decline-#{@report_date}-vs-#{@compare_date}.png", background: "#ffffff" } %>
+      <%= column_chart @district_net_decline_chart, id: 'district_net_decline_chart', title: 'Top District Membership Declines (Absolute)', thousands: ',', download: { filename: "district-net-decline-#{@report_date}-vs-#{@compare_date}.png", background: "#ffffff" } %>
     </div>
   </div>
 </div>
+
+<script>
+  const districtChartLinks = {
+    district_net_gain_chart: <%= raw((@district_net_gain_links || []).to_json) %>,
+    district_net_decline_chart: <%= raw((@district_net_decline_links || []).to_json) %>
+  };
+
+  const attachDistrictChartClick = (chartId) => {
+    const chart = window.Chartkick && Chartkick.charts[chartId];
+    if (!chart || chart.dataset_bound) {
+      return;
+    }
+    chart.dataset_bound = true;
+
+    const chartObject = chart.getChartObject();
+    const canvas = chartObject.canvas;
+    canvas.style.cursor = 'pointer';
+    canvas.addEventListener('click', (event) => {
+      const points = chartObject.getElementsAtEventForMode(event, 'nearest', { intersect: true }, true);
+      if (!points.length) {
+        return;
+      }
+      const url = districtChartLinks[chartId][points[0].index];
+      if (url) {
+        window.location = url;
+      }
+    });
+  };
+
+  const attachDistrictChartClicks = () => {
+    Object.keys(districtChartLinks).forEach(attachDistrictChartClick);
+  };
+
+  if (window.Chartkick) {
+    attachDistrictChartClicks();
+  }
+  window.addEventListener('chartkick:load', attachDistrictChartClicks);
+</script>
 
 <div class="row mb-3">
   <div class="col-12">
@@ -301,7 +334,13 @@
             <% delta_class = stats[:delta].positive? ? 'text-success' : (stats[:delta].negative? ? 'text-danger' : 'text-muted') %>
             <% delta_prefix = stats[:delta].positive? ? '+' : '' %>
             <tr>
-              <td><%= district_name %></td>
+              <td>
+                <% if stats[:district_id] %>
+                <%= link_to district_name, admin_district_path(stats[:district_id]) %>
+                <% else %>
+                <%= district_name %>
+                <% end %>
+              </td>
               <td class="text-end"><%= number_with_delimiter(stats[:chapters]) %></td>
               <td class="text-end <%= delta_class %>"><%= delta_prefix %><%= number_with_delimiter(stats[:delta]) %></td>
             </tr>

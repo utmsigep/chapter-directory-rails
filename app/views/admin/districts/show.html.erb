@@ -13,6 +13,11 @@
   </div>
 </div>
 
+<% if @preset_shortcuts.present? %>
+<%= render 'admin/preset_shortcuts', preset_shortcuts: @preset_shortcuts, compare_preset: @compare_preset,
+                                     preset_path: ->(shortcut) { admin_district_path(@district, date: @report_date, compare: shortcut[:compare_date], preset: shortcut[:key]) } %>
+<% end %>
+
 <%= render @district %>
 
 <% if role_check(:editor) %>

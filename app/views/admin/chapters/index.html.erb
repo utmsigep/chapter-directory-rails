@@ -21,8 +21,8 @@
   <div class="card-header text-bg-danger">
     Active Chapters Missing District
   </div>
-  <div>
-    <table class="table">
+  <div class="table-responsive">
+    <table class="table mb-0">
       <thead>
         <tr>
           <th>Roll #</th>
@@ -47,24 +47,26 @@
 <% end %>
 
 <div id="chapters" data-controller="admin">
-  <table class="table table-admin">
-    <thead>
-      <tr>
-          <th>Roll #</th>
-          <th>Chapter</th>
-          <th>Status</th>
-          <th>Institution</th>
-          <th>City</th>
-          <th>State</th>
-          <th>Charter Date</th>
-          <th>Manpower</th>
-          <th>District</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @chapters.each do |chapter| %>
-        <%= render 'chapter_row', chapter: chapter %>
-      <% end %>
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table class="table table-admin">
+      <thead>
+        <tr>
+            <th>Roll #</th>
+            <th>Chapter</th>
+            <th>Status</th>
+            <th>Institution</th>
+            <th>City</th>
+            <th>State</th>
+            <th>Charter Date</th>
+            <th>Manpower</th>
+            <th>District</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @chapters.each do |chapter| %>
+          <%= render 'chapter_row', chapter: chapter %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>

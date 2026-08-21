@@ -1,3 +1,97 @@
+<% if @report_date %>
+<div class="row g-3 mb-3">
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted small">Net Membership Change</div>
+        <% if @manpower_net_change %>
+        <% net_change_class = @manpower_net_change.positive? ? 'text-success' : (@manpower_net_change.negative? ? 'text-danger' : 'text-muted') %>
+        <% net_change_prefix = @manpower_net_change.positive? ? '+' : '' %>
+        <div class="display-6 <%= net_change_class %>"><%= net_change_prefix %><%= @manpower_net_change %></div>
+        <div class="small text-muted">Compared to <%= @compare_date.strftime('%-m/%-d/%Y') %></div>
+        <% else %>
+        <div class="display-6 text-muted">--</div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted small">Growth Rate</div>
+        <% if @manpower_growth_rate %>
+        <% growth_class = @manpower_growth_rate.positive? ? 'text-success' : (@manpower_growth_rate.negative? ? 'text-danger' : 'text-muted') %>
+        <% growth_prefix = @manpower_growth_rate.positive? ? '+' : '' %>
+        <div class="display-6 <%= growth_class %>"><%= growth_prefix %><%= @manpower_growth_rate %>%</div>
+        <div class="small text-muted">Since <%= @compare_date.strftime('%-m/%-d/%Y') %></div>
+        <% else %>
+        <div class="display-6 text-muted">--</div>
+        <div class="small text-muted">Requires non-zero comparison baseline</div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted small">Current Manpower</div>
+        <div class="display-6"><%= @report_manpower %></div>
+        <div class="small text-muted"><%= @report_date.strftime('%-m/%-d/%Y') %></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted small">Chapter Movement Mix</div>
+        <div class="mt-2">
+          <span class="badge text-bg-success me-1">Up: <%= @chapters_up_count %></span>
+          <span class="badge text-bg-secondary me-1">Flat: <%= @chapters_flat_count %></span>
+          <span class="badge text-bg-danger">Down: <%= @chapters_down_count %></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if @chapter_movers.present? %>
+<div class="card mb-3">
+  <div class="card-body">
+    <h5 class="mb-2">Chapter Manpower Changes</h5>
+    <div class="table-responsive">
+      <table class="table table-sm align-middle mb-0">
+        <thead>
+          <tr>
+            <th>Chapter</th>
+            <th class="text-end">Report</th>
+            <th class="text-end">Compare</th>
+            <th class="text-end">Net Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @chapter_movers.each do |mover| %>
+          <% change_class = mover[:change].positive? ? 'text-success' : (mover[:change].negative? ? 'text-danger' : 'text-muted') %>
+          <% change_prefix = mover[:change].positive? ? '+' : '' %>
+          <tr>
+            <td>
+              <% slc_icon = mover[:chapter].slc? ? 'chapter-slc.svg' : 'chapter.svg' %>
+              <% slc_title = mover[:chapter].slc? ? 'SLC Chapter' : 'Non-SLC Chapter' %>
+              <img src="<%= asset_path(slc_icon) %>" alt="<%= slc_title %>" title="<%= slc_title %>" width="14">
+              <%= link_to mover[:chapter].name, admin_chapter_path(mover[:chapter]) %>
+            </td>
+            <td class="text-end"><%= mover[:report_manpower] %></td>
+            <td class="text-end"><%= mover[:compare_manpower] %></td>
+            <td class="text-end <%= change_class %>"><%= change_prefix %><%= mover[:change] %></td>
+          </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<% end %>
+<% end %>
+
 <div class="card mb-3" id="<%= dom_id district %>">
     <div class="card-body">
         <dl class="row">

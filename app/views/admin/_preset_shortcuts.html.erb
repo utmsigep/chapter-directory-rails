@@ -1,0 +1,7 @@
+<div class="d-flex flex-wrap gap-2 mb-3">
+  <% preset_shortcuts.each do |shortcut| %>
+    <% active_preset = shortcut[:key] == compare_preset %>
+    <% button_class = active_preset ? 'btn btn-sm btn-primary' : 'btn btn-sm btn-outline-secondary' %>
+    <%= link_to shortcut[:label], preset_path.call(shortcut), class: button_class %>
+  <% end %>
+</div>

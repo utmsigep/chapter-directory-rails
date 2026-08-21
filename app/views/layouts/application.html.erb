@@ -2,7 +2,7 @@
 <html>
   <head>
     <title><%= full_title(yield(:title)) %></title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Listing of current Sigma Phi Epsilon (SigEp) chapters."> <!-- ˜150 chars -->
     <meta property="og:title" content="Chapter Directory">
     <meta property="og:description" content="Listing of current Sigma Phi Epsilon (SigEp) chapters."> <!-- ˜300 chars -->
@@ -51,18 +51,27 @@
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark nav-header mb-3">
       <div class="container-fluid">
-        <a class="navbar-brand me-auto" href="<%= root_path() %>">Chapter Directory</a>
+        <a class="navbar-brand" href="<%= root_path() %>">Chapter Directory</a>
         <% if user_signed_in? %>
-        <div class="text-light p-2">
-          <%= link_to admin_path, class: 'text-light ms-3' do %><i class="fas fa-gauge fa-fw me-1"></i>Dashboard<% end %>
-          <% if role_check(:admin) %>
-          <%= link_to admin_users_path, class: 'text-light ms-3' do %><i class="fas fa-users fa-fw me-1"></i>User Admin<% end %>
-          <% end %>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarContent">
+          <div class="d-flex flex-column flex-lg-row align-items-lg-center ms-lg-auto">
+            <div class="text-light p-2">
+              <%= link_to admin_path, class: 'text-light ms-lg-3' do %><i class="fas fa-gauge fa-fw me-1"></i>Dashboard<% end %>
+              <% if role_check(:admin) %>
+              <%= link_to admin_users_path, class: 'text-light ms-3' do %><i class="fas fa-users fa-fw me-1"></i>User Admin<% end %>
+              <% end %>
+            </div>
+            <div class="p-2 ms-lg-3">
+              <%= link_to current_user.email, admin_profile_path, class: 'text-light' %>
+            </div>
+            <div class="p-2">
+              <%= button_to('Sign Out',  destroy_user_session_path, :method => 'delete', class: 'btn btn-light btn-sm ms-lg-3') %>
+            </div>
+          </div>
         </div>
-        <div class="ms-3">
-          <%= link_to current_user.email, admin_profile_path, class: 'text-light' %>
-        </div>
-        <%= button_to('Sign Out',  destroy_user_session_path, :method => 'delete', class: 'btn btn-light btn-sm ms-3') %>
         <% end %>
       </div>
     </nav>

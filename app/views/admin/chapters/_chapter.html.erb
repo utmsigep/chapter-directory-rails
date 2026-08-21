@@ -1,3 +1,55 @@
+<% if @report_date %>
+<div class="row g-3 mb-3">
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted small">Net Membership Change</div>
+        <% if @stale_comparison %>
+        <div class="display-6 text-muted">--</div>
+        <div class="small text-muted">No reports since <%= @last_change_date.strftime('%-m/%-d/%Y') %></div>
+        <% elsif @manpower_net_change %>
+        <% net_change_class = @manpower_net_change.positive? ? 'text-success' : (@manpower_net_change.negative? ? 'text-danger' : 'text-muted') %>
+        <% net_change_prefix = @manpower_net_change.positive? ? '+' : '' %>
+        <div class="display-6 <%= net_change_class %>"><%= net_change_prefix %><%= @manpower_net_change %></div>
+        <div class="small text-muted">Compared to <%= @compare_date.strftime('%-m/%-d/%Y') %></div>
+        <% else %>
+        <div class="display-6 text-muted">--</div>
+        <div class="small text-muted">No report on <%= @compare_date.strftime('%-m/%-d/%Y') %></div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted small">Growth Rate</div>
+        <% if @stale_comparison %>
+        <div class="display-6 text-muted">--</div>
+        <div class="small text-muted">Chapter is dormant</div>
+        <% elsif @manpower_growth_rate %>
+        <% growth_class = @manpower_growth_rate.positive? ? 'text-success' : (@manpower_growth_rate.negative? ? 'text-danger' : 'text-muted') %>
+        <% growth_prefix = @manpower_growth_rate.positive? ? '+' : '' %>
+        <div class="display-6 <%= growth_class %>"><%= growth_prefix %><%= @manpower_growth_rate %>%</div>
+        <div class="small text-muted">Since <%= @compare_date.strftime('%-m/%-d/%Y') %></div>
+        <% else %>
+        <div class="display-6 text-muted">--</div>
+        <div class="small text-muted">Requires non-zero comparison baseline</div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <div class="text-muted small"><%= chapter.status ? 'Current Manpower' : 'Last Reported Manpower' %></div>
+        <div class="display-6"><%= @report_manpower %></div>
+        <div class="small text-muted"><%= @report_date.strftime('%-m/%-d/%Y') %></div>
+      </div>
+    </div>
+  </div>
+</div>
+<% end %>
+
 <div id="<%= dom_id chapter %>" class="card mb-3">
   <div class="card-body">
     <div class="row">
