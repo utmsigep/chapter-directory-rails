@@ -1,14 +1,33 @@
-/* global ImagePaths */
+/* global ImagePaths, MapLibreWorkerUrl */
 
 import { Controller } from '@hotwired/stimulus';
-import L from 'leaflet';
-import GeometryUtil from 'leaflet-geometryutil';
+import * as maplibregl from 'maplibre-gl';
 
 const ChapterIconSVG = ImagePaths.chapterIcon;
 const SLCChapterIconSVG = ImagePaths.slcChapterIcon;
 const DormantChapterIconSVG = ImagePaths.dormantChapterIcon;
 const MAX_ZOOM_LEVEL = 12;
+const MAP_STYLE = 'https://tiles.openfreemap.org/styles/positron';
 const logger = console;
+
+// Webpack bundles the app into a single chunk, so maplibre-gl can't locate its
+// worker script relative to itself; point it at the copy we precompile alongside it.
+maplibregl.setWorkerUrl(MapLibreWorkerUrl);
+
+function template(str, data) {
+  return str.replace(/\{ *([\w_-]+) *\}/g, (match, key) => (
+    Object.prototype.hasOwnProperty.call(data, key) ? data[key] : match
+  ));
+}
+
+function markerElement(iconUrl, size) {
+  const el = document.createElement('img');
+  el.src = iconUrl;
+  el.style.width = `${size}px`;
+  el.style.height = `${size}px`;
+  el.style.cursor = 'pointer';
+  return el;
+}
 
 // Connects to data-controller="map"
 export default class extends Controller {
@@ -25,42 +44,23 @@ export default class extends Controller {
       return;
     }
 
-    const ChapterIcon = L.Icon.extend({
-      options: {
-        iconUrl: ChapterIconSVG,
-        iconSize: [24, 24],
-        shadowUrl: null,
-      },
-    });
-
-    const SLCChapterIcon = L.Icon.extend({
-      options: {
-        iconUrl: SLCChapterIconSVG,
-        iconSize: [24, 24],
-        shadowUrl: null,
-      },
-    });
-
-    const DormantChapterIcon = L.Icon.extend({
-      options: {
-        iconUrl: DormantChapterIconSVG,
-        iconSize: [16, 16],
-        shadowUrl: null,
-      },
-    });
-
     const chapterList = document.getElementById('chapter_list');
     if (chapterList) {
       chapterList.innerHTML = '';
     }
 
-    if (this.chaptersLayer) {
-      this.chaptersLayer.clearLayers();
+    (this.chapterMarkers || []).forEach((marker) => marker.remove());
+    this.chapterMarkers = [];
+    if (this.districtBorderLayers) {
+      this.districtBorderLayers.forEach((layerId) => {
+        if (this.map.getLayer(layerId)) this.map.removeLayer(layerId);
+        if (this.map.getSource(layerId)) this.map.removeSource(layerId);
+      });
     }
-    this.chaptersLayer = L.layerGroup();
+    this.districtBorderLayers = [];
 
     // Load data for the markers
-    const mapBounds = [];
+    const mapBounds = new maplibregl.LngLatBounds();
     fetch(this.urlValue, { accept: 'application/json' })
       .then((response) => response.json())
       .then((parsed) => {
@@ -74,53 +74,52 @@ export default class extends Controller {
             logger.error(`Cannot plot ${chapter.name} (${chapter.institution_name})`, chapter);
             return;
           }
-          let icon = new ChapterIcon();
+          let el = markerElement(ChapterIconSVG, 24);
           if (chapter.slc) {
-            icon = new SLCChapterIcon();
+            el = markerElement(SLCChapterIconSVG, 24);
           }
           if (!chapter.status) {
-            icon = new DormantChapterIcon();
+            el = markerElement(DormantChapterIconSVG, 16);
           }
-          const marker = L.marker(
-            [chapter.latitude, chapter.longitude],
-            { icon, draggable: this.draggableValue },
-          );
+          const marker = new maplibregl.Marker({ element: el, draggable: this.draggableValue })
+            .setLngLat([chapter.longitude, chapter.latitude]);
           chapter.district_name = chapter.district && chapter.district.name ? chapter.district.name : '(District Unavailable)';
           chapter.slc = chapter.slc ? `<div><img src="${SLCChapterIconSVG}" style="height:1em; padding-right:0.5em"/><strong>SigEp Learning Community</strong></div>` : '';
-          chapter.website = chapter.website ? L.Util.template('<div><a href="{website}" target="_blank">{website}</a></div>', chapter) : '';
+          chapter.website = chapter.website ? template('<div><a href="{website}" target="_blank">{website}</a></div>', chapter) : '';
           chapter.status = chapter.status ? '' : '<span class="badge text-bg-secondary">Dormant</span>';
           chapter.manpower = chapter.manpower ? `<div>Manpower: ${parseInt(chapter.manpower, 10)}</div>` : '';
-          if (!L.Browser.mobile) {
-            marker.bindTooltip(L.Util.template('<div><strong>{name}</strong></div>{slc}{status}<div>{institution_name}</div>', chapter));
+          if (!('ontouchstart' in window)) {
+            el.title = `${chapter.name} - ${chapter.institution_name}`;
           }
           if (chapter.url) {
-            marker.bindPopup(L.Util.template('<div class="h5"><a href="{url}">{name}</a></div>{slc}{status}<div>{institution_name}</div><div>{location}</div><br />{manpower}<hr />{website}<div>{district_name}</div>', chapter));
+            marker.setPopup(new maplibregl.Popup().setHTML(template('<div class="h5"><a href="{url}">{name}</a></div>{slc}{status}<div>{institution_name}</div><div>{location}</div><br />{manpower}<hr />{website}<div>{district_name}</div>', chapter)));
           } else {
-            marker.bindPopup(L.Util.template('<div class="h5">{name}</div>{slc}{status}<div>{institution_name}</div><div>{location}</div><br />{manpower}<hr />{website}<div>{district_name}</div>', chapter));
+            marker.setPopup(new maplibregl.Popup().setHTML(template('<div class="h5">{name}</div>{slc}{status}<div>{institution_name}</div><div>{location}</div><br />{manpower}<hr />{website}<div>{district_name}</div>', chapter)));
           }
-          marker.addTo(this.chaptersLayer);
-          marker.on('dragend', (event) => {
-            const draggedMarker = event.target;
-            document.getElementById('chapter_latitude').value = draggedMarker.getLatLng().lat;
-            document.getElementById('chapter_longitude').value = draggedMarker.getLatLng().lng;
+          marker.addTo(this.map);
+          this.chapterMarkers.push(marker);
+          marker.on('dragend', () => {
+            const lngLat = marker.getLngLat();
+            document.getElementById('chapter_latitude').value = lngLat.lat;
+            document.getElementById('chapter_longitude').value = lngLat.lng;
           });
-          marker.on('click', (event) => {
-            that.map.flyTo(event.target.getLatLng(), MAX_ZOOM_LEVEL);
+          el.addEventListener('click', () => {
+            that.map.flyTo({ center: marker.getLngLat(), zoom: MAX_ZOOM_LEVEL });
           });
-          mapBounds.push([chapter.latitude, chapter.longitude]);
+          mapBounds.extend([chapter.longitude, chapter.latitude]);
 
           // Add to sidebar
           if (chapterList) {
             const chapterItem = document.createElement('div');
             if (chapter.url) {
-              chapterItem.innerHTML = L.Util.template('<div class="mb-3"><div class="h5"><a href="{url}">{name}</a></div>{slc}{status}<div><small>{institution_name}</small></div><div><small>{location}</small></div></div><hr />', chapter);
+              chapterItem.innerHTML = template('<div class="mb-3"><div class="h5"><a href="{url}">{name}</a></div>{slc}{status}<div><small>{institution_name}</small></div><div><small>{location}</small></div></div><hr />', chapter);
             } else {
-              chapterItem.innerHTML = L.Util.template('<div class="mb-3"><div class="h5">{name}</div>{slc}{status}<div><small>{institution_name}</small></div><div><small>{location}</small></div></div><hr />', chapter);
+              chapterItem.innerHTML = template('<div class="mb-3"><div class="h5">{name}</div>{slc}{status}<div><small>{institution_name}</small></div><div><small>{location}</small></div></div><hr />', chapter);
             }
             chapterItem.onclick = () => {
               document.getElementById('map').scrollIntoView(true);
-              that.map.flyTo(marker.getLatLng(), MAX_ZOOM_LEVEL);
-              marker.openPopup();
+              that.map.flyTo({ center: marker.getLngLat(), zoom: MAX_ZOOM_LEVEL });
+              marker.togglePopup();
             };
             chapterItem.style.cursor = 'pointer';
             chapterList.appendChild(chapterItem);
@@ -129,15 +128,14 @@ export default class extends Controller {
         return data;
       })
       .then((data) => {
-        this.map.addLayer(this.chaptersLayer);
-        if (mapBounds.length) {
-          this.map.fitBounds(mapBounds, { padding: [40, 40] });
+        if (!mapBounds.isEmpty()) {
+          this.map.fitBounds(mapBounds, { padding: 40 });
         }
         if (chapterList) {
           const chapterCount = document.createElement('div');
           chapterCount.innerHTML = '<div class="text-center p-4">No chapters matched your criteria.</div>';
-          if (mapBounds.length > 0) {
-            chapterCount.innerHTML = `<div class="mt-3 text-center text-muted"> Chapters: ${mapBounds.length}</div>`;
+          if (this.chapterMarkers.length > 0) {
+            chapterCount.innerHTML = `<div class="mt-3 text-center text-muted"> Chapters: ${this.chapterMarkers.length}</div>`;
           }
           chapterList.appendChild(chapterCount);
         }
@@ -163,33 +161,44 @@ export default class extends Controller {
           }
           chapterGrouping[chapter[grouping]].push(chapter);
         });
-        chapterGrouping.forEach((groupName) => {
-          const groupPoints = [];
-          chapterGrouping[groupName].forEach((chapter) => {
-            groupPoints.push([chapter.latitude, chapter.longitude]);
-          });
-          const center = L.bounds(groupPoints).getCenter();
-          if (Number.isNaN(center.x) || Number.isNaN(center.y)) {
+        Object.keys(chapterGrouping).forEach((groupName) => {
+          const groupChapters = chapterGrouping[groupName];
+          const lngSum = groupChapters.reduce((sum, c) => sum + Number(c.longitude), 0);
+          const latSum = groupChapters.reduce((sum, c) => sum + Number(c.latitude), 0);
+          const centerLng = lngSum / groupChapters.length;
+          const centerLat = latSum / groupChapters.length;
+          if (Number.isNaN(centerLng) || Number.isNaN(centerLat)) {
             return;
           }
-          chapterGrouping[groupName].forEach((chapter, i) => {
-            if (Number.isNaN(chapter.latitude) || Number.isNaN(chapter.longitude)) {
-              return;
-            }
-            const angle = GeometryUtil.angle(
-              this.map,
-              new L.LatLng(center.x, center.y),
-              new L.LatLng(chapter.latitude, chapter.longitude),
+          groupChapters.forEach((chapter, i) => {
+            groupChapters[i].angle = Math.atan2(
+              Number(chapter.latitude) - centerLat,
+              Number(chapter.longitude) - centerLng,
             );
-            chapterGrouping[groupName][i].angle = angle;
           });
-          chapterGrouping[groupName].sort((chapterA, chapterB) => chapterA.angle > chapterB.angle);
-          const polygonPoints = [];
-          chapterGrouping[groupName].forEach((chapter) => {
-            polygonPoints.push(new L.LatLng(chapter.latitude, chapter.longitude));
+          groupChapters.sort((chapterA, chapterB) => chapterA.angle - chapterB.angle);
+          const polygonPoints = groupChapters.map((chapter) => [
+            Number(chapter.longitude), Number(chapter.latitude),
+          ]);
+          if (polygonPoints.length) {
+            polygonPoints.push(polygonPoints[0]);
+          }
+          const layerId = `district-border-${groupName.replace(/[^a-z0-9]/gi, '_')}`;
+          this.map.addSource(layerId, {
+            type: 'geojson',
+            data: {
+              type: 'Feature',
+              properties: { name: groupName },
+              geometry: { type: 'Polygon', coordinates: [polygonPoints] },
+            },
           });
-          const groupPolygon = (new L.Polygon(polygonPoints)).bindTooltip(groupName);
-          groupPolygon.addTo(this.map);
+          this.map.addLayer({
+            id: layerId,
+            type: 'fill',
+            source: layerId,
+            paint: { 'fill-color': '#3388ff', 'fill-opacity': 0.2 },
+          });
+          this.districtBorderLayers.push(layerId);
         });
       });
   }
@@ -230,37 +239,49 @@ export default class extends Controller {
       [this.urlValue] = this.urlValue.split('?');
     }
     this.urlValue = `${this.urlValue}?nonce=${Math.random()}`;
-    this.map.closePopup();
+    document.querySelectorAll('.maplibregl-popup').forEach((popup) => popup.remove());
   }
 
   connect() {
     // Configure base map
-    this.map = L.map(document.getElementById('map'), {
-      center: L.latLng(44.967243, -103.771556),
-      maxBounds: L.latLngBounds(
-        L.latLng(64.858889, -147.835556), // northwest
-        L.latLng(18.4643137, -66.105905), // southeast
-      ),
+    this.map = new maplibregl.Map({
+      container: document.getElementById('map'),
+      style: MAP_STYLE,
+      center: [-103.771556, 44.967243],
+      maxBounds: [
+        [-172.5, 13], // southwest
+        [-60, 72], // northeast
+      ],
       zoom: 4,
-      minZoom: 4,
-    });
-    L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}{r}.png', {
-      subdomains: 'abcd',
+      minZoom: 2,
       maxZoom: MAX_ZOOM_LEVEL,
-      minZoom: 4,
-      attribution: '&copy <a href="http://www.openstreetmap.org/copyright" target="blank">OpenStreetMap</a> &copy <a href="http://cartodb.com/attributions" target="blank">CartoDB</a>',
-    }).addTo(this.map);
+    });
+    this.map.addControl(new maplibregl.NavigationControl());
+    this.map.on('load', () => {
+      [
+        'label_country_1', 'label_country_2', 'label_country_3',
+        'waterway_line_label', 'water_name_point_label', 'water_name_line_label',
+      ].forEach((layerId) => {
+        this.map.setLayoutProperty(layerId, 'visibility', 'none');
+      });
+      ['label_city', 'label_city_capital', 'label_town'].forEach((layerId) => {
+        this.map.setLayerZoomRange(layerId, 7, 24);
+      });
+      this.map.setLayerZoomRange('boundary_3', 2, 24);
+    });
 
     // Map is being used to populate form fields
     if (this.clickableValue && !this.urlValue) {
-      const marker = L.marker(
-        this.map.getCenter(),
-        { icon: ChapterIconSVG, draggable: true },
-      ).addTo(this.map);
-      marker.on('dragend', (event) => {
-        const draggedMarker = event.target;
-        document.getElementById('chapter_latitude').value = draggedMarker.getLatLng().lat;
-        document.getElementById('chapter_longitude').value = draggedMarker.getLatLng().lng;
+      const marker = new maplibregl.Marker({
+        element: markerElement(ChapterIconSVG, 24),
+        draggable: true,
+      })
+        .setLngLat(this.map.getCenter())
+        .addTo(this.map);
+      marker.on('dragend', () => {
+        const lngLat = marker.getLngLat();
+        document.getElementById('chapter_latitude').value = lngLat.lat;
+        document.getElementById('chapter_longitude').value = lngLat.lng;
       });
     }
   }
