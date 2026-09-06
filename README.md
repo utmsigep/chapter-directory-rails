@@ -19,8 +19,4 @@ Required environment variables:
 - `APP_HOST` - hostname used to build links in the email (defaults to `chapters.sigep.network`)
 - `MAIL_FROM_ADDRESS` - the `From` address (defaults to `reports@sigep.network`)
 
-Since Heroku has no built-in weekly cron cadence, schedule this with the [Heroku Scheduler](https://elements.heroku.com/addons/scheduler) add-on to run **daily** (e.g. every morning) - the task itself no-ops on non-Sunday days:
-
-```
-rake report:weekly_summary
-```
+Production runs this via the `chapters.sigep.network - Weekly Report` Jenkins pipeline, which SSHes to the deploy host and runs the task on a Sunday morning cron trigger (`H 7 * * 0`). The rake task also guards against non-Sunday runs on its own (`FORCE=1` overrides this for manual testing), so it's safe to trigger by hand.
