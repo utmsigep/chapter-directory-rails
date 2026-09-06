@@ -1,0 +1,197 @@
+<%
+  net_change_color = @report.net_manpower_change.positive? ? '#198754' : (@report.net_manpower_change.negative? ? '#dc3545' : '#6c757d')
+  net_change_prefix = @report.net_manpower_change.positive? ? '+' : ''
+  growth_color = @report.net_manpower_growth_rate.to_f.positive? ? '#198754' : (@report.net_manpower_growth_rate.to_f.negative? ? '#dc3545' : '#6c757d')
+  growth_prefix = @report.net_manpower_growth_rate.to_f.positive? ? '+' : ''
+
+  card_style = 'border:1px solid #dee2e6;border-radius:6px;padding:16px;background:#ffffff;'
+  label_style = 'color:#6c757d;font-size:12px;text-transform:uppercase;letter-spacing:.03em;'
+  value_style = 'font-size:28px;font-weight:600;line-height:1.2;margin-top:4px;'
+  muted_small_style = 'color:#6c757d;font-size:12px;margin-top:4px;'
+  section_title_style = 'font-size:18px;font-weight:600;margin:28px 0 10px;color:#212529;'
+  table_style = 'width:100%;border-collapse:collapse;font-size:13px;'
+  th_style = 'text-align:left;border-bottom:2px solid #dee2e6;padding:6px 8px;color:#6c757d;font-weight:600;'
+  th_end_style = th_style + 'text-align:right;'
+  td_style = 'border-bottom:1px solid #eeeeee;padding:6px 8px;'
+  td_end_style = td_style + 'text-align:right;'
+%>
+<div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#212529;max-width:680px;margin:0 auto;">
+  <div style="margin-bottom:20px;">
+    <h1 style="font-size:22px;margin:0 0 4px;">Chapter Directory Weekly Report</h1>
+    <div style="color:#6c757d;font-size:13px;">
+      <%= @report_date.strftime('%-m/%-d/%Y') %> vs <%= @compare_date.strftime('%-m/%-d/%Y') %>
+      &middot; <%= link_to 'View live dashboard', admin_url(date: @report_date, compare: @compare_date), style: 'color:#0d6efd;text-decoration:none;' %>
+    </div>
+  </div>
+
+  <table role="presentation" style="width:100%;border-collapse:separate;border-spacing:8px 0;margin-bottom:8px;">
+    <tr>
+      <td style="<%= card_style %>width:25%;">
+        <div style="<%= label_style %>">Net Membership Change</div>
+        <div style="<%= value_style %>color:<%= net_change_color %>;"><%= net_change_prefix %><%= number_with_delimiter(@report.net_manpower_change) %></div>
+        <div style="<%= muted_small_style %>">Compared to <%= @compare_date.strftime('%-m/%-d/%Y') %></div>
+      </td>
+      <td style="<%= card_style %>width:25%;">
+        <div style="<%= label_style %>">Growth Rate</div>
+        <% if @report.net_manpower_growth_rate.nil? %>
+          <div style="<%= value_style %>color:#6c757d;">--</div>
+          <div style="<%= muted_small_style %>">Requires non-zero comparison baseline</div>
+        <% else %>
+          <div style="<%= value_style %>color:<%= growth_color %>;"><%= growth_prefix %><%= @report.net_manpower_growth_rate %>%</div>
+          <div style="<%= muted_small_style %>">Manpower growth over selected window</div>
+        <% end %>
+      </td>
+      <td style="<%= card_style %>width:25%;">
+        <div style="<%= label_style %>">Chapter Movement Mix</div>
+        <div style="margin-top:8px;font-size:13px;">
+          <span style="color:#198754;font-weight:600;">Up: <%= @report.chapters_up_count %></span>
+          &nbsp;&middot;&nbsp;
+          <span style="color:#6c757d;font-weight:600;">Flat: <%= @report.chapters_flat_count %></span>
+          &nbsp;&middot;&nbsp;
+          <span style="color:#dc3545;font-weight:600;">Down: <%= @report.chapters_down_count %></span>
+        </div>
+        <div style="<%= muted_small_style %>">Based on <%= number_with_delimiter(@report.chapters_compared_count) %> chapters compared</div>
+      </td>
+      <td style="<%= card_style %>width:25%;">
+        <div style="<%= label_style %>">Reporting Coverage</div>
+        <div style="<%= value_style %>"><%= @report.reporting_coverage_rate.nil? ? '--' : "#{@report.reporting_coverage_rate}%" %></div>
+        <div style="<%= muted_small_style %>"><%= number_with_delimiter(@report.reporting_chapters_count) %> of <%= number_with_delimiter(@report.active_chapter_total) %> active chapters</div>
+      </td>
+    </tr>
+  </table>
+
+  <table role="presentation" style="width:100%;border-collapse:separate;border-spacing:8px 0;margin-bottom:8px;">
+    <tr>
+      <td style="<%= card_style %>width:25%;">
+        <div style="<%= label_style %>">Active Chapters</div>
+        <div style="<%= value_style %>"><%= number_with_delimiter(@report.active_chapters) %></div>
+      </td>
+      <td style="<%= card_style %>width:25%;">
+        <div style="<%= label_style %>">Reported Manpower</div>
+        <div style="<%= value_style %>"><%= number_with_delimiter(@report.current_manpower) %></div>
+        <div style="<%= muted_small_style %>"><%= @report_date.strftime('%-m/%-d/%Y') %></div>
+      </td>
+      <td style="<%= card_style %>width:25%;">
+        <div style="<%= label_style %>">Average Chapter Size</div>
+        <div style="<%= value_style %>"><%= number_with_precision(@report.average_chapter_size, precision: 1) if @report.average_chapter_size.positive? %></div>
+      </td>
+      <td style="<%= card_style %>width:25%;">
+        <div style="<%= label_style %>">Median Chapter Size</div>
+        <div style="<%= value_style %>"><%= @report.median_chapter_size.round if @report.median_chapter_size %></div>
+      </td>
+    </tr>
+  </table>
+
+  <div style="<%= section_title_style %>">Expansion vs Non-Expansion</div>
+  <table role="presentation" style="<%= table_style %>">
+    <thead>
+      <tr>
+        <th style="<%= th_style %>">Group</th>
+        <th style="<%= th_end_style %>">Chapters</th>
+        <th style="<%= th_end_style %>">Report</th>
+        <th style="<%= th_end_style %>">Compare</th>
+        <th style="<%= th_end_style %>">Net</th>
+        <th style="<%= th_end_style %>">Growth</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @report.expansion_comparison.each do |row| %>
+        <% change_color = row[:net_change].positive? ? '#198754' : (row[:net_change].negative? ? '#dc3545' : '#6c757d') %>
+        <% change_prefix = row[:net_change].positive? ? '+' : '' %>
+        <% growth_prefix2 = row[:growth_rate].to_f.positive? ? '+' : '' %>
+        <tr>
+          <td style="<%= td_style %>"><strong><%= row[:label] %></strong></td>
+          <td style="<%= td_end_style %>"><%= number_with_delimiter(row[:chapters]) %></td>
+          <td style="<%= td_end_style %>"><%= number_with_delimiter(row[:report_manpower]) %></td>
+          <td style="<%= td_end_style %>"><%= number_with_delimiter(row[:compare_manpower]) %></td>
+          <td style="<%= td_end_style %>color:<%= change_color %>;"><%= change_prefix %><%= number_with_delimiter(row[:net_change]) %></td>
+          <td style="<%= td_end_style %>"><%= row[:growth_rate].nil? ? '--' : "#{growth_prefix2}#{row[:growth_rate]}%" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div style="<%= section_title_style %>">SLC vs Non-SLC</div>
+  <table role="presentation" style="<%= table_style %>">
+    <thead>
+      <tr>
+        <th style="<%= th_style %>">Group</th>
+        <th style="<%= th_end_style %>">Chapters</th>
+        <th style="<%= th_end_style %>">Report</th>
+        <th style="<%= th_end_style %>">Compare</th>
+        <th style="<%= th_end_style %>">Net</th>
+        <th style="<%= th_end_style %>">Growth</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @report.slc_comparison.each do |row| %>
+        <% change_color = row[:net_change].positive? ? '#198754' : (row[:net_change].negative? ? '#dc3545' : '#6c757d') %>
+        <% change_prefix = row[:net_change].positive? ? '+' : '' %>
+        <% growth_prefix2 = row[:growth_rate].to_f.positive? ? '+' : '' %>
+        <tr>
+          <td style="<%= td_style %>"><strong><%= row[:label] %></strong></td>
+          <td style="<%= td_end_style %>"><%= number_with_delimiter(row[:chapters]) %></td>
+          <td style="<%= td_end_style %>"><%= number_with_delimiter(row[:report_manpower]) %></td>
+          <td style="<%= td_end_style %>"><%= number_with_delimiter(row[:compare_manpower]) %></td>
+          <td style="<%= td_end_style %>color:<%= change_color %>;"><%= change_prefix %><%= number_with_delimiter(row[:net_change]) %></td>
+          <td style="<%= td_end_style %>"><%= row[:growth_rate].nil? ? '--' : "#{growth_prefix2}#{row[:growth_rate]}%" %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <% if @report.district_net_change_table.any? %>
+    <div style="<%= section_title_style %>">District Net Change Snapshot</div>
+    <table role="presentation" style="<%= table_style %>">
+      <thead>
+        <tr>
+          <th style="<%= th_style %>">District</th>
+          <th style="<%= th_end_style %>">Chapters</th>
+          <th style="<%= th_end_style %>">Net Change</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @report.district_net_change_table.each do |district_name, stats| %>
+          <% delta_color = stats[:delta].positive? ? '#198754' : (stats[:delta].negative? ? '#dc3545' : '#6c757d') %>
+          <% delta_prefix = stats[:delta].positive? ? '+' : '' %>
+          <tr>
+            <td style="<%= td_style %>">
+              <% if stats[:district_id] %>
+                <%= link_to district_name, admin_district_url(stats[:district_id]), style: 'color:#0d6efd;text-decoration:none;' %>
+              <% else %>
+                <%= district_name %>
+              <% end %>
+            </td>
+            <td style="<%= td_end_style %>"><%= number_with_delimiter(stats[:chapters]) %></td>
+            <td style="<%= td_end_style %>color:<%= delta_color %>;"><%= delta_prefix %><%= number_with_delimiter(stats[:delta]) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+  <div style="<%= section_title_style %>">Chapter Rankings</div>
+  <table role="presentation" style="width:100%;border-collapse:separate;border-spacing:8px 0;">
+    <tr>
+      <td style="vertical-align:top;width:50%;">
+        <%= render partial: 'admin/weekly_report_mailer/ranking_table', locals: { title: 'Increased Manpower', rows: @report.chapter_increases.first(10), change: true } %>
+        <%= render partial: 'admin/weekly_report_mailer/ranking_table', locals: { title: 'Largest Chapters', rows: @report.largest_chapters.first(10), change: false } %>
+      </td>
+      <td style="vertical-align:top;width:50%;">
+        <%= render partial: 'admin/weekly_report_mailer/ranking_table', locals: { title: 'Decreased Manpower', rows: @report.chapter_decreases.first(10), change: true } %>
+        <%= render partial: 'admin/weekly_report_mailer/ranking_table', locals: { title: 'Smallest Chapters', rows: @report.smallest_chapters.first(10), change: false } %>
+      </td>
+    </tr>
+  </table>
+
+  <% if @report.zero_manpower_chapters.any? %>
+    <p style="font-size:12px;color:#6c757d;margin:16px 0 0;">
+      <%= number_with_delimiter(@report.zero_manpower_chapters.size) %> active <%= 'chapter'.pluralize(@report.zero_manpower_chapters.size) %> reported zero manpower on <%= @report_date.strftime('%-m/%-d/%Y') %>:
+      <%= safe_join(@report.zero_manpower_chapters.map { |chapter| link_to chapter.name, admin_chapter_url(chapter[:id]), style: 'color:#0d6efd;text-decoration:none;' }, ', ') %>
+    </p>
+  <% end %>
+
+  <div style="margin-top:24px;padding-top:12px;border-top:1px solid #dee2e6;color:#6c757d;font-size:12px;">
+    Full rankings, trend charts, and district maps are available on the <%= link_to 'live dashboard', admin_url(date: @report_date, compare: @compare_date), style: 'color:#0d6efd;text-decoration:none;' %>.
+  </div>
+</div>

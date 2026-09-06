@@ -1,0 +1,16 @@
+Chapter Directory Weekly Report
+<%= @report_date.strftime('%-m/%-d/%Y') %> vs <%= @compare_date.strftime('%-m/%-d/%Y') %>
+
+Net Membership Change: <%= @report.net_manpower_change.positive? ? '+' : '' %><%= number_with_delimiter(@report.net_manpower_change) %>
+Growth Rate: <%= @report.net_manpower_growth_rate.nil? ? '--' : "#{@report.net_manpower_growth_rate}%" %>
+Chapter Movement: Up <%= @report.chapters_up_count %> / Flat <%= @report.chapters_flat_count %> / Down <%= @report.chapters_down_count %>
+Reporting Coverage: <%= @report.reporting_coverage_rate.nil? ? '--' : "#{@report.reporting_coverage_rate}%" %> (<%= @report.reporting_chapters_count %> of <%= @report.active_chapter_total %>)
+
+Active Chapters: <%= @report.active_chapters %>
+Reported Manpower: <%= number_with_delimiter(@report.current_manpower) %>
+Average Chapter Size: <%= number_with_precision(@report.average_chapter_size, precision: 1) if @report.average_chapter_size.positive? %>
+Median Chapter Size: <%= @report.median_chapter_size.round if @report.median_chapter_size %>
+<% if @report.zero_manpower_chapters.any? %>
+Note: <%= @report.zero_manpower_chapters.size %> active <%= 'chapter'.pluralize(@report.zero_manpower_chapters.size) %> reported zero manpower on <%= @report_date.strftime('%-m/%-d/%Y') %>: <%= @report.zero_manpower_chapters.map(&:name).join(', ') %>
+<% end %>
+View the full interactive dashboard: <%= admin_url(date: @report_date, compare: @compare_date) %>

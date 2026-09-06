@@ -140,6 +140,14 @@
   </div>
 </div>
 
+<% if @zero_manpower_chapters.any? %>
+<p class="small text-muted">
+  <i class="fas fa-circle-info fa-fw me-1"></i>
+  <%= number_with_delimiter(@zero_manpower_chapters.size) %> active <%= 'chapter'.pluralize(@zero_manpower_chapters.size) %> reported zero manpower on <%= @report_date.strftime('%-m/%-d/%Y') %>:
+  <%= safe_join(@zero_manpower_chapters.map { |chapter| link_to chapter.name, admin_chapter_path(id: chapter[:id]) }, ', ') %>
+</p>
+<% end %>
+
 <div class="row g-3 mb-3">
   <div class="col-md-6">
     <div class="card h-100">

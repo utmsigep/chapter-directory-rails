@@ -1,0 +1,40 @@
+<%
+  section_title_style = 'font-size:14px;font-weight:600;margin:0 0 6px;color:#212529;'
+  table_style = 'width:100%;border-collapse:collapse;font-size:12px;margin-bottom:18px;'
+  th_style = 'text-align:left;border-bottom:2px solid #dee2e6;padding:4px 6px;color:#6c757d;font-weight:600;'
+  th_end_style = th_style + 'text-align:right;'
+  td_style = 'border-bottom:1px solid #eeeeee;padding:4px 6px;'
+  td_end_style = td_style + 'text-align:right;white-space:nowrap;'
+%>
+<% if rows.any? %>
+  <div style="<%= section_title_style %>"><%= title %></div>
+  <table role="presentation" style="<%= table_style %>">
+    <thead>
+      <tr>
+        <th style="<%= th_style %>">Chapter</th>
+        <th style="<%= th_end_style %>">Manpower</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% rows.each do |row| %>
+        <% chapter = change ? row[:chapter] : row %>
+        <tr>
+          <td style="<%= td_style %>">
+            <%= link_to chapter.name, admin_chapter_url(chapter[:id]), style: 'color:#0d6efd;text-decoration:none;' %>
+            <div style="color:#6c757d;font-size:11px;"><%= chapter.institution_name %></div>
+          </td>
+          <td style="<%= td_end_style %>">
+            <% if change %>
+              <% delta_color = row[:manpower_change].positive? ? '#198754' : (row[:manpower_change].negative? ? '#dc3545' : '#6c757d') %>
+              <% delta_prefix = row[:manpower_change].positive? ? '+' : '' %>
+              <span style="color:<%= delta_color %>;"><%= delta_prefix %><%= row[:manpower_change] %></span><br>
+              <%= row[:manpower_at_report_date] %>
+            <% else %>
+              <%= row.manpower %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
