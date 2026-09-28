@@ -334,13 +334,17 @@
           <tr>
             <th>District</th>
             <th class="text-end">Chapters</th>
-            <th class="text-end">Net Change</th>
+            <th class="text-end">Report</th>
+            <th class="text-end">Compare</th>
+            <th class="text-end">Net</th>
+            <th class="text-end">Growth</th>
           </tr>
         </thead>
         <tbody>
           <% @district_net_change_table.each do |district_name, stats| %>
             <% delta_class = stats[:delta].positive? ? 'text-success' : (stats[:delta].negative? ? 'text-danger' : 'text-muted') %>
             <% delta_prefix = stats[:delta].positive? ? '+' : '' %>
+            <% growth_prefix = stats[:growth_rate].to_f.positive? ? '+' : '' %>
             <tr>
               <td>
                 <% if stats[:district_id] %>
@@ -350,7 +354,10 @@
                 <% end %>
               </td>
               <td class="text-end"><%= number_with_delimiter(stats[:chapters]) %></td>
+              <td class="text-end"><%= number_with_delimiter(stats[:report_manpower]) %></td>
+              <td class="text-end"><%= number_with_delimiter(stats[:compare_manpower]) %></td>
               <td class="text-end <%= delta_class %>"><%= delta_prefix %><%= number_with_delimiter(stats[:delta]) %></td>
+              <td class="text-end"><%= stats[:growth_rate].nil? ? '--' : "#{growth_prefix}#{stats[:growth_rate]}%" %></td>
             </tr>
           <% end %>
         </tbody>

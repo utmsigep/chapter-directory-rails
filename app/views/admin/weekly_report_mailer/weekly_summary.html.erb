@@ -154,13 +154,17 @@
         <tr>
           <th style="<%= th_style %>">District</th>
           <th style="<%= th_end_style %>">Chapters</th>
-          <th style="<%= th_end_style %>">Net Change</th>
+          <th style="<%= th_end_style %>">Report</th>
+          <th style="<%= th_end_style %>">Compare</th>
+          <th style="<%= th_end_style %>">Net</th>
+          <th style="<%= th_end_style %>">Growth</th>
         </tr>
       </thead>
       <tbody>
         <% @report.district_net_change_table.each do |district_name, stats| %>
           <% delta_color = stats[:delta].positive? ? '#198754' : (stats[:delta].negative? ? '#dc3545' : '#6c757d') %>
           <% delta_prefix = stats[:delta].positive? ? '+' : '' %>
+          <% growth_prefix2 = stats[:growth_rate].to_f.positive? ? '+' : '' %>
           <tr>
             <td style="<%= td_style %>">
               <% if stats[:district_id] %>
@@ -170,7 +174,10 @@
               <% end %>
             </td>
             <td style="<%= td_end_style %>"><%= number_with_delimiter(stats[:chapters]) %></td>
+            <td style="<%= td_end_style %>"><%= number_with_delimiter(stats[:report_manpower]) %></td>
+            <td style="<%= td_end_style %>"><%= number_with_delimiter(stats[:compare_manpower]) %></td>
             <td style="<%= td_end_style %>color:<%= delta_color %>;"><%= delta_prefix %><%= number_with_delimiter(stats[:delta]) %></td>
+            <td style="<%= td_end_style %>"><%= stats[:growth_rate].nil? ? '--' : "#{growth_prefix2}#{stats[:growth_rate]}%" %></td>
           </tr>
         <% end %>
       </tbody>

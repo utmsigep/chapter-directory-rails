@@ -181,12 +181,19 @@ module Admin
     end
 
     def build_district_changes
-      district_change_stats = Hash.new { |hash, key| hash[key] = { delta: 0, chapters: 0, district_id: nil } }
+      district_change_stats = Hash.new do |hash, key|
+        hash[key] = { delta: 0, chapters: 0, report_manpower: 0, compare_manpower: 0, district_id: nil }
+      end
       @chapter_changes.each do |change|
-        district_label = district_label_for(change[:chapter].district)
-        district_change_stats[district_label][:delta] += change[:manpower_change]
-        district_change_stats[district_label][:chapters] += 1
-        district_change_stats[district_label][:district_id] ||= change[:chapter].district&.id
+        stats = district_change_stats[district_label_for(change[:chapter].district)]
+        stats[:delta] += change[:manpower_change]
+        stats[:chapters] += 1
+        stats[:report_manpower] += change[:manpower_at_report_date]
+        stats[:compare_manpower] += change[:manpower_at_compare_date]
+        stats[:district_id] ||= change[:chapter].district&.id
+      end
+      district_change_stats.each_value do |stats|
+        stats[:growth_rate] = stats[:compare_manpower].positive? ? ((stats[:delta].to_f / stats[:compare_manpower]) * 100).round(1) : nil
       end
       @district_net_change = district_change_stats.transform_values { |stats| stats[:delta] }
                                                   .sort_by { |_, delta| -delta }
