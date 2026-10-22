@@ -11,7 +11,7 @@ gem "sprockets-rails"
 gem "mysql2", "~> 0.5"
 
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", "~> 6"
+gem "puma", "~> 7.2.1"
 
 # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
 gem "jsbundling-rails"
@@ -55,6 +55,8 @@ group :development, :test do
 end
 
 group :development do
+  gem "bundler-audit", require: false
+
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
 
@@ -68,17 +70,20 @@ end
 group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
-  gem "selenium-webdriver"
-  gem "webdrivers"
+  gem "selenium-webdriver", ">= 4.14.0"
 end
 
 # Load environment variables .env
 gem 'dotenv-rails', groups: [:development, :test]
 
 # Use devise for logins
-gem "devise", "~> 4.8"
+gem "devise", "~> 5.0", ">= 5.0.4"
 
 # Use rack
 gem 'rack', '~> 2.2'
 
 gem "csv", "~> 3.3"
+gem "addressable", ">= 2.9.0"
+gem "bcrypt", ">= 3.1.22"
+gem "msgpack", ">= 1.8.2"
+gem "rubyzip", ">= 3.4.0"
